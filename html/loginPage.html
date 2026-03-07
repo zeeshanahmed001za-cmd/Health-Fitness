@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/loginPage.css">
+    <link rel="icon" href="/images/site.png" type="image/png">
+    <title>H&F | login page</title>
+</head>
+
+<body>
+    <nav class="navBar">
+        <h3>Health & Fitness</h3>
+    </nav>
+
+    <div class="pageWrapper">
+        <!-- ProgressBar -->
+        <div class="progressContainer">
+            <div class="progressBar"></div>
+        </div>
+
+        <!-- Login frame -->
+        <section class="loginFrame">
+            <!-- loginForm -->
+            <form class="formLayout" id="loginForm">
+                <h3>Almost there! Create your account</h3>
+
+                <!-- Input fields -->
+                <div class="inputFields">
+                    <input type="email" class="emailInput" id="EmailInput" placeholder="Email address" required>
+                    <div class="passwordWrapper">
+                        <input type="password" class="passwordInput" id="PasswordInput" placeholder="Create a Password"
+                            required>
+                        <button class="TogglePassword" type="button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <a href="#" class="fpElement">Forgot password?</a>
+                </div>
+
+                <!-- inputConditions + privacy & policy apply -->
+                <div class="rulePara" id="RulePara"></div>
+
+                <!-- Terms and conditions -->
+                <div class="termsDCondition">
+                    <div class="checkboxContainer">
+                        <input type="checkbox" id="checkBoxInput" class="checkboxInput" required>
+                        <label for="ckBx">Terms & Conditions</label>
+                    </div>
+
+                    <p>I agree to Health and Fitness <a href="#">Terms and Conditions and Privacy Policy</a></p>
+                </div>
+
+
+                <!-- Button field -->
+                <div class="buttonContainer">
+                    <!-- default login -->
+                    <button type="submit" class="ContinueBtn">Continue</button>
+
+                    <span>Or</span>
+
+                    <!-- login with google -->
+                    <button type="button" class="googleLogin"><span class="loginIcons"><img src="../images/google.svg"
+                                alt="googleIcon"></span>Continue with Google
+                    </button>
+
+                    <!-- login with facebook -->
+                    <button type="button" class="facebookLogin"><span class="loginIcons facebook"> <img
+                                src="../images/facebook.svg" alt="facebookIcon"></span>Continue with Facebook
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+    <script src="../javaScript/loginPage.js"></script>
+</body>
+
+</html>
