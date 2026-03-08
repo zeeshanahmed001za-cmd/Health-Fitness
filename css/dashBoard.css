@@ -1,0 +1,57 @@
+/* Head area */
+
+
+.headSection {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    min-height: 60px;
+}
+
+.siteLogo a {
+    cursor: pointer;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.additionalSettings ul {
+    display: flex;
+    gap: 50px;
+    width: inherit;
+}
+
+.additionalSettings li {
+    list-style: none;
+}
+
+/* Navigation bar */
+.navBarConatainer {
+    min-height: 100%;
+    background-color: #000;
+}
+
+.navBarConatainer ul {
+    display: flex;
+    height: 60px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.navBarConatainer li {
+    list-style: none;
+}
+
+.navBar a {
+    color: #fff;
+    padding: 1.3rem;
+}
+
+.navBarConatainer li :hover {
+    background-color: #303030;
+}
+
+/* Active state */
+.navBarItemActive {
+    background-color: #303030;
+}
