@@ -17,12 +17,36 @@
 
 .additionalSettings ul {
     display: flex;
-    gap: 50px;
+    align-items: center;
+    gap: 80px;
     width: inherit;
 }
 
 .additionalSettings li {
     list-style: none;
+}
+
+.searchContainer {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.searchElement input {
+    height: 2.4rem;
+    width: 200px;
+    padding: 10px;
+}
+
+.searchIcon {
+    border: none;
+    position: absolute;
+    right: 0;
+    top: 2%;
+    cursor: pointer;
+    padding: 5px;
+    background-color: #000;
+    color: #dadada;
 }
 
 /* Navigation bar */
