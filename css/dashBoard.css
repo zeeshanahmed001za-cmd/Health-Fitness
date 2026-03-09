@@ -79,3 +79,12 @@
 .navBarItemActive {
     background-color: #303030;
 }
+
+/*Tip Element */
+.tipBox {
+    color: #000000;
+    border: 2px solid #000000;
+    padding: 13px;
+    margin: 20px;
+    border-radius: 18px;
+}
