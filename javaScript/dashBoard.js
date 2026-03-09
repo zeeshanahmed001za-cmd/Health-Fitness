@@ -38,3 +38,32 @@ function displayDailyTip() {
 // Call the function to display a tip when the page loads
 displayDailyTip();
 
+// Dynamic Greeting Logic
+const now = new Date();
+const hour = now.getHours();
+let greeting;
+
+if (hour < 12) greeting = "Good Morning";
+else if (hour < 17) greeting = "Good Afternoon";
+else greeting = "Good Evening";
+
+//  Day & Time based greeting
+const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const formatted = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} - ${hour % 12 || 12}:${now.getMinutes().toString().padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+
+// Subtext for greeting
+const motivations = [
+    "| Remember, every step counts towards a healthier you!",
+    "| Stay consistent and you'll see amazing results!",
+    "| Your dedication today will pay off tomorrow!",
+    "| Keep pushing, you're doing great!",
+    "| Believe in yourself and all that you are capable of!"
+];
+
+// Insert greeting and motivation
+
+document.getElementById("greeting").textContent = greeting + ", User! Welcome to Health & Fitness.";
+document.getElementById("dateTime").textContent = formatted;
+document.getElementById("subGreeting").textContent = motivations[Math.floor(Math.random() * motivations.length)];
