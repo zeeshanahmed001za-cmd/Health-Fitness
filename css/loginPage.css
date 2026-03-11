@@ -8,7 +8,7 @@
     padding: 20px;
 }
 
-.navBar h3 {
+.navBar h1 {
     margin-left: 140px;
 }
 
@@ -75,7 +75,7 @@
 
 .inputFields input {
     font-size: 1rem;
-    padding: 0.5rem;
+    padding: 1rem;
     width: 100%;
     border: 1px solid #cfcfcf;
     border-radius: 3px;
@@ -106,7 +106,7 @@
     border: none;
     background-color: transparent;
     position: absolute;
-    top: 38%;
+    top: 39%;
     transform: translateX(-150%);
     border: none;
     background: none;
@@ -165,8 +165,8 @@ input[type="checkbox"] {
     gap: 0.5rem;
     border: none;
     border-radius: 5px;
-    padding: 8px 0;
-    font-size: 500;
+    padding: 10px 0;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
 }
