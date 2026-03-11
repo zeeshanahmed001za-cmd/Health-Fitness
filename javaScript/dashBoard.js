@@ -62,8 +62,7 @@ const motivations = [
     "| Believe in yourself and all that you are capable of!"
 ];
 
-// Insert greeting and motivation
-
+// Insert greeting and motivation and date time.
 document.getElementById("greeting").textContent = greeting + ", User! Welcome to Health & Fitness.";
 document.getElementById("dateTime").textContent = formatted;
 document.getElementById("subGreeting").textContent = motivations[Math.floor(Math.random() * motivations.length)];

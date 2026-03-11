@@ -1,21 +1,41 @@
-.heroImg {
+body {
+    background-image: url(/images/background.jpg);
     width: 100%;
-    position: relative;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-image: url(../images/background.jpg);
-    opacity: 85%;
 }
 
+/* .navbarContainer {
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+} */
+
 .navBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: #000;
     padding: 0 40px;
-    min-height: 60px;
+    min-height: 80px;
     background-color: #fff;
+    background: #fff;
+}
+
+.navBar.scrolled {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.85) 0%,
+            rgba(255, 255, 255, 0.6) 60%,
+            rgba(255, 255, 255, 0) 100%);
 }
 
 .navBar h1 {
@@ -34,10 +54,19 @@
     color: inherit;
     padding: 5px;
     border-radius: 3px;
+    font-weight: bold;
+}
+
+.navBar .navCta {
+    background-color: #000;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
 }
 
 .navBar a:hover {
-    background-color: #b1b1b1;
+    background-color: #ffd9d9;
 }
 
 .heroSection {
@@ -51,22 +80,23 @@
     align-items: center;
 }
 
-.headingSubtext {
+.heroText {
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.heroSection button {
+.heroSection .ctaBtn {
     border: none;
     background-color: #fff;
     padding: 10px 28px;
-    border-radius: 3px;
+    border-radius: 5px;
+    font-size: large;
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
@@ -74,4 +104,29 @@
 .heroSection button:hover {
     background-color: #e6e6e6;
     transform: translateY(-5px);
+}
+
+.programsSection {
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.programsContainer {
+    display: flex;
+    gap: 50px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 40px 0;
+}
+
+.programCard img {
+    width: 80%;
+    height: 250px;
+    object-fit: contain;
+}
+
+.programCard p {
+    width: 50ch;
 }

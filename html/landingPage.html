@@ -11,23 +11,30 @@
 </head>
 
 <body>
-    <div class="heroImg">
-        <nav class="navBar">
-            <h2>Health & Fitness</h2>
-            <ul>
-                <li><a href="landingPage.html">Home</a></li>
-                <li><a href="workoutPlans.html">Programs</a></li>
-                <li><a href="loginPage.html">Login</a></li>
-            </ul>
-        </nav>
-        <section class="heroSection">
-            <div class="headingSubtext">
+    <header>
+        <div class="navbarContainer">
+            <nav class="navBar">
+                <h1>Health & Fitness</h1>
+                <ul class="navBarOptions">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#programs">Programs</a></li>
+                    <li><a href="loginPage.html">Login</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#getStarted" class="navCta">Get Started</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="heroSection" id="home">
+            <div class="heroText">
                 <h1>Fitness Made Simple For Everyone</h1>
                 <p class="subText">Everything you need to build a healthy lifestyle — structured workouts, meal
                     guidance, and habit tracking — all in one place.
                 </p>
             </div>
-            <button class="ctaBtn">Get Started<span>
+            <button class="ctaBtn"><span>Get Started</span>
+                <span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" />
@@ -35,8 +42,32 @@
                 </span>
             </button>
         </section>
-    </div>
 
+        <section class="programsSection" id="programs">
+            <h1>Our Programs</h1>
+            <div class="programsContainer">
+                <div class="programCard">
+                    <img src="/images/weightLoss.jpg" alt="Weight Loss Program">
+                    <h3>Weight Loss</h3>
+                    <p>Effective strategies and workouts to help you shed unwanted pounds and achieve a healthier
+                        body.</p>
+                </div>
+                <div class="programCard">
+                    <img src="/images/muscleGain.jpg" alt="Muscle Gain Program">
+                    <h3>Muscle Gain</h3>
+                    <p>Structured workout plans and nutrition guidance to help you build muscle mass and strength
+                        effectively.</p>
+                </div>
+                <div class="programCard">
+                    <img src="/images/generalFitness.jpg" alt="General Fitness Program">
+                    <h3>General Fitness</h3>
+                    <p>A balanced approach to fitness that includes cardio, strength training, and flexibility
+                        exercises for overall health and well-being.</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
 
     <script src="../javaScript/landingPage.js"></script>
 </body>
