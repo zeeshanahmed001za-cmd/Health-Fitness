@@ -4,42 +4,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health&Fitness/create/account</title>
+    <title>Health & Fitness | Create Account</title>
     <link rel="icon" href="/images/site.png" type="image/png">
-    <link rel="stylesheet" href="../css/onBoardingQuestions.css">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/onBoardingQuestions.css">
 </head>
 
 <body>
-    <div class="accountIcon">
-        <div class="emptydiv"></div>
-        <a href="loginPage.html"> <svg class="profileIconSvg" focusable="false" aria-hidden="true" viewBox="0 0 24 24"
-                alt="Log In">
-                <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6m0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20">
-                </path>
-            </svg>
-        </a>
-    </div>
-
-    <div class="welcomeContainer">
-        <h2>Welcome to <span class="logo2">Health & Fitness</span></h2>
-    </div>
-
-    <div class="imgTxtContainer">
-        <div class="imagesContainer">
-            <img src="../images/cardio.jpg" alt="cardioImge">
-            <img src="../images/deadlift.jpg" alt="cardio2Image">
-            <img src="../images/situps.jpg" alt="situpsImg">
+    <!-- Top Bar with Progress -->
+    <header class="topBar">
+        <div class="progressContainer">
+            <div class="progressBar" id="progressBar"></div>
         </div>
-        <div class="txtContainer">
-            <p>Are you ready to start your fitness journey and build a personalized workout plan designed around your
-                goals, experience level, and lifestyle?</p>
+        <div class="accountIcon">
+            <a href="loginPage.html">
+                <svg class="profileIconSvg" focusable="false" aria-hidden="true" viewBox="0 0 24 24" alt="Log In">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6m0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20">
+                    </path>
+                </svg>
+            </a>
         </div>
-    </div>
-    <div class="btnContainer">
-        <a href="personalizedQuestionPage.html" class="ctaBttn">CONTINUE</a>
-    </div>
+    </header>
+
+    <main class="onboardingContainer">
+
+        <!-- STEP 1: Welcome -->
+        <div class="step active" id="step1">
+            <div class="welcomeHeader">
+                <h2>Welcome to <span class="gradientText">Health & Fitness</span></h2>
+                <p class="subtitle">Are you ready to start your fitness journey and build a personalized workout plan
+                    designed around your goals, experience level, and lifestyle?</p>
+            </div>
+
+            <div class="imagesContainer">
+                <div class="imageWrapper">
+                    <img src="../images/cardio.jpg" alt="Cardio Training">
+                </div>
+                <div class="imageWrapper">
+                    <img src="../images/deadlift.jpg" alt="Strength Training">
+                </div>
+                <div class="imageWrapper">
+                    <img src="../images/situps.jpg" alt="Core Training">
+                </div>
+            </div>
+
+            <div class="navigationButtons">
+                <button type="button" class="ctaBtn nextBtn">Let's Go</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Name -->
+        <div class="step" id="step2">
+            <div class="questionHeader">
+                <h2>Let's get to know you</h2>
+                <p class="subtitle">What should we call you?</p>
+            </div>
+            
+            <div class="formGroup">
+                <input type="text" id="firstName" class="textInput" placeholder="First Name">
+                <input type="text" id="lastName" class="textInput" placeholder="Last Name">
+            </div>
+
+            <div class="navigationButtons">
+                <button type="button" class="secondaryBtn backBtn">Back</button>
+                <button type="button" class="ctaBtn nextBtn" id="nameNextBtn" disabled>Next</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Primary Goal -->
+        <div class="step" id="step3">
+            <div class="questionHeader">
+                <h2 id="goalGreeting">What is your primary goal?</h2>
+                <p class="subtitle">Select up to two to help us tailor your experience.</p>
+            </div>
+
+            <div class="optionsList">
+                <div class="optionCard listStyle" data-value="weight_loss">
+                    <h3>Weight Loss</h3>
+                    <p>Shed pounds and lean out</p>
+                </div>
+                <div class="optionCard listStyle" data-value="muscle_gain">
+                    <h3>Muscle Gain</h3>
+                    <p>Build size and strength</p>
+                </div>
+                <div class="optionCard listStyle" data-value="general_fitness">
+                    <h3>General Fitness</h3>
+                    <p>Improve overall health</p>
+                </div>
+                <div class="optionCard listStyle" data-value="maintain_weight">
+                    <h3>Maintain Weight</h3>
+                    <p>Stay at my current weight and tone up</p>
+                </div>
+                <div class="optionCard listStyle" data-value="manage_stress">
+                    <h3>Manage Stress</h3>
+                    <p>Use exercise for mental well-being and relaxation</p>
+                </div>
+                <div class="optionCard listStyle" data-value="improve_flexibility">
+                    <h3>Improve Flexibility</h3>
+                    <p>Enhance mobility, range of motion, and posture</p>
+                </div>
+                <div class="optionCard listStyle" data-value="build_endurance">
+                    <h3>Build Endurance</h3>
+                    <p>Increase stamina for runs, hikes, or sports</p>
+                </div>
+                <div class="optionCard listStyle" data-value="increase_energy">
+                    <h3>Increase Energy</h3>
+                    <p>Boost daily energy levels and overcome fatigue</p>
+                </div>
+            </div>
+
+            <div class="navigationButtons">
+                <button type="button" class="secondaryBtn backBtn">Back</button>
+                <button type="button" class="ctaBtn nextBtn" disabled>Next</button>
+            </div>
+        </div>
+
+        <!-- STEP 4: Activity Level -->
+        <div class="step" id="step4">
+            <div class="questionHeader">
+                <h2>How active are you daily?</h2>
+                <p class="subtitle">This helps us calculate your energy needs.</p>
+            </div>
+
+            <div class="optionsList">
+                <div class="optionCard listStyle" data-value="sedentary">
+                    <h3>Not Very Active</h3>
+                    <p>Mostly sitting (office work, driving, etc.)</p>
+                </div>
+                <div class="optionCard listStyle" data-value="lightly_active">
+                    <h3>Lightly Active</h3>
+                    <p>On your feet often (teaching, retail, light walks)</p>
+                </div>
+                <div class="optionCard listStyle" data-value="active">
+                    <h3>Active</h3>
+                    <p>Moving most of the day or regular exercise</p>
+                </div>
+                <div class="optionCard listStyle" data-value="very_active">
+                    <h3>Very Active</h3>
+                    <p>Heavy physical labor or intense daily training</p>
+                </div>
+            </div>
+
+            <div class="navigationButtons">
+                <button type="button" class="secondaryBtn backBtn">Back</button>
+                <button type="button" class="ctaBtn nextBtn" disabled>Next</button>
+            </div>
+        </div>
+
+        <!-- STEP 5: Fitness Level -->
+        <div class="step" id="step5">
+            <div class="questionHeader">
+                <h2>What is your current fitness level?</h2>
+                <p class="subtitle">Be honest, this sets your starting point.</p>
+            </div>
+
+            <div class="optionsList">
+                <div class="optionCard listStyle" data-value="beginner">
+                    <h3>Beginner</h3>
+                    <p>I rarely exercise or am just starting out.</p>
+                </div>
+                <div class="optionCard listStyle" data-value="intermediate">
+                    <h3>Intermediate</h3>
+                    <p>I exercise 1-3 times a week consistently.</p>
+                </div>
+                <div class="optionCard listStyle" data-value="advanced">
+                    <h3>Advanced</h3>
+                    <p>I train 4+ times a week and know my way around a gym.</p>
+                </div>
+            </div>
+
+            <div class="navigationButtons">
+                <button type="button" class="secondaryBtn backBtn">Back</button>
+                <button type="button" class="ctaBtn nextBtn" disabled>Complete</button>
+            </div>
+        </div>
+
+        <!-- STEP 6: Personal Details -->
+        <div class="step" id="step6">
+            <div class="questionHeader">
+                <h2>A little about you</h2>
+                <p class="subtitle">Please provide some basic details.</p>
+            </div>
+            
+            <div class="formGroup">
+                <div class="radioGroup">
+                    <label class="radioLabel">
+                        <input type="radio" name="gender" value="male">
+                        <span class="customRadio"></span>
+                        Male
+                    </label>
+                    <label class="radioLabel">
+                        <input type="radio" name="gender" value="female">
+                        <span class="customRadio"></span>
+                        Female
+                    </label>
+                    <label class="radioLabel">
+                        <input type="radio" name="gender" value="other">
+                        <span class="customRadio"></span>
+                        Other
+                    </label>
+                </div>
+                
+                <input type="date" id="dob" class="textInput customDateInput" placeholder="Date of Birth" required>
+                <input type="text" id="location" class="textInput" placeholder="Where do you live? (City, Country)">
+            </div>
+
+            <div class="navigationButtons">
+                <button type="button" class="secondaryBtn backBtn">Back</button>
+                <button type="button" class="ctaBtn nextBtn" id="detailsNextBtn" disabled>Next</button>
+            </div>
+        </div>
+
+        <!-- STEP 7: Body Metrics -->
+        <div class="step" id="step7">
+            <div class="questionHeader" style="margin-bottom: 20px;">
+                <h2>How tall are you?</h2>
+            </div>
+            
+            <div class="formGroup" style="margin-bottom: 20px;">
+                <!-- Imperial Height -->
+                <div class="metricRow" id="heightImperialContainer">
+                    <div class="inputGroupVertical">
+                        <label class="inputLabel">Height (feet)</label>
+                        <input type="number" id="heightFeet" class="textInput" placeholder="ft" min="0">
+                    </div>
+                    <div class="inputGroupVertical">
+                        <label class="inputLabel">Height (inches)</label>
+                        <input type="number" id="heightInches" class="textInput" placeholder="in" min="0" max="11">
+                    </div>
+                </div>
+                <!-- Metric Height (Hidden initially) -->
+                 <div class="metricRow" id="heightMetricContainer" style="display: none;">
+                    <div class="inputGroupVertical">
+                        <label class="inputLabel">Height (cm)</label>
+                        <div class="inputWithUnit" style="width:100%;">
+                            <input type="number" id="heightCm" class="textInput" placeholder="cm" min="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+                <div class="toggleContainer">
+                    <a href="#" class="unitToggle" id="toggleHeightUnit">Switch to centimeters</a>
+                </div>
+            </div>
+
+            <div class="questionHeader" style="margin-bottom: 20px;">
+                <h2>How much do you weigh?</h2>
+                <p class="subtitle" style="font-size: 0.95rem;">It's OK to estimate. You can update this later.</p>
+            </div>
+
+            <div class="formGroup" style="margin-bottom: 20px;">
+                <div class="metricRow">
+                    <div class="inputGroupVertical">
+                        <label class="inputLabel">Current weight</label>
+                        <div class="inputWithUnit" style="width:100%;">
+                            <input type="number" id="weightVal" class="textInput" placeholder="lbs" min="0" step="0.1">
+                            <span class="unitLabel" id="weightUnitLabel">lbs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="questionHeader" style="margin-bottom: 20px;">
+                <h2>What's your goal weight?</h2>
+                <p class="subtitle" style="font-size: 0.9rem;">Don't worry. This doesn't affect your daily calorie goal and you can always change it later.</p>
+            </div>
+
+            <div class="formGroup">
+                <div class="metricRow">
+                    <div class="inputGroupVertical">
+                        <label class="inputLabel">Goal weight</label>
+                        <div class="inputWithUnit" style="width:100%;">
+                            <input type="number" id="goalWeightVal" class="textInput" placeholder="lbs" min="0" step="0.1">
+                            <span class="unitLabel" id="goalWeightUnitLabel">lbs</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="toggleContainer">
+                    <a href="#" class="unitToggle" id="toggleWeightUnit">Switch to kilograms</a>
+                </div>
+            </div>
+
+            <div class="navigationButtons" style="margin-top: 10px;">
+                <button type="button" class="secondaryBtn backBtn">Back</button>
+                <button type="button" class="ctaBtn nextBtn" id="metricsNextBtn" disabled>Next</button>
+            </div>
+        </div>
+
+    </main>
 
     <script src="../javaScript/onBoardingQuestions.js"></script>
 </body>

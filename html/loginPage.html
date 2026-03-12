@@ -4,81 +4,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H&F | Welcome Back</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/loginPage.css">
     <link rel="icon" href="/images/site.png" type="image/png">
-    <title>H&F | login page</title>
 </head>
 
 <body>
-    <nav class="navBar">
-        <h1>Health & Fitness</h2>
+    <!-- Top Navigation -->
+    <nav class="navBar" id="navbar">
+        <a href="landingPage.html" class="logoLink">
+            <h1>Health & Fitness</h1>
+        </a>
     </nav>
-    <div class="pageWrapper">
-        <!-- ProgressBar -->
-        <div class="progressContainer">
-            <div class="progressBar"></div>
+
+    <div class="splitWrapper">
+        <!-- Left Visual Side -->
+        <div class="visualSide">
+            <div class="overlay"></div>
+            <div class="visualContent">
+                <h2>Welcome Back</h2>
+                <p>Pick up where you left off. Continue your journey towards a healthier, stronger you.</p>
+            </div>
         </div>
 
-        <!-- Login frame -->
-        <section class="loginFrame">
-            <!-- loginForm -->
-            <form class="formLayout" id="loginForm">
-                <h3>Almost there! Create your account</h3>
+        <!-- Right Form Side -->
+        <div class="formSide">
+            <div class="formContainer">
+                <div class="formHeader">
+                    <h2>Log in to your account</h2>
+                    <p>Enter your details below to access your dashboard.</p>
+                </div>
 
-                <!-- Input fields -->
-                <div class="inputFields">
-                    <input type="email" class="emailInput" id="EmailInput" placeholder="Email address" required>
-                    <div class="passwordWrapper">
-                        <input type="password" class="passwordInput" id="PasswordInput" placeholder="Create a Password"
-                            required>
-                        <button class="TogglePassword" type="button">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                <circle cx="12" cy="12" r="3" />
-                            </svg>
+                <form id="loginForm" novalidate>
+                    <!-- Floating Email Input -->
+                    <div class="inputGroup">
+                        <input type="email" id="EmailInput" class="floatInput" placeholder=" " required>
+                        <label for="EmailInput" class="floatLabel">Email Address</label>
+                        <span class="errorText" id="emailError">Please enter a valid email address.</span>
+                    </div>
+
+                    <!-- Floating Password Input -->
+                    <div class="inputGroup">
+                        <div class="passwordWrapper">
+                            <input type="password" id="PasswordInput" class="floatInput" placeholder=" " required>
+                            <label for="PasswordInput" class="floatLabel">Password</label>
+                            <button class="TogglePassword" type="button" aria-label="Toggle Password Visibility">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="errorText" id="passwordError">Password must be at least 10 chars, include uppercase, lowercase, number, and special char.</span>
+                        <a href="#" class="forgotPassword">Forgot Password?</a>
+                    </div>
+
+                    <!-- Terms & Conditions -->
+                    <div class="termsGroup">
+                        <div class="checkboxWrapper">
+                            <input type="checkbox" id="checkBoxInput" class="customCheckbox" required>
+                            <label for="checkBoxInput">I agree to Health & Fitness <a href="#">Terms & Conditions</a></label>
+                        </div>
+                        <span class="errorText" id="termsError">You must agree to the terms to continue.</span>
+                    </div>
+
+                    <!-- Actions -->
+                    <button type="submit" class="primaryBtn" id="loginBtn">Log in</button>
+
+                    <div class="divider">
+                        <span>Or continue with</span>
+                    </div>
+
+                    <div class="socialLogin">
+                        <button type="button" class="socialBtn googleBtn">
+                            <img src="../images/google.svg" alt="Google">
+                            Google
+                        </button>
+                        <button type="button" class="socialBtn facebookBtn">
+                            <img src="../images/facebook.svg" alt="Facebook">
+                            Facebook
                         </button>
                     </div>
 
-                    <a href="#" class="fpElement">Forgot password?</a>
-                </div>
-
-                <!-- inputConditions + privacy & policy apply -->
-                <div class="rulePara" id="RulePara"></div>
-
-                <!-- Terms and conditions -->
-                <div class="termsDCondition">
-                    <div class="checkboxContainer">
-                        <input type="checkbox" id="checkBoxInput" class="checkboxInput" required>
-                        <label for="ckBx">Terms & Conditions</label>
-                    </div>
-
-                    <p>I agree to Health and Fitness <a href="#">Terms and Conditions and Privacy Policy</a></p>
-                </div>
-
-
-                <!-- Button field -->
-                <div class="buttonContainer">
-                    <!-- default login -->
-                    <button type="submit" class="ContinueBtn">Continue</button>
-
-                    <span>Or</span>
-
-                    <!-- login with google -->
-                    <button type="button" class="googleLogin"><span class="loginIcons"><img src="../images/google.svg"
-                                alt="googleIcon"></span>Continue with Google
-                    </button>
-
-                    <!-- login with facebook -->
-                    <button type="button" class="facebookLogin"><span class="loginIcons facebook"> <img
-                                src="../images/facebook.svg" alt="facebookIcon"></span>Continue with Facebook
-                    </button>
-                </div>
-            </form>
-        </section>
+                    <p class="signupPrompt">Don't have an account? <a href="onBoardingQuestions.html">Sign up</a></p>
+                </form>
+            </div>
+        </div>
     </div>
+
     <script src="../javaScript/loginPage.js"></script>
 </body>
 

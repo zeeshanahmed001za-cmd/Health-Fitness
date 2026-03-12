@@ -1,192 +1,447 @@
+/* loginPage.css Complete Override */
+/* Modern Split-Screen Layout for Premium Aesthetics */
+
+body {
+    background-color: var(--bg-primary);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Navbar integration */
 .navBar {
-    color: #fff;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    background-color: #000;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    padding: 0 5%;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    z-index: 1000;
+}
+
+.logoLink {
+    text-decoration: none;
 }
 
 .navBar h1 {
-    margin-left: 140px;
+    font-weight: 800;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }
 
-.pageWrapper {
+/* Split Layout Wrapper */
+.splitWrapper {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-    /* gap: 1.5rem; */
-}
-
-.loginFrame {
-    height: inherit;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.formLayout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 2.5rem;
+    min-height: 100vh;
     width: 100%;
-    max-width: 450px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
 }
 
-.formLayout h3 {
-    text-align: center;
-    font-size: x-large;
+/* Left Visual Side */
+.visualSide {
+    flex: 1;
+    display: none;
+    /* hidden on small screens */
+    position: relative;
+    background-image: url('../images/login.jpg');
+    /* Using an existing landing page image */
+    background-size: cover;
+    background-position: center 50%;
+    background-repeat: no-repeat;
 }
 
-.progressContainer {
-    width: 450px;
-    height: 7px;
-    border-radius: 18px;
-    background: #eee;
-    overflow: hidden;
-}
-
-.progressBar {
+.visualSide .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    width: 90%;
-    background: #000;
-    transition: width 0.3s ease;
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.4), var(--bg-primary));
 }
 
-.inputFields {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    width: 100%;
-    max-width: 400px;
+.visualContent {
+    position: absolute;
+    bottom: 15%;
+    left: 10%;
+    right: 10%;
+    z-index: 2;
+    animation: fadeIn 1s ease forwards;
 }
 
-.passwordField {
+.visualContent h2 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.visualContent p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+/* Right Form Side */
+.formSide {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.inputFields input {
-    font-size: 1rem;
-    padding: 1rem;
-    width: 100%;
-    border: 1px solid #cfcfcf;
-    border-radius: 3px;
-}
-
-.inputFields input::placeholder {
-    color: #898989;
-}
-
-.inputFields input:hover {
-    border: 1px solid #000;
-}
-
-.passwordWrapper svg {
-    width: 1.2rem;
+    justify-content: center;
+    padding: 100px 5% 50px 5%;
+    /* Space for fixed nav */
+    background-color: var(--bg-primary);
     position: relative;
 }
 
-.fpElement {
-    text-align: end;
+.formContainer {
+    width: 100%;
+    max-width: 440px;
+    animation: slideUpFade 0.6s ease forwards;
 }
 
-.fpElement:hover {
-    text-decoration: underline;
+.formHeader {
+    margin-bottom: 40px;
+}
+
+.formHeader h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.formHeader p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Floating Label Inputs */
+.inputGroup {
+    position: relative;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.floatInput {
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 20px 16px 10px 16px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    outline: none;
+    transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.floatInput:focus,
+.floatInput:not(:placeholder-shown) {
+    border-color: var(--accent-cyan);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+}
+
+.floatLabel {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+}
+
+.floatInput:focus~.floatLabel,
+.floatInput:not(:placeholder-shown)~.floatLabel {
+    top: 14px;
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+/* Input Error States */
+.inputGroup.error .floatInput {
+    border-color: #ef4444;
+    /* Error red */
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.inputGroup.error .floatInput:focus~.floatLabel,
+.inputGroup.error .floatInput:not(:placeholder-shown)~.floatLabel {
+    color: #ef4444;
+}
+
+.inputGroup.success .floatInput {
+    border-color: var(--accent-primary);
+    /* Success green */
+}
+
+/* Error Text */
+.errorText {
+    display: block;
+    font-size: 0.8rem;
+    color: #ef4444;
+    margin-top: 5px;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all var(--transition-fast);
+}
+
+.inputGroup.error .errorText,
+.termsGroup.error .errorText {
+    height: auto;
+    opacity: 1;
+    margin-top: 8px;
+}
+
+/* Password Visibility Toggle */
+.passwordWrapper {
+    position: relative;
 }
 
 .TogglePassword {
-    border: none;
-    background-color: transparent;
     position: absolute;
-    top: 39%;
-    transform: translateX(-150%);
-    border: none;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
-    cursor: pointer;
-}
-
-/* Terms and condition field */
-.termsDCondition {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: 150px;
-}
-
-.checkboxContainer {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-input[type="checkbox"] {
-    width: 15px;
-    height: 15px;
-    accent-color: #000;
-    color: #000;
-    border: 2px solid #333;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.termsDCondition label {
-    font-size: medium;
-    font-weight: bold;
-}
-
-.termsDCondition p {
-    padding-left: 1rem;
-}
-
-.buttonContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    max-width: 400px;
-}
-
-.buttonContainer span {
-    text-align: center;
-}
-
-.buttonContainer button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
     border: none;
-    border-radius: 5px;
-    padding: 10px 0;
-    font-size: 18px;
-    font-weight: bold;
     cursor: pointer;
+    color: var(--text-secondary);
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
 }
 
-.buttonContainer img {
-    width: 1rem;
+.TogglePassword:hover {
+    color: var(--text-primary);
 }
 
-
-
-.ContinueBtn {
-    color: #fff;
-    background-color: #000;
+/* Forgot Password Link */
+.forgotPassword {
+    display: block;
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--accent-cyan);
+    margin-top: 10px;
+    font-weight: 500;
 }
 
-.googleLogin {
-    background-color: #d4d4d4;
+.forgotPassword:hover {
+    color: var(--accent-primary);
+    text-decoration: underline;
 }
 
-.facebookLogin {
-    color: #fff;
-    background-color: #4267B2;
+/* Terms and Conditions */
+.termsGroup {
+    margin-bottom: 30px;
+}
+
+.checkboxWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.customCheckbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    background-color: var(--bg-secondary);
+    cursor: pointer;
+    position: relative;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.customCheckbox:checked {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+    border-color: transparent;
+}
+
+.customCheckbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid var(--bg-primary);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkboxWrapper label {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.checkboxWrapper label a {
+    color: var(--accent-cyan);
+    font-weight: 500;
+}
+
+.checkboxWrapper label a:hover {
+    text-decoration: underline;
+}
+
+/* Action Button */
+.primaryBtn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+    color: var(--bg-primary);
+    border: none;
+    padding: 16px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    margin-bottom: 25px;
+}
+
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* Divider */
+.divider {
+    position: relative;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider span {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 0 10px;
+    background-color: var(--bg-primary);
+}
+
+/* Social Buttons */
+.socialLogin {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.socialBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    background-color: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.socialBtn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.socialBtn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Signup prompt */
+.signupPrompt {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.signupPrompt a {
+    color: var(--accent-primary);
+    font-weight: 600;
+    /* text-decoration: underline; */
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 900px) {
+    .visualSide {
+        display: block;
+        /* Show visual side on larger screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .formHeader h2 {
+        font-size: 1.8rem;
+    }
+
+    .socialLogin {
+        flex-direction: column;
+    }
 }

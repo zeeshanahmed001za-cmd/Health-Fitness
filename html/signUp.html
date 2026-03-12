@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H&F | Sign Up</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/signUp.css">
+    <link rel="icon" href="/images/site.png" type="image/png">
+</head>
+
+<body>
+    <!-- Top Navigation -->
+    <nav class="navBar" id="navbar">
+        <a href="landingPage.html" class="logoLink">
+            <h1>Health & Fitness</h1>
+        </a>
+    </nav>
+
+    <div class="signupWrapper">
+        <div class="formContainer">
+            <div class="formHeader">
+                <h2>Almost there! Create your account.</h2>
+            </div>
+
+            <form id="signupForm" novalidate>
+                <!-- Floating Email Input -->
+                <div class="inputGroup">
+                    <input type="email" id="EmailInput" class="floatInput" placeholder=" " required>
+                    <label for="EmailInput" class="floatLabel">Email address</label>
+                    <span class="errorText" id="emailError">Please enter a valid email address.</span>
+                </div>
+
+                <!-- Floating Password Input -->
+                <div class="inputGroup">
+                    <div class="passwordWrapper">
+                        <input type="password" id="PasswordInput" class="floatInput" placeholder=" " required>
+                        <label for="PasswordInput" class="floatLabel">Create a password</label>
+                        <button class="TogglePassword" type="button" aria-label="Toggle Password Visibility">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="passwordHint">Must be at least 10 characters, no spaces.</p>
+                    <span class="errorText" id="passwordError">Password does not meet requirements.</span>
+                </div>
+
+                <div class="recaptchaText">
+                    <p>This site is protected by reCAPTCHA and the Google <a href="#">Privacy Policy</a> and <a href="#">Terms</a> apply.</p>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="termsGroup">
+                    <div class="checkboxWrapper">
+                        <input type="checkbox" id="checkBoxInput" class="customCheckbox" required>
+                        <label for="checkBoxInput">I agree to Health & Fitness <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>.</label>
+                    </div>
+                    <span class="errorText" id="termsError">You must agree to the terms to continue.</span>
+                </div>
+
+                <!-- Actions -->
+                <button type="submit" class="primaryBtn" id="signupBtn">Sign Up</button>
+
+                <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <div class="socialLogin">
+                    <button type="button" class="socialBtn googleBtn">
+                        <img src="../images/google.svg" alt="Google">
+                        Continue with Google
+                    </button>
+                    <button type="button" class="socialBtn facebookBtn">
+                        <img src="../images/facebook.svg" alt="Facebook">
+                        Continue with Facebook
+                    </button>
+                    <p class="socialHint">We will never post anything without your permission</p>
+                </div>
+
+                <p class="signupPrompt">Already have an account? <a href="loginPage.html">Log In</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="../javaScript/signUp.js"></script>
+</body>
+
+</html>

@@ -4,126 +4,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health & fitness | beginners and intermediate guide</title>
+    <title>Health & Fitness | Beginners and Intermediate Guide</title>
+    <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/landingPage.css">
     <link rel="icon" href="/images/site.png" type="image/png">
-    <link rel="stylesheet" href="../css/common.css">
 </head>
 
 <body>
     <header>
-        <div class="navbarContainer">
-            <nav class="navBar">
-                <h1>Health & Fitness</h1>
-                <ul class="navBarOptions">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#programs">Programs</a></li>
-                    <li><a href="loginPage.html">Login</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#getStarted" class="navCta">Get Started</a></li>
-                </ul>
-            </nav>
-        </div>
+        <nav class="navBar" id="navbar">
+            <h1>Health & Fitness</h1>
+            <ul class="navBarOptions">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#programs">Programs</a></li>
+                <li><a href="#membership">Membership</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="onBoardingQuestions.html" class="navCta">Get Started</a></li>
+            </ul>
+        </nav>
     </header>
+
     <main>
+        <!-- Hero Section -->
         <section class="heroSection" id="home">
             <div class="heroText">
-                <h1>Fitness Made Simple For Everyone</h1>
-                <p class="subText">Everything you need to build a healthy lifestyle — structured workouts, meal
-                    guidance, and habit tracking — all in one place.
+                <span>Transform Your Life<br>Through Fitness</span>
+                <p class="subText">Everything you need to build a healthy lifestyle — structured workouts, expert meal
+                    guidance, and continuous habit tracking — all in one place.
                 </p>
             </div>
-            <button class="ctaBtn"><span>Get Started</span>
-                <span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </span>
+            <button class="heroCtaBtn"
+                onclick="document.getElementById('membership').scrollIntoView({behavior: 'smooth'})">
+                Explore Memberships
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
             </button>
         </section>
 
-        <section class="programsSection" id="programs">
-            <h1>Our Programs</h1>
-            <div class="programsContainer">
-                <div class="programCard">
-                    <img src="/images/weightLoss.jpg" alt="Weight Loss Program">
-                    <h3>Weight Loss</h3>
-                    <p>Effective strategies and workouts to help you shed unwanted pounds and achieve a healthier
-                        body.</p>
-                </div>
-                <div class="programCard">
-                    <img src="/images/muscleGain.jpg" alt="Muscle Gain Program">
-                    <h3>Muscle Gain</h3>
-                    <p>Structured workout plans and nutrition guidance to help you build muscle mass and strength
-                        effectively.</p>
-                </div>
-                <div class="programCard">
-                    <img src="/images/generalFitness.jpg" alt="General Fitness Program">
-                    <h3>General Fitness</h3>
-                    <p>A balanced approach to fitness that includes cardio, strength training, and flexibility
-                        exercises for overall health and well-being.</p>
-                </div>
-            </div>
-        </section>
+        <!-- Main Content Container with Dark Background -->
+        <div class="additionalSections">
 
-        <section class="aboutSection" id="about">
-            <h1>About Us</h1>
-            <p>At Health & Fitness, we are dedicated to helping individuals of all fitness levels achieve their
-                health goals. Our mission is to provide accessible and effective fitness solutions that empower
-                people to lead healthier lives. Whether you're just starting your fitness journey or looking to
-                take it to the next level, we have the resources and support you need to succeed.</p>
-        </section>
+            <!-- Programs Section -->
+            <section class="programsSection" id="programs">
+                <h1>Our Core Programs</h1>
+                <div class="programsContainer">
+                    <div class="programCard">
+                        <!-- Use placeholder or existing image appropriately -->
+                        <img src="/images/weightLoss.jpg" alt="Weight Loss Program">
+                        <h3>Weight Loss</h3>
+                        <p>Effective, science-backed strategies and HIIT workouts to help you shed unwanted pounds and
+                            achieve a leaner body sustainably.</p>
+                    </div>
+                    <div class="programCard">
+                        <img src="/images/muscleGain.jpg" alt="Muscle Gain Program">
+                        <h3>Muscle Gain</h3>
+                        <p>Structured hypertrophy workout plans and macro-nutrient guidance to help you build muscle
+                            mass and raw strength effectively.</p>
+                    </div>
+                    <div class="programCard">
+                        <img src="/images/generalFitness.jpg" alt="General Fitness Program">
+                        <h3>General Fitness</h3>
+                        <p>A balanced approach including functional cardio, mobility training, and flexibility exercises
+                            for total longevity and well-being.</p>
+                    </div>
+                </div>
+            </section>
 
-        <section class="callToActionSection">
-            <h1>Ready to Transform Your Health?</h1>
-            <p>Join our community today and start your journey towards a healthier, fitter you. With our expert
-                guidance and comprehensive programs, achieving your fitness goals has never been easier.</p>
-            <button class="ctaBtn"><span>Get Started</span>
-                <span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Membership Section -->
+            <section class="membership" id="membership">
+                <span class="memLabel">Memberships</span>
+                <p class="memSubText">Choose your fitness journey</p>
+
+                <ul class="membership">
+                    <li>Access to personalized workout plans tailored to your fitness level.</li>
+                    <li>Comprehensive meal plans designed by certified nutritionists.</li>
+                    <li>Advanced progress tracking tools to monitor your improvements.</li>
+                    <li>Exclusive access to our supportive, private community.</li>
+                </ul>
+
+                <div class="membershipCards">
+                    <div class="membershipCard">
+                        <h3>Basic</h3>
+                        <p>$9.99<span
+                                style="font-size: 1rem; color: var(--text-secondary); font-weight: normal;">/mo</span>
+                        </p>
+                        <ul>
+                            <li>Access to basic workout plans</li>
+                            <li>Standard meal templates</li>
+                            <li>Basic progress tracking</li>
+                        </ul>
+                        <button class="membershipCtaBtn">
+                            Get Basic
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="membershipCard">
+                        <!-- Premium Card - Highlighted in CSS -->
+                        <h3>Premium</h3>
+                        <p>$19.99<span
+                                style="font-size: 1rem; color: var(--text-secondary); font-weight: normal;">/mo</span>
+                        </p>
+                        <ul>
+                            <li>Access to ALL workout plans</li>
+                            <li>Customized weekly meal plans</li>
+                            <li>Advanced analytics tracking</li>
+                            <li>Exclusive community access</li>
+                        </ul>
+                        <button class="membershipCtaBtn">
+                            Go Premium
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="membershipCard">
+                        <h3>Elite</h3>
+                        <p>$39.99<span
+                                style="font-size: 1rem; color: var(--text-secondary); font-weight: normal;">/mo</span>
+                        </p>
+                        <ul>
+                            <li>All Premium features</li>
+                            <li>1-on-1 coaching sessions</li>
+                            <li>Monthly live Q&A events</li>
+                            <li>Priority 24/7 support</li>
+                        </ul>
+                        <button class="membershipCtaBtn">
+                            Get Elite
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section class="aboutSection" id="about">
+                <h1>Our Mission</h1>
+                <p>At Health & Fitness, we are dedicated to helping individuals of all fitness levels achieve their
+                    health goals. Our mission is to provide accessible, scientifically-backed, and effective fitness
+                    solutions.</p>
+
+                <div class="aboutRow">
+                    <img src="/images/about1.jpg" alt="About Us Team">
+                    <div class="aboutPara">
+                        <p>Our team of experienced fitness professionals is passionate about creating personalized
+                            workout plans and meal guidance that cater to your unique needs.</p>
+                        <br>
+                        <p>We believe that fitness should be sustainable and empowering. That's why we focus on building
+                            healthy, long-term habits and fostering a supportive community where everyone can thrive.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final Call to Action -->
+            <section class="callToActionSection" id="getStarted">
+                <h1>Ready to Transform Your Health?</h1>
+                <p>Join our community today. With our expert guidance and comprehensive programs, achieving your dream
+                    physique and mental clarity is entirely within reach.</p>
+                <a href="onBoardingQuestions.html" class="ctaBtn">
+                    Start Your Journey
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                </span>
-            </button>
-        </section>
+                </a>
+            </section>
+
+        </div>
     </main>
+
+    <!-- Footer -->
     <footer>
         <div class="footerContainer">
-            <div class="footerLogo">
-                <img src="/images/site.png" alt="Health & Fitness Logo">
-                <span>Health & Fitness</span>
-            </div>
             <div class="innerContainer">
+                <div class="footerLogo">
+                    <img src="/images/site.png" alt="Health & Fitness Logo">
+                    <span>Health & Fitness</span>
+                </div>
+
                 <div class="quickLinks">
                     <h2>Quick Links</h2>
-                    <ul class="quickLinkcontainer">
+                    <ul>
                         <li><a href="#home">Home</a></li>
                         <li><a href="#programs">Programs</a></li>
-                        <li><a href="loginPage.html">Login</a></li>
-                        <li><a href="#about">About</a></li>
+                        <li><a href="#membership">Pricing</a></li>
+                        <li><a href="loginPage.html">Member Login</a></li>
                     </ul>
                 </div>
 
                 <div class="programs">
-                    <h2>Our Programs</h2>
+                    <h2>Our Focus</h2>
                     <ul>
                         <li><a href="#programs">Weight Loss</a></li>
                         <li><a href="#programs">Muscle Gain</a></li>
-                        <li><a href="#programs">General Fitness</a></li>
+                        <li><a href="#programs">Functional Fitness</a></li>
+                        <li><a href="#programs">Mobility</a></li>
                     </ul>
                 </div>
+
                 <div class="contacts">
                     <h2>Contact Us</h2>
-                    <p>Email: zeeshhanahmed1@gmail.com</p>
-                    <p>Location: India</p>
+                    <p>contact@healthfitness.com</p>
+                    <p>Phone: +1 (555) 123-4567</p>
+                    <p>Location: New York, USA</p>
                 </div>
             </div>
+
             <div class="copyrights">
-                <p>&copy; 2026 Health & Fitness. All rights reserved. | <a href="#">Privacy Policy </a>|<a> Terms of
-                        Service</a>
-                </p>
+                <p>&copy; 2026 Health & Fitness. All rights reserved. | <a href="#">Privacy Policy</a> | <a
+                        href="#">Terms of Service</a></p>
             </div>
         </div>
     </footer>
