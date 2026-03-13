@@ -5,11 +5,262 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/images/site.png" type="image/png">
-    <title>Document</title>
+    <title>Nutrition Dashboard | Health & Fitness</title>
+    <!-- Assuming common.css is one level up in css folder relative to html folder -->
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/nutrition.css">
+    <!-- Font Awesome for icons if needed, using simple SVGs for now but good to have a layout -->
 </head>
 
 <body>
+    <!-- Navigation (Placeholder for existing app nav) -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="logo">Health&Fitness</h1>
+            <nav class="main-nav">
+                <!-- Navigation items would go here -->
+            </nav>
+            <div class="accountIcon">
+                <svg class="profileIconSvg" focusable="false" aria-hidden="true" viewBox="0 0 24 24" alt="Log In">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6m0 14c-2.03 0-4.43-.82-6.14-2.88C7.55 15.8 9.68 15 12 15s4.45.8 6.14 2.12C16.43 19.18 14.03 20 12 20">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </header>
 
+    <main class="nutrition-dashboard">
+        <!-- Understanding Nutrients Section -->
+        <section class="understanding-nutrients-section">
+            <h2 class="section-title">Understanding Nutrients</h2>
+            <p class="section-intro">Nutrients are chemical compounds in food that are crucial to human growth, disease
+                prevention, and overall health. They are divided into macros (needed in large amounts) and micros
+                (needed in smaller amounts).</p>
+
+            <div class="nutrients-list">
+
+                <!-- Protein -->
+                <div class="nutrient-row toggle-row" tabindex="0" aria-expanded="false" aria-controls="protein-info">
+                    <div class="nutrient-header-row">
+                        <div class="nutrient-title-group">
+
+                            <div>
+                                <h3>Protein</h3>
+                                <span class="nutrient-type">Macronutrient</span>
+                            </div>
+                        </div>
+                        <div class="accordion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg></div>
+                    </div>
+                    <p class="nutrient-brief">Large molecules consisting of amino acids that our bodies need to function
+                        properly.</p>
+                    <div class="nutrient-dropdown-content" id="protein-info">
+                        <div class="nutrient-dropdown-inner">
+                            <p><strong>Importance & Function:</strong> Essential for building and repairing tissues,
+                                preserving muscle mass, and making enzymes and hormones.</p>
+                            <p><strong>Food Sources:</strong> Meat, poultry, fish, eggs, dairy, legumes, and nuts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carbohydrates -->
+                <div class="nutrient-row toggle-row" tabindex="0" aria-expanded="false" aria-controls="carbs-info">
+                    <div class="nutrient-header-row">
+                        <div class="nutrient-title-group">
+
+                            <div>
+                                <h3>Carbohydrates</h3>
+                                <span class="nutrient-type">Macronutrient</span>
+                            </div>
+                        </div>
+                        <div class="accordion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg></div>
+                    </div>
+                    <p class="nutrient-brief">Sugar molecules that your body breaks down into glucose for energy.</p>
+                    <div class="nutrient-dropdown-content" id="carbs-info">
+                        <div class="nutrient-dropdown-inner">
+                            <p><strong>Importance & Function:</strong> Your body's primary and preferred source of
+                                energy. Fuels brain function and physical activity.</p>
+                            <p><strong>Food Sources:</strong> Whole grains, fruits, vegetables, beans, and oats.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fats -->
+                <div class="nutrient-row toggle-row" tabindex="0" aria-expanded="false" aria-controls="fats-info">
+                    <div class="nutrient-header-row">
+                        <div class="nutrient-title-group">
+
+                            <div>
+                                <h3>Fats</h3>
+                                <span class="nutrient-type">Macronutrient</span>
+                            </div>
+                        </div>
+                        <div class="accordion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg></div>
+                    </div>
+                    <p class="nutrient-brief">Essential lipids that provide a concentrated source of energy.</p>
+                    <div class="nutrient-dropdown-content" id="fats-info">
+                        <div class="nutrient-dropdown-inner">
+                            <p><strong>Importance & Function:</strong> Crucial for nutrient absorption, nerve
+                                transmission, protecting organs, and hormone production.</p>
+                            <p><strong>Food Sources:</strong> Avocados, olive oil, nuts, seeds, and fatty fish.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micronutrients -->
+                <div class="nutrient-row toggle-row" tabindex="0" aria-expanded="false" aria-controls="micros-info">
+                    <div class="nutrient-header-row">
+                        <div class="nutrient-title-group">
+
+                            <div>
+                                <h3>Vitamins & Minerals</h3>
+                                <span class="nutrient-type">Micronutrient</span>
+                            </div>
+                        </div>
+                        <div class="accordion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg></div>
+                    </div>
+                    <p class="nutrient-brief">Essential dietary elements needed in varying, but small quantities.</p>
+                    <div class="nutrient-dropdown-content" id="micros-info">
+                        <div class="nutrient-dropdown-inner">
+                            <p><strong>Importance & Function:</strong> Orchestrate bone health, brain function, immune
+                                system boosting, and disease prevention.</p>
+                            <p><strong>Food Sources:</strong> A diverse diet rich in fruits, vegetables, and whole
+                                foods.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Water -->
+                <div class="nutrient-row toggle-row" tabindex="0" aria-expanded="false" aria-controls="water-info">
+                    <div class="nutrient-header-row">
+                        <div class="nutrient-title-group">
+
+                            <div>
+                                <h3>Water</h3>
+                                <span class="nutrient-type">Essential Nutrient</span>
+                            </div>
+                        </div>
+                        <div class="accordion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M6 9l6 6 6-6" />
+                            </svg></div>
+                    </div>
+                    <p class="nutrient-brief">The most crucial nutrient; you can only survive a few days without it.</p>
+                    <div class="nutrient-dropdown-content" id="water-info">
+                        <div class="nutrient-dropdown-inner">
+                            <p><strong>Importance & Function:</strong> Acts as a solvent and temperature regulator.
+                                Flushes waste, lubricates joints, aids in digestion and nutrient absorption.</p>
+                            <p><strong>Food Sources:</strong> Drinking water, water-rich fruits and vegetables, and
+                                teas.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- Understanding Nutrients Section End -->
+
+        <div class="dashboard-grid">
+            <!-- Left Column: Main Content -->
+            <div class="main-column">
+            </div> <!-- End Main Column -->
+
+            <!-- Right Column: Sidebar -->
+            <aside class="sidebar-column">
+
+                <!-- Calorie Calculator (Your Nutrition) -->
+                <section class="calculator-section card interactive-card">
+                    <h2>Calculate Target</h2>
+                    <p class="calc-desc">Enter your details to generate personalized targets.</p>
+
+                    <form id="calorie-form" class="calc-form">
+
+                        <div class="unit-toggle">
+                            <input type="radio" id="unit-metric" name="unit-type" value="metric" checked>
+                            <label for="unit-metric" class="toggle-btn">Metric</label>
+
+                            <input type="radio" id="unit-imperial" name="unit-type" value="imperial">
+                            <label for="unit-imperial" class="toggle-btn">Imperial</label>
+                        </div>
+
+                        <div class="form-group" id="weight-group">
+                            <label for="calc-weight" id="label-weight">Weight (kg)</label>
+                            <input type="number" id="calc-weight" placeholder="e.g. 75" required step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="calc-goal">Primary Goal</label>
+                            <div class="select-wrapper">
+                                <select id="calc-goal" required>
+                                    <option value="lose">Lose Weight</option>
+                                    <option value="maintain" selected>Maintain Weight</option>
+                                    <option value="gain">Build Muscle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="height-group">
+                            <label for="calc-height" id="label-height">Height (cm)</label>
+                            <!-- Metric Height -->
+                            <input type="number" id="calc-height" placeholder="e.g. 175" class="metric-input" required>
+
+                            <!-- Imperial Height (Hidden by default) -->
+                            <div class="imperial-height-inputs hidden">
+                                <input type="number" id="calc-height-ft" placeholder="ft">
+                                <input type="number" id="calc-height-in" placeholder="in">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Calculate</button>
+                    </form>
+
+                    <div id="calc-result" class="calc-result hidden">
+                        <h4>Suggested Target</h4>
+                        <div class="result-value"><span id="result-cals">---</span> kcal</div>
+                        <button id="apply-target-btn" class="btn-secondary btn-small">Apply to Dashboard</button>
+                    </div>
+                </section>
+
+                <!-- Hydration -->
+                <section class="hydration-section card">
+                    <div class="hydration-header">
+                        <h2>Hydration</h2>
+                        <svg class="water-icon" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)"
+                            stroke-width="2">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                        </svg>
+                    </div>
+                    <div class="hydration-tracker">
+                        <div class="glass-container">
+                            <!-- JS will generate glasses -->
+                            <button class="glass active"></button>
+                            <button class="glass active"></button>
+                            <button class="glass active"></button>
+                            <button class="glass"></button>
+                            <button class="glass"></button>
+                            <button class="glass"></button>
+                            <button class="glass"></button>
+                            <button class="glass"></button>
+                        </div>
+                        <p class="hydration-status">3 / 8 glasses (750ml)</p>
+                    </div>
+                </section>
+
+            </aside> <!-- End Sidebar Column -->
+
+        </div> <!-- End Dashboard Grid -->
+    </main>
+
+    <script src="../javaScript/nutrition.js"></script>
 </body>
 
 </html>
