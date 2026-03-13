@@ -19,7 +19,7 @@
     gap: 2rem;
     padding: 2.5rem;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .profileAvatarLarge {
