@@ -410,11 +410,6 @@ body {
     color: #3b82f6;
 }
 
-.heartIcon {
-    background-color: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-}
-
 .metricTitle {
     color: var(--text-secondary);
     font-size: 0.95rem;
