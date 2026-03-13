@@ -1,3 +1,13 @@
+.mainWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+}
+
+
 /* profile.css */
 
 .profileDashboard {
