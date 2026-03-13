@@ -4,10 +4,10 @@
 
 /* Layout & Structure */
 .nutrition-dashboard {
-    max-width: 1200px;
-    margin: 0 auto;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
     padding: 2rem;
-    padding-top: calc(2rem + 70px);
     display: flex;
     flex-direction: column;
     gap: 2rem;

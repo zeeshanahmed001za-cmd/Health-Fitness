@@ -33,6 +33,10 @@
     --shadow-glow: 0 0 20px var(--accent-glow);
     --radius-md: 12px;
     --radius-lg: 20px;
+    /* dashboard sidebar */
+    --sidebar-width: 290px;
+    --sidebar-collapsed-width: 0;
+    --header-height: 70px;
 }
 
 * {
