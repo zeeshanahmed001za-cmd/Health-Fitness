@@ -703,12 +703,13 @@ body {
         position: fixed;
         left: -var(--sidebar-width);
         top: 0;
+        left: -100%;
+        width: var(--sidebar-width);
         z-index: 100;
     }
 
     .sidebar.mobile-open {
         left: 0;
-        width: var(--sidebar-width);
         /* Override collapse width */
     }
 
@@ -778,12 +779,12 @@ body {
         width: 32px;
         height: 32px;
     }
-    
+
     .metricIcon svg {
         width: 18px;
         height: 18px;
     }
-    
+
     .panelHeader h3 {
         font-size: 1rem;
     }
