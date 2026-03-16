@@ -144,36 +144,36 @@
             <!-- Key Stats Grid -->
             <section class="statsHighlightGrid">
                 <div class="statCard">
-                    <span class="statLabel">Weight Lost</span>
+                    <span class="statLabel">Weight Goal</span>
                     <div class="statValueContainer">
-                        <span class="statValue">8.5</span>
-                        <span class="statUnit">kg</span>
+                        <span class="statValue" id="weightLostStatus">0.0</span>
+                        <span class="statUnit" id="weightUnitText">kg</span>
                     </div>
-                    <span class="statTrend positive">↑ 1.2kg this month</span>
+                    <span class="statTrend" id="weightTrendText">Loading...</span>
                 </div>
                 <div class="statCard">
                     <span class="statLabel">Workout Consistency</span>
                     <div class="statValueContainer">
-                        <span class="statValue">92</span>
+                        <span class="statValue" id="consistencyValue">92</span>
                         <span class="statUnit">%</span>
                     </div>
-                    <span class="statTrend positive">↑ 5% vs last month</span>
+                    <span class="statTrend positive" id="consistencyTrendText">↑ 5% this week</span>
                 </div>
                 <div class="statCard">
                     <span class="statLabel">Current BMI</span>
                     <div class="statValueContainer">
-                        <span class="statValue">22.4</span>
+                        <span class="statValue" id="bmiValue">--.-</span>
                     </div>
-                    <span class="statTrend neutral">Healthy Range</span>
+                    <span class="statTrend" id="bmiStatus">Calculating...</span>
                 </div>
                 <div class="statCard">
-                    <span class="statLabel">Goals Completed</span>
+                    <span class="statLabel">Exercises Logged</span>
                     <div class="statValueContainer">
-                        <span class="statValue">12</span>
-                        <span class="statUnit">/15</span>
+                        <span class="statValue" id="goalsCompleted">0</span>
+                        <span class="statUnit" id="goalsTotal">/15</span>
                     </div>
                     <div class="miniProgressBar">
-                        <div class="fill" style="width: 80%;"></div>
+                        <div class="fill" id="goalsProgressBar" style="width: 0%;"></div>
                     </div>
                 </div>
             </section>
@@ -226,11 +226,12 @@
                     <div class="radialProgressContainer">
                         <svg viewBox="0 0 100 100" class="radialSvg">
                             <circle cx="50" cy="50" r="45" class="bg" />
-                            <circle cx="50" cy="50" r="45" class="meter" style="stroke-dasharray: 283; stroke-dashoffset: 70;" />
+                            <circle cx="50" cy="50" r="45" class="meter"
+                                style="stroke-dasharray: 283; stroke-dashoffset: 70;" />
                         </svg>
                         <div class="radialContent">
-                            <span class="value">18.5%</span>
-                            <span class="label">-2% this month</span>
+                            <span class="value" id="bodyFatValue">--.-%</span>
+                            <span class="label" id="bodyFatStatus">Keep going!</span>
                         </div>
                     </div>
                 </div>
@@ -275,21 +276,21 @@
                         <div class="milestoneIcon">🏆</div>
                         <div class="milestoneText">
                             <h4>Weight Master</h4>
-                            <p>Reached target weight of 75kg</p>
+                            <p>Reached target weight!</p>
                         </div>
                     </div>
                     <div class="milestoneCard">
                         <div class="milestoneIcon">🔥</div>
                         <div class="milestoneText">
-                            <h4>30 Day Streak</h4>
-                            <p>Consecutive active days</p>
+                            <h4>Consistency King</h4>
+                            <p>Active for 7+ days</p>
                         </div>
                     </div>
                     <div class="milestoneCard locked">
                         <div class="milestoneIcon">💪</div>
                         <div class="milestoneText">
                             <h4>Iron Grip</h4>
-                            <p>Lift 100kg Bench Press (Soon)</p>
+                            <p>Log 50 exercises (Soon)</p>
                         </div>
                     </div>
                 </div>

@@ -19,7 +19,7 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebarHeader">
-            <a href="landingPage.html" class="logoLink">
+            <a class="logoLink">
                 <h2>Health&Fitness</h2>
             </a>
             <button class="closeSidebarBtn" id="closeSidebarBtn" aria-label="Close Sidebar">
@@ -155,9 +155,9 @@
                         </div>
                         <span class="metricTitle">Steps</span>
                     </div>
-                    <div class="metricValue">8,432</div>
+                    <div class="metricValue"><span id="dashSteps">8,432</span></div>
                     <div class="metricProgress">
-                        <div class="progressBar" style="width: 84%;"></div>
+                        <div class="progressBar" id="stepProgress" style="width: 84%;"></div>
                     </div>
                     <div class="metricFooter">
                         <span class="trend positive">↑ 12%</span> vs yesterday
@@ -178,9 +178,9 @@
                         </div>
                         <span class="metricTitle">Calories Burned</span>
                     </div>
-                    <div class="metricValue">1,240 <span class="unit">kcal</span></div>
+                    <div class="metricValue"><span id="dashCalories">1,240</span> <span class="unit">kcal</span></div>
                     <div class="metricProgress">
-                        <div class="progressBar caloriesBar" style="width: 65%;"></div>
+                        <div class="progressBar caloriesBar" id="calorieProgress" style="width: 65%;"></div>
                     </div>
                     <div class="metricFooter">
                         <span class="trend positive">↑ 5%</span> vs yesterday
@@ -200,9 +200,9 @@
                         </div>
                         <span class="metricTitle">Active Time</span>
                     </div>
-                    <div class="metricValue">45 <span class="unit">mins</span></div>
+                    <div class="metricValue"><span id="dashActiveTime">45</span> <span class="unit">mins</span></div>
                     <div class="metricProgress">
-                        <div class="progressBar activeBar" style="width: 50%;"></div>
+                        <div class="progressBar activeBar" id="activeTimeProgress" style="width: 50%;"></div>
                     </div>
                     <div class="metricFooter">
                         <span>Goal: 90 mins</span>

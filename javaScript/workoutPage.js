@@ -1,17 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Core State
     let exercises = JSON.parse(localStorage.getItem('loggedExercises_grouped')) || [
-        // Pre-loaded sample to demonstrate the structure if empty
-        { name: 'Cat-Cow', category: 'pre', muscleGroup: 'Mobility', sets: 1, reps: '1 min', completed: false, id: 1 },
-        { name: 'Arm Circles', category: 'pre', muscleGroup: 'Shoulders', sets: 1, reps: '30s', completed: false, id: 2 },
-        { name: 'Leg Swings', category: 'pre', muscleGroup: 'Legs', sets: 1, reps: '15 reps/ea', completed: false, id: 3 },
+        { name: 'Cat-Cow', category: 'pre', muscleGroup: 'Mobility', sets: 1, reps: '1 min', calories: 15, completed: false, id: 1 },
+        { name: 'Arm Circles', category: 'pre', muscleGroup: 'Shoulders', sets: 1, reps: '30s', calories: 10, completed: false, id: 2 },
+        { name: 'Leg Swings', category: 'pre', muscleGroup: 'Legs', sets: 1, reps: '15 reps/ea', calories: 20, completed: false, id: 3 },
         
-        { name: 'Bench Press', category: 'main', muscleGroup: 'Chest', sets: 3, reps: '10', completed: false, id: 4 },
-        { name: 'Incline Dumbbell Fly', category: 'main', muscleGroup: 'Chest', sets: 3, reps: '12', completed: false, id: 5 },
-        { name: 'Chest Dips', category: 'main', muscleGroup: 'Chest', sets: 3, reps: 'Max', completed: false, id: 6 },
+        { name: 'Bench Press', category: 'main', muscleGroup: 'Chest', sets: 3, reps: '10', calories: 120, completed: false, id: 4 },
+        { name: 'Incline Dumbbell Fly', category: 'main', muscleGroup: 'Chest', sets: 3, reps: '12', calories: 90, completed: false, id: 5 },
+        { name: 'Chest Dips', category: 'main', muscleGroup: 'Chest', sets: 3, reps: 'Max', calories: 100, completed: false, id: 6 },
         
-        { name: 'Cobra Stretch', category: 'post', muscleGroup: 'Recovery', sets: 1, reps: '45s', completed: false, id: 7 },
-        { name: 'Childs Pose', category: 'post', muscleGroup: 'Recovery', sets: 1, reps: '1 min', completed: false, id: 8 }
+        { name: 'Cobra Stretch', category: 'post', muscleGroup: 'Recovery', sets: 1, reps: '45s', calories: 5, completed: false, id: 7 },
+        { name: 'Childs Pose', category: 'post', muscleGroup: 'Recovery', sets: 1, reps: '1 min', calories: 5, completed: false, id: 8 }
     ];
 
     const workoutMeta = {
@@ -26,11 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const summaryContainer = document.getElementById('workoutSummary');
     const progressContainer = document.getElementById('workoutProgress');
     
-    // Header Selectors
     document.getElementById('splitDisplay').textContent = workoutMeta.split;
     document.getElementById('intensityDisplay').textContent = workoutMeta.intensity;
     
-    // Modal Selectors
     const logModal = document.getElementById('modalOverlay');
     const openModalBtn = document.getElementById('openLogModal');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -39,13 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const muscleGroupField = document.getElementById('muscleGroupField');
 
     // 3. Rendering Logic
-
-    const renderExerciseItem = (ex, index) => `
+    const renderExerciseItem = (ex) => `
         <div class="exerciseItem ${ex.completed ? 'completed' : ''}">
             <div class="exCheck" onclick="toggleExercise(${ex.id})"></div>
             <div class="exBody">
                 <h4>${ex.name}</h4>
-                <p>${ex.sets} Sets | ${ex.reps}</p>
+                <p>${ex.sets} Sets | ${ex.reps} ${ex.calories ? `| <span style="color:var(--accent-cyan); font-weight:600;">${ex.calories} kcal</span>` : ''}</p>
             </div>
             <button class="exRemove" onclick="removeExercise(${ex.id})">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -59,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderSummary = () => {
         const total = exercises.length;
         const completed = exercises.filter(e => e.completed).length;
+        const totalCals = exercises.filter(e => e.completed).reduce((acc, curr) => acc + (parseInt(curr.calories) || 0), 0);
+
         summaryContainer.innerHTML = `
             <div class="summaryCard">
                 <span class="label">Total Routine</span>
@@ -68,13 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="label">Completed</span>
                 <span class="value">${completed} Done</span>
             </div>
+            <div class="summaryCard">
+                <span class="label">Energy Burned</span>
+                <span class="value" style="color:#f59e0b;">${totalCals} <small>kcal</small></span>
+            </div>
         `;
     };
 
-    const renderMainExercises = () => {
-        const mainExs = exercises.filter(e => e.category === 'main');
-        
-        // Group by muscle group
+    const renderMainExercises = (activeExs) => {
+        const mainExs = activeExs.filter(e => e.category === 'main');
         const groups = mainExs.reduce((acc, ex) => {
             const mg = ex.muscleGroup || 'Other';
             if (!acc[mg]) acc[mg] = [];
@@ -89,22 +89,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${groups[mg].map(ex => renderExerciseItem(ex)).join('')}
                 </div>
             </div>
-        `).join('') || '<div class="emptyState">No main exercises logged.</div>';
+        `).join('') || '<div class="emptyState">No pending main exercises.</div>';
     };
 
     const renderAll = () => {
+        // Filter out completed tasks for the visual list (make them "vanish")
+        const activeExs = exercises.filter(e => !e.completed);
+
         // Pre-Workout
-        const preExs = exercises.filter(e => e.category === 'pre');
-        preList.innerHTML = preExs.map(ex => renderExerciseItem(ex)).join('') || '<div class="emptyState">None</div>';
+        const preExs = activeExs.filter(e => e.category === 'pre');
+        preList.innerHTML = preExs.map(ex => renderExerciseItem(ex)).join('') || '<div class="emptyState">No pending stretches.</div>';
 
         // Main
-        renderMainExercises();
+        renderMainExercises(activeExs);
 
         // Post-Workout
-        const postExs = exercises.filter(e => e.category === 'post');
-        postList.innerHTML = postExs.map(ex => renderExerciseItem(ex)).join('') || '<div class="emptyState">None</div>';
+        const postExs = activeExs.filter(e => e.category === 'post');
+        postList.innerHTML = postExs.map(ex => renderExerciseItem(ex)).join('') || '<div class="emptyState">No pending stretches.</div>';
 
-        // Summary & Progress
+        // Summary & Progress (still use all exercises for stats)
         renderSummary();
         const percent = exercises.length > 0 ? Math.round((exercises.filter(e => e.completed).length / exercises.length) * 100) : 0;
         progressContainer.innerHTML = `
@@ -124,8 +127,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleExercise = (id) => {
         const ex = exercises.find(e => e.id === id);
         if (ex) {
-            ex.completed = !ex.completed;
-            renderAll();
+            ex.completed = true; // Mark as done
+            
+            // Re-render immediately to show the tick
+            const item = document.querySelector(`.exerciseItem:has(.exCheck[onclick*="${id}"])`);
+            if (item) {
+                item.classList.add('completed');
+            }
+            
+            // Delay the "vanishing" for 500ms
+            setTimeout(() => {
+                renderAll();
+            }, 500);
         }
     };
 
@@ -167,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             muscleGroup: document.getElementById('exMuscleGroup').value || 'Recovery',
             sets: document.getElementById('exSets').value,
             reps: document.getElementById('exReps').value,
+            calories: document.getElementById('exCalories').value || 0,
             completed: false
         };
         exercises.push(newEx);
