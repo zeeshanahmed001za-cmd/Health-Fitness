@@ -4,12 +4,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H&F | Daily Workout</title>
+    <!-- Use the common variables and base styles -->
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/dashBoard.css">
+    <link rel="stylesheet" href="../css/workoutPlans.css">
     <link rel="icon" href="/images/site.png" type="image/png">
-    <title>Document</title>
 </head>
 
 <body>
 
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebarOverlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebarHeader">
+            <a href="landingPage.html" class="logoLink">
+                <h2>Health&Fitness</h2>
+            </a>
+            <button class="closeSidebarBtn" id="closeSidebarBtn" aria-label="Close Sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="sidebarNav">
+            <a href="dashBoard.html" class="navItem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span class="navText">Dashboard</span>
+            </a>
+            <a href="nutrition.html" class="navItem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                </svg>
+                <span class="navText">Nutrition</span>
+            </a>
+            <a href="workoutPlans.html" class="navItem active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                <span class="navText">Workouts</span>
+            </a>
+            <a href="progressTracker.html" class="navItem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 16 12 14 15 10 9 8 12 2 12"></polyline>
+                </svg>
+                <span class="navText">Progress</span>
+            </a>
+        </nav>
+
+        <div class="sidebarFooter">
+            <a href="loginPage.html" class="navItem logoutBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span class="navText">Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="mainWrapper" id="mainWrapper">
+
+        <!-- Top Navigation Bar -->
+        <header class="topNavbar">
+            <div class="navLeft">
+                <button class="toggleSidebarBtn" id="toggleSidebarBtn" aria-label="Toggle Sidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 class="pageTitle">Workout Log</h1>
+            </div>
+
+            <div class="navRight">
+                 <div class="currentDate" id="currentDateDisplay">-- --, ----</div>
+                 <a href="workoutGuidance.html" class="guidanceBtn" title="Workout Guidance">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span>Guidance</span>
+                </a>
+                <a href="profilePage.html" class="profileDropdownBtn">
+                    <div class="profileAvatar">
+                        <img src="../images/avatar-placeholder.png" alt="User Avatar"
+                            onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23cbd5e1\'><path d=\'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z\'/></svg>'">
+                    </div>
+                </a>
+            </div>
+        </header>
+
+        <!-- Workout Content Area -->
+        <main class="dashboardContent">
+            
+            <!-- Workout Header: Split & Intensity -->
+            <section class="workoutMetaHeader" id="workoutMetaHeader">
+                <div class="metaCard split">
+                    <span class="metaLabel">Workout Split</span>
+                    <span class="metaValue" id="splitDisplay">Full Body</span>
+                </div>
+                <div class="metaCard intensity">
+                    <span class="metaLabel">Intensity Level</span>
+                    <span class="metaValue" id="intensityDisplay">Intermediate</span>
+                </div>
+            </section>
+
+            <!-- Pre-Workout Section -->
+            <section class="logSection preWorkout">
+                <div class="sectionHeader">
+                    <h3>Pre-Workout Stretching</h3>
+                    <p class="sectionGoal">Goal: 5-10 mins mobility</p>
+                </div>
+                <div class="exerciseList" id="preWorkoutList">
+                    <!-- Injected via JS -->
+                </div>
+            </section>
+
+            <!-- Main Exercises Section -->
+            <section class="logSection mainExercises">
+                <div class="logHeader">
+                    <h3>Main Exercises</h3>
+                    <button class="primaryBtn" id="openLogModal">Add Exercise</button>
+                </div>
+                <div id="muscleGroupContainers">
+                    <!-- Dynamic Muscle Group Groups Injected here -->
+                </div>
+            </section>
+
+            <!-- Post-Workout Section -->
+            <section class="logSection postWorkout">
+                <div class="sectionHeader">
+                    <h3>Post-Workout Recovery</h3>
+                    <p class="sectionGoal">Goal: 5-10 mins static stretching</p>
+                </div>
+                <div class="exerciseList" id="postWorkoutList">
+                    <!-- Injected via JS -->
+                </div>
+            </section>
+
+            <!-- Dynamic Summary Section -->
+            <section class="workoutSummary" id="workoutSummary">
+                <!-- Injected via JS -->
+            </section>
+
+            <!-- Progress Section -->
+            <section class="workoutProgress" id="workoutProgress">
+                 <!-- Injected via JS -->
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Log Exercise Modal -->
+    <div class="modalOverlay" id="modalOverlay">
+        <div class="modalContent">
+            <h3>Log New Exercise</h3>
+            <form id="logExerciseForm">
+                <div class="formGroup">
+                    <label for="exName">Exercise Name</label>
+                    <input type="text" id="exName" placeholder="e.g. Pushups" required>
+                </div>
+                <div class="formGroup">
+                    <label for="exCategory">Category</label>
+                    <select id="exCategory" class="customSelect">
+                        <option value="main">Main Exercise</option>
+                        <option value="pre">Pre-Workout Stretch</option>
+                        <option value="post">Post-Workout Stretch</option>
+                    </select>
+                </div>
+                <div class="formGroup" id="muscleGroupField">
+                    <label for="exMuscleGroup">Muscle Group</label>
+                    <input type="text" id="exMuscleGroup" placeholder="e.g. Chest, Legs" required>
+                </div>
+                <div class="formRow">
+                    <div class="formGroup">
+                        <label for="exSets">Sets</label>
+                        <input type="number" id="exSets" placeholder="0" required>
+                    </div>
+                    <div class="formGroup">
+                        <label for="exReps">Reps / Duration</label>
+                        <input type="text" id="exReps" placeholder="e.g. 10 or 30s" required>
+                    </div>
+                </div>
+                <div class="modalActions">
+                    <button type="button" class="btn-cancel" id="closeModalBtn">Cancel</button>
+                    <button type="submit" class="primaryBtn">Add to Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="../javaScript/dashBoard.js"></script>
+    <script src="../javaScript/workoutPage.js"></script>
 </body>
 
 </html>
