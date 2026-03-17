@@ -48,11 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const locationInput = document.getElementById('location');
     const detailsNextBtn = document.getElementById('detailsNextBtn');
 
+    let ageRedirectTimer = null;
+
     if (detailsNextBtn) {
         const validateDetails = () => {
             const isGenderSelected = document.querySelector('input[name="gender"]:checked') !== null;
             const isDobFilled = dobInput && dobInput.value !== '';
             const isLocationFilled = locationInput && locationInput.value.trim() !== '';
+            const ageErrorDiv = document.getElementById('ageError');
+
+            // Reset error and timer by default if criteria not met yet
+            if (ageErrorDiv) ageErrorDiv.style.display = 'none';
+            if (ageRedirectTimer) {
+                clearTimeout(ageRedirectTimer);
+                ageRedirectTimer = null;
+            }
 
             if (isGenderSelected && isDobFilled && isLocationFilled) {
                 // Calculate age
@@ -66,9 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Check if under 18
                 if (age < 18) {
-                    alert("Sorry, you must be at least 18 years old to create an account.");
-                    window.location.href = 'landingPage.html';
-                    return; // Stop execution
+                    if (ageErrorDiv) {
+                        ageErrorDiv.textContent = "Sorry, you must be at least 18 years old to create an account. Redirecting to home...";
+                        ageErrorDiv.style.display = 'block';
+                    }
+                    detailsNextBtn.setAttribute('disabled', 'true');
+                    
+                    // Redirect after 3 seconds
+                    ageRedirectTimer = setTimeout(() => {
+                        window.location.href = 'landingPage.html';
+                    }, 3500);
+                    return;
                 }
 
                 detailsNextBtn.removeAttribute('disabled');
