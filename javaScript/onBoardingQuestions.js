@@ -187,28 +187,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const validateMetrics = () => {
-            let isHeightFilled = false;
+            const metricsErrorDiv = document.getElementById('metricsError');
+            if (metricsErrorDiv) metricsErrorDiv.style.display = 'none';
+            metricsNextBtn.setAttribute('disabled', 'true');
+
+            let isHeightValid = false;
+            let currentHeightValue = 0;
+
             if (formData.heightUnit === 'imperial') {
-                 isHeightFilled = (heightFeet.value !== '' || heightInches.value !== '');
-                 if(isHeightFilled) {
-                     let ft = parseFloat(heightFeet.value) || 0;
-                     let inc = parseFloat(heightInches.value) || 0;
-                     formData.heightValue = (ft * 12) + inc;
+                 const ft = parseFloat(heightFeet.value);
+                 const inc = parseFloat(heightInches.value) || 0;
+                 if (!isNaN(ft) && ft >= 2 && ft <= 8 && inc >= 0 && inc <= 11) {
+                     isHeightValid = true;
+                     currentHeightValue = (ft * 12) + inc;
                  }
             } else {
-                 isHeightFilled = (heightCm.value !== '' && parseFloat(heightCm.value) > 0);
-                 if(isHeightFilled) formData.heightValue = parseFloat(heightCm.value);
+                 const cm = parseFloat(heightCm.value);
+                 if (!isNaN(cm) && cm >= 60 && cm <= 272) {
+                     isHeightValid = true;
+                     currentHeightValue = cm;
+                 }
             }
 
-            let isWeightFilled = (weightVal.value !== '' && parseFloat(weightVal.value) > 0);
-            let isGoalWeightFilled = (goalWeightVal.value !== '' && parseFloat(goalWeightVal.value) > 0);
-            
-            if (isHeightFilled && isWeightFilled && isGoalWeightFilled) {
-                metricsNextBtn.removeAttribute('disabled');
-                formData.weightValue = parseFloat(weightVal.value);
-                formData.goalWeightValue = parseFloat(goalWeightVal.value);
+            const currentWeight = parseFloat(weightVal.value);
+            const goalWeight = parseFloat(goalWeightVal.value);
+
+            // Basic range checks for weight
+            let isWeightRangeValid = false;
+            if (formData.weightUnit === 'imperial') {
+                isWeightRangeValid = !isNaN(currentWeight) && currentWeight >= 50 && currentWeight <= 1000;
             } else {
-                metricsNextBtn.setAttribute('disabled', 'true');
+                isWeightRangeValid = !isNaN(currentWeight) && currentWeight >= 20 && currentWeight <= 450;
+            }
+
+            let isGoalWeightRangeValid = false;
+            if (formData.weightUnit === 'imperial') {
+                isGoalWeightRangeValid = !isNaN(goalWeight) && goalWeight >= 50 && goalWeight <= 1000;
+            } else {
+                isGoalWeightRangeValid = !isNaN(goalWeight) && goalWeight >= 20 && goalWeight <= 450;
+            }
+
+            if (isHeightValid && isWeightRangeValid && isGoalWeightRangeValid) {
+                // Specific User Rule: Goal weight must be MORE than current weight
+                if (goalWeight <= currentWeight) {
+                    if (metricsErrorDiv) {
+                        metricsErrorDiv.textContent = "Goal weight must be greater than your current weight.";
+                        metricsErrorDiv.style.display = 'block';
+                    }
+                    return;
+                }
+
+                metricsNextBtn.removeAttribute('disabled');
+                formData.heightValue = currentHeightValue;
+                formData.weightValue = currentWeight;
+                formData.goalWeightValue = goalWeight;
+            } else {
+                // Optionally show a generic height/weight range error if values are entered but outside ranges
+                if ((heightFeet.value || heightCm.value) && (weightVal.value) && (goalWeightVal.value)) {
+                    // Only show if everything is filled but one is invalid
+                     if (metricsErrorDiv && (!isHeightValid || !isWeightRangeValid || !isGoalWeightRangeValid)) {
+                        metricsErrorDiv.textContent = "Please enter realistic height and weight values.";
+                        metricsErrorDiv.style.display = 'block';
+                    }
+                }
             }
         };
 
