@@ -1,0 +1,406 @@
+/* NutritionPage.module.css */
+
+.nutritionDashboard {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.dashboardGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sidebarColumn {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* Card Base */
+.card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: var(--shadow-soft);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.interactiveCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.sectionIntro {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    max-width: 800px;
+}
+
+/* Understanding Nutrients */
+.understandingNutrientsSection {
+    margin-bottom: 2rem;
+}
+
+.nutrientsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.nutrientRow {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: box-shadow var(--transition-fast);
+}
+
+.nutrientRow:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.nutrientHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.nutrientTitleGroup {
+    display: flex;
+    align-items: center;
+}
+
+.nutrientTitleGroup h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}
+
+.nutrientType {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.accordionIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.accordionIcon svg {
+    transition: transform var(--transition-fast);
+}
+
+.nutrientRow.expanded .accordionIcon {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
+.nutrientRow.expanded .accordionIcon svg {
+    transform: rotate(180deg);
+}
+
+.nutrientBrief {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.nutrientDropdownContent {
+    margin-top: 1rem;
+}
+
+.nutrientDropdownInner {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.nutrientDropdownInner p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.nutrientDropdownInner p strong {
+    color: var(--text-primary);
+}
+
+/* Calculator */
+.calculatorSection h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.calcDesc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.calcForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formGroup label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.formGroup input,
+.formGroup select {
+    background: var(--bg-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-main);
+    transition: border-color var(--transition-fast);
+    outline: none;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+    border-color: var(--accent-primary);
+}
+
+.unitToggle {
+    display: flex;
+    background: var(--bg-primary);
+    border-radius: var(--radius-md);
+    padding: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.5rem;
+}
+
+.unitToggle input[type="radio"] {
+    display: none;
+}
+
+.toggleBtn {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.unitToggle input[type="radio"]:checked+.toggleBtn {
+    background: var(--accent-primary);
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.imperialHeightInputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.selectWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.selectWrapper::after {
+    content: '▼';
+    font-size: 0.7rem;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-secondary);
+}
+
+.formGroup select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.5rem;
+}
+
+.formGroup input[type="number"]::-webkit-outer-spin-button,
+.formGroup input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.formGroup input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.btnPrimary {
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-top: 0.5rem;
+    font-family: var(--font-main);
+}
+
+.btnPrimary:hover {
+    background: var(--accent-hover);
+    box-shadow: var(--shadow-glow);
+}
+
+.btnSecondary {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: var(--font-main);
+}
+
+.btnSecondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.calcResult {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.calcResult h4 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.resultValue {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+}
+
+/* Hydration */
+.hydrationSection h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.hydrationHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.hydrationTracker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.glassContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.glass {
+    width: 30px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px 4px 10px 10px;
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    background: var(--accent-cyan);
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass.active::after {
+    height: 90%;
+}
+
+.glass:hover {
+    border-color: var(--accent-cyan);
+}
+
+.hydrationStatus {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nutritionDashboard {
+        padding: 1rem;
+    }
+}

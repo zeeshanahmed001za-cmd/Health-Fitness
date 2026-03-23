@@ -1,7 +1,7 @@
-import LoginPage from './pages/LoginPage';
+import NutritionPage from './pages/NutritionPage';
 
 function App() {
-  return <LoginPage />;
+  return <NutritionPage />;
 }
 
 export default App;
