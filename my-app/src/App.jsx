@@ -1,7 +1,7 @@
-import LandingPage from './pages/LandingPage';
+import OnboardingQuestions from './pages/OnBoardingQuestions';
 
 function App() {
-  return <LandingPage />;
+  return <OnboardingQuestions />;
 }
 
 export default App;
