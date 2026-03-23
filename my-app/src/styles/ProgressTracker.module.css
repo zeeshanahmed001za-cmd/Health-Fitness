@@ -92,7 +92,7 @@
 
 .statCard {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(4px);
     padding: 24px;
     border-radius: var(--radius-lg);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -177,7 +177,7 @@
 
 .chartCard {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.5));
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(4px);
     padding: 24px;
     border-radius: var(--radius-lg);
     border: 1px solid rgba(255, 255, 255, 0.05);

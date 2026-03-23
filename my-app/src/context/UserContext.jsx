@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 const UserContext = createContext();
 
@@ -23,18 +23,30 @@ export const UserProvider = ({ children }) => {
         }
     }, [userData]);
 
-    const updateUserData = (data) => {
-        setUserData(prev => ({ ...prev, ...data }));
-    };
+    const updateUserData = useCallback((data) => {
+        setUserData(prev => {
+            // Check if there's an actual change to avoid redundant renders
+            const isDifferent = Object.entries(data).some(([key, value]) => prev[key] !== value);
+            if (!isDifferent) return prev;
+            return { ...prev, ...data };
+        });
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         setUserData({});
         sessionStorage.removeItem('onboardingData');
         localStorage.removeItem('userSession');
-    };
+    }, []);
+
+    // Memoize the value to prevent unnecessary re-renders of consumers
+    const contextValue = useMemo(() => ({
+        userData,
+        updateUserData,
+        logout
+    }), [userData, updateUserData, logout]);
 
     return (
-        <UserContext.Provider value={{ userData, updateUserData, logout }}>
+        <UserContext.Provider value={contextValue}>
             {children}
         </UserContext.Provider>
     );
