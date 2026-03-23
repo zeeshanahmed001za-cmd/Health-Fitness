@@ -41,7 +41,7 @@ body {
     flex: 1;
     display: none;
     position: relative;
-    background-image: url('/images/login.jpg');
+    background-image: url('../assets/images/login.jpg');
     background-size: cover;
     background-position: center 40%;
     background-repeat: no-repeat;

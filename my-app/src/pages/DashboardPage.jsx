@@ -149,7 +149,7 @@ function DashboardPage() {
                         <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
                                 <img 
-                                    src="/images/avatar-placeholder.png" 
+                                    src="../assets/images/avatar-placeholder.png" 
                                     alt="User Avatar"
                                     onError={e => { e.target.src = AVATAR_FALLBACK; }} 
                                 />

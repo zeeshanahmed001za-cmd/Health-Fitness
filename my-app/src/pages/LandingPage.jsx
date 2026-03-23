@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../styles/LandingPage.module.css';
+import weightLossImg from '../assets/images/weightLoss.jpg';
+import muscleGainImg from '../assets/images/MuscleGain.jpg';
+import generalFitnessImg from '../assets/images/generalFitness.jpg';
+import aboutImg from '../assets/images/about1.jpg';
+import siteLogo from '../assets/images/site.png';
 
 const ArrowIcon = ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -97,19 +102,19 @@ function LandingPage() {
                         <h1>Our Core Programs</h1>
                         <div className={styles.programsContainer}>
                             <div className={styles.programCard}>
-                                <img src="/images/weightLoss.jpg" alt="Weight Loss Program" />
+                                <img src={weightLossImg} alt="Weight Loss Program" />
                                 <h3>Weight Loss</h3>
                                 <p>Effective, science-backed strategies and HIIT workouts to help you shed unwanted
                                     pounds and achieve a leaner body sustainably.</p>
                             </div>
                             <div className={styles.programCard}>
-                                <img src="/images/MuscleGain.jpg" alt="Muscle Gain Program" />
+                                <img src={muscleGainImg} alt="Muscle Gain Program" />
                                 <h3>Muscle Gain</h3>
                                 <p>Structured hypertrophy workout plans and macro-nutrient guidance to help you
                                     build muscle mass and raw strength effectively.</p>
                             </div>
                             <div className={styles.programCard}>
-                                <img src="/images/generalFitness.jpg" alt="General Fitness Program" />
+                                <img src={generalFitnessImg} alt="General Fitness Program" />
                                 <h3>General Fitness</h3>
                                 <p>A balanced approach including functional cardio, mobility training, and
                                     flexibility exercises for total longevity and well-being.</p>
@@ -187,7 +192,7 @@ function LandingPage() {
                             and effective fitness solutions.</p>
 
                         <div className={styles.aboutRow}>
-                            <img src="/images/about1.jpg" alt="About Us Team" />
+                            <img src={aboutImg} alt="About Us Team" />
                             <div className={styles.aboutPara}>
                                 <p>Our team of experienced fitness professionals is passionate about creating
                                     personalized workout plans and meal guidance that cater to your unique needs.</p>
@@ -218,7 +223,7 @@ function LandingPage() {
                 <div className={styles.footerContainer}>
                     <div className={styles.innerContainer}>
                         <div className={styles.footerLogo}>
-                            <Link to="/"><img src="/images/site.png" alt="Health & Fitness Logo" /></Link>
+                            <Link to="/"><img src={siteLogo} alt="Health & Fitness Logo" /></Link>
                             <span>Health & Fitness</span>
                         </div>
                         <div className={styles.quickLinks}>

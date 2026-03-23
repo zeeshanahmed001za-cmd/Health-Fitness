@@ -157,7 +157,7 @@ function ProfilePage() {
                         </button>
                         <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
-                                <img src="/images/avatar-placeholder.png" alt="User Avatar"
+                                <img src="../assets/images/avatar-placeholder.png" alt="User Avatar"
                                     onError={e => { e.target.src = avatarFallback; }} />
                             </div>
                         </Link>
@@ -171,7 +171,7 @@ function ProfilePage() {
                         {/* Profile Header Card */}
                         <div className={`${styles.profileHeaderCard} ${styles.card}`}>
                             <div className={styles.profileAvatarLarge}>
-                                <img src="/images/avatar-placeholder.png" alt="User Avatar"
+                                <img src="../assets/images/avatar-placeholder.png" alt="User Avatar"
                                     onError={e => { e.target.src = avatarFallback; }} />
                                 <button className={styles.editAvatarBtn} aria-label="Edit Avatar">
                                     <EditIcon />

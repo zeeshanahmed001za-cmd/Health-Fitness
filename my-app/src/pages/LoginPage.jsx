@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
 import { useUser } from '../context/UserContext';
+import googleIcon from '../assets/images/google.svg';
+import facebookIcon from '../assets/images/facebook.svg';
 
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = password => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password);
@@ -189,11 +191,11 @@ function LoginPage() {
                             {/* Social Login */}
                             <div className={styles.socialLogin}>
                                 <button type="button" className={`${styles.socialBtn} ${styles.googleBtn}`}>
-                                    <img src="/images/google.svg" alt="Google" />
+                                    <img src={googleIcon} alt="Google" />
                                     Google
                                 </button>
                                 <button type="button" className={`${styles.socialBtn} ${styles.facebookBtn}`}>
-                                    <img src="/images/facebook.svg" alt="Facebook" />
+                                    <img src={facebookIcon} alt="Facebook" />
                                     Facebook
                                 </button>
                             </div>

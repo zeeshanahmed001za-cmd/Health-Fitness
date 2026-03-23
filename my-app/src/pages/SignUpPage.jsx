@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/SignUpPage.module.css';
 import { useUser } from '../context/UserContext';
+import googleIcon from '../assets/images/google.svg';
+import facebookIcon from '../assets/images/facebook.svg';
 
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = password => password.length >= 10 && !/\s/.test(password);
@@ -149,11 +151,11 @@ function SignUpPage() {
 
                         <div className={styles.socialLogin}>
                             <button type="button" className={styles.socialBtn}>
-                                <img src="/images/google.svg" alt="Google" />
+                                <img src={googleIcon} alt="Google" />
                                 Continue with Google
                             </button>
                             <button type="button" className={styles.socialBtn}>
-                                <img src="/images/facebook.svg" alt="Facebook" />
+                                <img src={facebookIcon} alt="Facebook" />
                                 Continue with Facebook
                             </button>
                             <p className={styles.socialHint}>We will never post anything without your permission</p>

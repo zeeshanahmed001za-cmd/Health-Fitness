@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/OnboardingQuestions.module.css';
 import { useUser } from '../context/UserContext';
+import cardioImg from '../assets/images/cardio.jpg';
+import deadliftImg from '../assets/images/deadlift.jpg';
+import situpsImg from '../assets/images/situps.jpg';
 
 function OnboardingQuestions() {
     const navigate = useNavigate();
@@ -205,9 +208,9 @@ function OnboardingQuestions() {
                             <p className={styles.subtitle}>Are you ready to start your fitness journey and build a personalized workout plan designed around your goals, experience level, and lifestyle?</p>
                         </div>
                         <div className={styles.imagesContainer}>
-                            <div className={styles.imageWrapper}><img src="/images/cardio.jpg" alt="Cardio Training" /></div>
-                            <div className={styles.imageWrapper}><img src="/images/deadlift.jpg" alt="Strength Training" /></div>
-                            <div className={styles.imageWrapper}><img src="/images/situps.jpg" alt="Core Training" /></div>
+                            <div className={styles.imageWrapper}><img src={cardioImg} alt="Cardio Training" /></div>
+                            <div className={styles.imageWrapper}><img src={deadliftImg} alt="Strength Training" /></div>
+                            <div className={styles.imageWrapper}><img src={situpsImg} alt="Core Training" /></div>
                         </div>
                         <div className={styles.navigationButtons}>
                             <button type="button" className={styles.ctaBtn} onClick={handleNext}>Let's Go</button>
