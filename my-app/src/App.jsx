@@ -1,7 +1,7 @@
-import ProfilePage from './pages/ProfilePage';
+import ProgressTracker from './pages/ProgressTracker';
 
 function App() {
-  return <ProfilePage />;
+  return <ProgressTracker />;
 }
 
 export default App;
