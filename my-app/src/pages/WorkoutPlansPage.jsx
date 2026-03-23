@@ -12,13 +12,6 @@ const HamburgerIcon = () => (
         <line x1="3" y1="18" x2="21" y2="18"></line>
     </svg>
 );
-const HelpIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-    </svg>
-);
 const InfoIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"></circle>
@@ -45,6 +38,20 @@ const defaultExercises = [
     { name: 'Cobra Stretch', category: 'post', muscleGroup: 'Recovery', sets: 1, reps: '45s', calories: 5, completed: false, id: 7 },
     { name: 'Childs Pose', category: 'post', muscleGroup: 'Recovery', sets: 1, reps: '1 min', calories: 5, completed: false, id: 8 }
 ];
+
+const AVATAR_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+const ExerciseItem = ({ ex, onToggle, onRemove }) => (
+    <div className={`${pageStyles.exerciseItem} ${ex.completed ? pageStyles.completed : ''}`}>
+        <div className={pageStyles.exCheck} onClick={() => onToggle(ex.id)}></div>
+        <div className={pageStyles.exBody}>
+            <h4>{ex.name}</h4>
+            <p>{ex.sets} Sets | {ex.reps} {ex.calories ? <>| <span className={pageStyles.exStats}>{ex.calories} kcal</span></> : ''}</p>
+        </div>
+        <button className={pageStyles.exRemove} onClick={() => onRemove(ex.id)}>
+            <TrashIcon />
+        </button>
+    </div>
+);
 
 function WorkoutPlansPage() {
     // Sidebar state
@@ -141,21 +148,6 @@ function WorkoutPlansPage() {
         setFormData({ name: '', category: 'main', muscleGroup: '', sets: '', reps: '', calories: '' });
     };
 
-    const avatarFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
-
-    const ExerciseItem = ({ ex }) => (
-        <div className={`${pageStyles.exerciseItem} ${ex.completed ? pageStyles.completed : ''}`}>
-            <div className={pageStyles.exCheck} onClick={() => toggleExercise(ex.id)}></div>
-            <div className={pageStyles.exBody}>
-                <h4>{ex.name}</h4>
-                <p>{ex.sets} Sets | {ex.reps} {ex.calories ? <>| <span className={pageStyles.exStats}>{ex.calories} kcal</span></> : ''}</p>
-            </div>
-            <button className={pageStyles.exRemove} onClick={() => removeExercise(ex.id)}>
-                <TrashIcon />
-            </button>
-        </div>
-    );
-
     return (
         <div className={dashStyles.pageWrapper}>
             <Sidebar
@@ -182,7 +174,7 @@ function WorkoutPlansPage() {
                         <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
                                 <img src="/images/avatar-placeholder.png" alt="User Avatar"
-                                    onError={e => { e.target.src = avatarFallback; }} />
+                                    onError={e => { e.target.src = AVATAR_FALLBACK; }} />
                             </div>
                         </Link>
                     </div>

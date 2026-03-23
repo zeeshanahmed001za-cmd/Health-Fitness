@@ -25,6 +25,8 @@ const SearchIcon = () => (
     </svg>
 );
 
+const AVATAR_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
 function ProgressTracker() {
     // Sidebar state
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -51,6 +53,12 @@ function ProgressTracker() {
         bodyFat: onboardingData.bodyFat || '',
         waistSize: onboardingData.waistSize || ''
     });
+
+    // Cleanup for timeouts
+    useEffect(() => {
+        let timer;
+        return () => { if (timer) clearTimeout(timer); };
+    }, []);
 
     // Calculations
     const bmi = useMemo(() => {
@@ -81,11 +89,11 @@ function ProgressTracker() {
     const totalEx = loggedExercises.length || 15;
     const goalPercent = (compEx / totalEx) * 100;
 
-    const bodyFat = onboardingData.bodyFat || 18.5;
-    const radialOffset = 283 - (283 * (bodyFat / 100));
+    const bodyFatValue = onboardingData.bodyFat || 18.5;
+    const radialOffset = 283 - (283 * (bodyFatValue / 100));
 
-    const waistSize = onboardingData.waistSize || 82;
-    const waistBarWidth = Math.min((waistSize / 120) * 100, 100);
+    const currentWaistSize = onboardingData.waistSize || 82;
+    const waistBarWidth = Math.min((currentWaistSize / 120) * 100, 100);
 
     const consistency = Math.min(Math.round((compEx / 10) * 100), 100);
 
@@ -133,8 +141,6 @@ function ProgressTracker() {
         alert("Metrics updated successfully! Your progress chart is being recalibrated.");
     };
 
-    const avatarFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
-
     return (
         <div className={dashStyles.pageWrapper}>
             <Sidebar
@@ -164,7 +170,7 @@ function ProgressTracker() {
                         <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
                                 <img src="/images/avatar-placeholder.png" alt="User Avatar"
-                                    onError={e => { e.target.src = avatarFallback; }} />
+                                    onError={e => { e.target.src = AVATAR_FALLBACK; }} />
                             </div>
                         </Link>
                     </div>
@@ -276,7 +282,7 @@ function ProgressTracker() {
                                         style={{ strokeDasharray: 283, strokeDashoffset: radialOffset }} />
                                 </svg>
                                 <div className={styles.radialContent}>
-                                    <span className={styles.value}>{bodyFat}%</span>
+                                    <span className={styles.value}>{bodyFatValue}%</span>
                                     <span className={styles.label}>Keep going!</span>
                                 </div>
                             </div>
@@ -299,7 +305,7 @@ function ProgressTracker() {
                                     <div className={styles.mBarContainer}>
                                         <div className={styles.mBar} style={{ width: `${waistBarWidth}%` }}></div>
                                     </div>
-                                    <span className={styles.mValue}>{waistSize} cm</span>
+                                    <span className={styles.mValue}>{currentWaistSize} cm</span>
                                 </div>
                                 <div className={styles.measurementItem}>
                                     <span className={styles.mLabel}>Arms</span>
