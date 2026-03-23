@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import dashStyles from '../styles/Dashboard.module.css';
 import pageStyles from '../styles/DashboardPage.module.css';
+import { useUser } from '../context/UserContext';
 
 // SVG Icons
 const HamburgerIcon = () => (
@@ -55,22 +56,17 @@ const YogaIcon = () => (
 const AVATAR_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
 function DashboardPage() {
+    const { userData } = useUser();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [notificationsClean, setNotificationsClean] = useState(false);
-
-    // Data retrieval
-    const onboardingData = useMemo(() => {
-        return JSON.parse(sessionStorage.getItem('onboardingData')) || 
-               JSON.parse(localStorage.getItem('userSession')) || {};
-    }, []);
 
     const loggedExercises = useMemo(() => {
         return JSON.parse(localStorage.getItem('loggedExercises_grouped')) || [];
     }, []);
 
-    // Derived values
-    const firstName = onboardingData.firstName || 'Alex';
+    // Use context values instead of local lookups
+    const firstName = userData.firstName || 'Alex';
     const completedExercises = useMemo(() => loggedExercises.filter(ex => ex.completed), [loggedExercises]);
     
     const progress = useMemo(() => {

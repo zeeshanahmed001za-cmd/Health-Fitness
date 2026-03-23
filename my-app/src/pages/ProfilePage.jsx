@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import dashStyles from '../styles/Dashboard.module.css';
 import styles from '../styles/ProfilePage.module.css';
+import { useUser } from '../context/UserContext';
 
 // --- Static initial data (later this will come from API/auth) ---
 const initialPersonalInfo = {
@@ -50,6 +51,7 @@ const EditIcon = () => (
 );
 
 function ProfilePage() {
+    const { userData, updateUserData } = useUser();
     // Sidebar state
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -57,9 +59,22 @@ function ProfilePage() {
     // Edit mode state
     const [isEditing, setIsEditing] = useState(false);
 
-    // Form data state
-    const [personalInfo, setPersonalInfo] = useState(initialPersonalInfo);
-    const [physicalInfo, setPhysicalInfo] = useState(initialPhysicalInfo);
+    // Form data state - merge context data with defaults
+    const [personalInfo, setPersonalInfo] = useState({
+        ...initialPersonalInfo,
+        firstName: userData.firstName || initialPersonalInfo.firstName,
+        lastName: userData.lastName || initialPersonalInfo.lastName,
+        dob: userData.dob || initialPersonalInfo.dob,
+        gender: userData.gender || initialPersonalInfo.gender,
+    });
+    const [physicalInfo, setPhysicalInfo] = useState({
+        ...initialPhysicalInfo,
+        currentWeight: userData.weightValue || initialPhysicalInfo.currentWeight,
+        targetWeight: userData.goalWeightValue || initialPhysicalInfo.targetWeight,
+        height: userData.heightCm || userData.heightFeet || initialPhysicalInfo.height,
+        activityLevel: userData.activityLevel || initialPhysicalInfo.activityLevel,
+        primaryGoal: userData.primaryGoal?.[0] || initialPhysicalInfo.primaryGoal,
+    });
     const [preferences, setPreferences] = useState(initialPreferences);
 
     // Snapshot to restore on cancel
@@ -90,7 +105,13 @@ function ProfilePage() {
     };
 
     const handleSave = () => {
-        // TODO: Send data to backend API
+        // Sync back to context
+        updateUserData({
+            ...personalInfo,
+            ...physicalInfo,
+            weightValue: physicalInfo.currentWeight,
+            goalWeightValue: physicalInfo.targetWeight,
+        });
         console.log('Saving profile...', { personalInfo, physicalInfo });
         setIsEditing(false);
     };

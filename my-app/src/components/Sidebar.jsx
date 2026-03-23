@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import styles from './Sidebar.module.css';
+import { useUser } from '../context/UserContext';
 
 // Icons extracted as components outside
 const DashboardIcon = () => (
@@ -48,6 +49,7 @@ const navItems = [
 ];
 
 function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
+    const { logout } = useUser();
     const sidebarClass = [
         styles.sidebar,
         isCollapsed ? styles.collapsed : '',
@@ -55,8 +57,7 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
     ].join(' ');
 
     const handleLogout = () => {
-        sessionStorage.clear();
-        localStorage.removeItem('userSession');
+        logout();
         // Link will handle the navigation
     };
 

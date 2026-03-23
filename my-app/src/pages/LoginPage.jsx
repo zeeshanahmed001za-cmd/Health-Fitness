@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
+import { useUser } from '../context/UserContext';
 
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = password => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password);
@@ -24,6 +25,7 @@ const EyeClose = () => (
 
 function LoginPage() {
     const navigate = useNavigate();
+    const { updateUserData } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [termsChecked, setTermsChecked] = useState(false);
@@ -73,6 +75,7 @@ function LoginPage() {
         setTermsError(!isTermsValid);
 
         if (isEmailValid && isPasswordValid && isTermsValid) {
+            updateUserData({ email });
             console.log('Validation passed. Redirecting to dashboard...');
             navigate('/dashboard');
         } else {

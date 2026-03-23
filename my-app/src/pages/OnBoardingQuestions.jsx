@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/OnboardingQuestions.module.css';
+import { useUser } from '../context/UserContext';
 
 function OnboardingQuestions() {
     const navigate = useNavigate();
+    const { updateUserData } = useUser();
     const totalSteps = 7;
     const [currentStep, setCurrentStep] = useState(0);
     const [formData, setFormData] = useState({
@@ -88,7 +90,7 @@ function OnboardingQuestions() {
     // --- Handlers ---
     const handleNext = () => {
         if (currentStep === totalSteps - 1) {
-            sessionStorage.setItem('onboardingData', JSON.stringify(formData));
+            updateUserData(formData);
             console.log('Final Form Data:', formData);
             navigate('/signup');
             return;

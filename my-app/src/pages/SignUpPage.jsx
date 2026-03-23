@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/SignUpPage.module.css';
+import { useUser } from '../context/UserContext';
 
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = password => password.length >= 10 && !/\s/.test(password);
@@ -23,6 +24,7 @@ const EyeClose = () => (
 
 function SignUpPage() {
     const navigate = useNavigate();
+    const { updateUserData } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [termsChecked, setTermsChecked] = useState(false);
@@ -47,8 +49,8 @@ function SignUpPage() {
 
         if (isEmailValid && isPasswordValid && isTermsValid) {
             setIsSubmitting(true);
+            updateUserData({ email });
             console.log('Sign up successful');
-            // Navigate to dashboard after onboarding and sign up
             navigate('/dashboard');
         }
     };
