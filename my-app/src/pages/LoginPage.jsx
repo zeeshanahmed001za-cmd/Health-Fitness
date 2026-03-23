@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
 
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -22,6 +23,7 @@ const EyeClose = () => (
 );
 
 function LoginPage() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [termsChecked, setTermsChecked] = useState(false);
@@ -72,8 +74,7 @@ function LoginPage() {
 
         if (isEmailValid && isPasswordValid && isTermsValid) {
             console.log('Validation passed. Redirecting to dashboard...');
-            // TODO: Replace with React Router navigate('/dashboard')
-            window.location.href = '/dashboard';
+            navigate('/dashboard');
         } else {
             console.log('Validation failed. Please correct the errors.');
         }
@@ -83,10 +84,9 @@ function LoginPage() {
         <>
             {/* Navbar */}
             <nav className={styles.navBar}>
-                <a href="/" className={styles.logoLink}>
-                    {/* TODO: Replace with React Router <Link to="/"> */}
+                <Link to="/" className={styles.logoLink}>
                     <h1>Health & Fitness</h1>
-                </a>
+                </Link>
             </nav>
 
             <div className={styles.splitWrapper}>
@@ -196,8 +196,7 @@ function LoginPage() {
                             </div>
 
                             <p className={styles.signupPrompt}>
-                                Don't have an account? <a href="#">Sign up</a>
-                                {/* TODO: Replace with React Router <Link to="/onboarding"> */}
+                                Don't have an account? <Link to="/signup">Sign up</Link>
                             </p>
 
                         </form>

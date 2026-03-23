@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 
 // Icons extracted as components outside
@@ -38,19 +39,14 @@ const CloseIcon = () => (
     </svg>
 );
 
-// navItems data array - easy to update in one place
+// navItems data array
 const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon />, href: '#' },
-    { id: 'nutrition', label: 'Nutrition', icon: <NutritionIcon />, href: '#' },
-    { id: 'workouts', label: 'Workouts', icon: <WorkoutsIcon />, href: '#' },
-    { id: 'progress', label: 'Progress', icon: <ProgressIcon />, href: '#' },
+    { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { id: 'nutrition', label: 'Nutrition', icon: <NutritionIcon />, path: '/nutrition' },
+    { id: 'workouts', label: 'Workouts', icon: <WorkoutsIcon />, path: '/workouts' },
+    { id: 'progress', label: 'Progress', icon: <ProgressIcon />, path: '/progress' },
 ];
 
-// Props:
-// activePage - string: which nav item is highlighted e.g. "nutrition"
-// isCollapsed - bool: desktop collapsed state
-// isMobileOpen - bool: mobile open state
-// onClose - fn: close sidebar on mobile
 function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
     const sidebarClass = [
         styles.sidebar,
@@ -58,9 +54,14 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
         isMobileOpen ? styles.mobileOpen : '',
     ].join(' ');
 
+    const handleLogout = () => {
+        sessionStorage.clear();
+        localStorage.removeItem('userSession');
+        // Link will handle the navigation
+    };
+
     return (
         <>
-            {/* Overlay for mobile */}
             <div
                 className={`${styles.sidebarOverlay} ${isMobileOpen ? styles.active : ''}`}
                 onClick={onClose}
@@ -68,9 +69,9 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
 
             <aside className={sidebarClass}>
                 <div className={styles.sidebarHeader}>
-                    <a className={styles.logoLink}>
+                    <Link to="/dashboard" className={styles.logoLink}>
                         <h2>Health&Fitness</h2>
-                    </a>
+                    </Link>
                     <button className={styles.closeSidebarBtn} onClick={onClose} aria-label="Close Sidebar">
                         <CloseIcon />
                     </button>
@@ -78,23 +79,23 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
 
                 <nav className={styles.sidebarNav}>
                     {navItems.map(item => (
-                        <a
+                        <Link
                             key={item.id}
-                            href={item.href}
+                            to={item.path}
                             className={`${styles.navItem} ${activePage === item.id ? styles.active : ''}`}
+                            onClick={onClose}
                         >
                             {item.icon}
                             <span className={styles.navText}>{item.label}</span>
-                        </a>
+                        </Link>
                     ))}
                 </nav>
 
                 <div className={styles.sidebarFooter}>
-                    <a href="#" className={`${styles.navItem} ${styles.logoutBtn}`}>
-                        {/* TODO: Replace with React Router link to login */}
+                    <Link to="/login" className={`${styles.navItem} ${styles.logoutBtn}`} onClick={handleLogout}>
                         <LogoutIcon />
                         <span className={styles.navText}>Log Out</span>
-                    </a>
+                    </Link>
                 </div>
             </aside>
         </>

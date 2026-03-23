@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styles from '../styles/LandingPage.module.css';
 
 const ArrowIcon = ({ size = 24 }) => (
@@ -54,21 +55,18 @@ function LandingPage() {
         }
     };
 
-
-
     return (
-        <>
+        <div className={styles.pageBody}>
             {/* Navbar */}
             <header>
                 <nav className={`${styles.navBar} ${scrolled ? styles.scrolled : ''}`}>
-                    <h1>Health & Fitness</h1>
+                    <Link to="/" className={styles.logoText}><h1>Health & Fitness</h1></Link>
                     <ul className={styles.navBarOptions}>
                         <li><a href="#home" onClick={(e) => scrollToSection(e, 'home')}>Home</a></li>
                         <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Programs</a></li>
                         <li><a href="#membership" onClick={(e) => scrollToSection(e, 'membership')}>Membership</a></li>
                         <li><a href="#about" onClick={(e) => scrollToSection(e, 'about')}>About</a></li>
-                        {/* TODO: Replace href with React Router <Link> later */}
-                        <li><a href="#" className={styles.navCta}>Get Started</a></li>
+                        <li><Link to="/onboarding" className={styles.navCta}>Get Started</Link></li>
                     </ul>
                 </nav>
             </header>
@@ -140,9 +138,11 @@ function LandingPage() {
                                     <li>Standard meal templates</li>
                                     <li>Basic progress tracking</li>
                                 </ul>
-                                <button className={styles.membershipCtaBtn}>
-                                    Get Basic <ArrowIcon size={20} />
-                                </button>
+                                <Link to="/onboarding" className={styles.membershipCtaLink}>
+                                    <button className={styles.membershipCtaBtn}>
+                                        Get Basic <ArrowIcon size={20} />
+                                    </button>
+                                </Link>
                             </div>
 
                             <div className={styles.membershipCard}>
@@ -154,9 +154,11 @@ function LandingPage() {
                                     <li>Advanced analytics tracking</li>
                                     <li>Exclusive community access</li>
                                 </ul>
-                                <button className={styles.membershipCtaBtn}>
-                                    Go Premium <ArrowIcon size={20} />
-                                </button>
+                                <Link to="/onboarding" className={styles.membershipCtaLink}>
+                                    <button className={styles.membershipCtaBtn}>
+                                        Go Premium <ArrowIcon size={20} />
+                                    </button>
+                                </Link>
                             </div>
 
                             <div className={styles.membershipCard}>
@@ -168,9 +170,11 @@ function LandingPage() {
                                     <li>Monthly live Q&A events</li>
                                     <li>Priority 24/7 support</li>
                                 </ul>
-                                <button className={styles.membershipCtaBtn}>
-                                    Get Elite <ArrowIcon size={20} />
-                                </button>
+                                <Link to="/onboarding" className={styles.membershipCtaLink}>
+                                    <button className={styles.membershipCtaBtn}>
+                                        Get Elite <ArrowIcon size={20} />
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </section>
@@ -200,11 +204,10 @@ function LandingPage() {
                         <h1>Ready to Transform Your Health?</h1>
                         <p>Join our community today. With our expert guidance and comprehensive programs,
                             achieving your dream physique and mental clarity is entirely within reach.</p>
-                        {/* TODO: Replace with React Router <Link> later */}
-                        <a href="#" className={styles.ctaBtn}>
+                        <Link to="/onboarding" className={styles.ctaBtn}>
                             Start Your Journey
                             <ArrowIcon size={24} />
-                        </a>
+                        </Link>
                     </section>
 
                 </div>
@@ -215,7 +218,7 @@ function LandingPage() {
                 <div className={styles.footerContainer}>
                     <div className={styles.innerContainer}>
                         <div className={styles.footerLogo}>
-                            <img src="/images/site.png" alt="Health & Fitness Logo" />
+                            <Link to="/"><img src="/images/site.png" alt="Health & Fitness Logo" /></Link>
                             <span>Health & Fitness</span>
                         </div>
                         <div className={styles.quickLinks}>
@@ -224,7 +227,7 @@ function LandingPage() {
                                 <li><a href="#home" onClick={(e) => scrollToSection(e, 'home')}>Home</a></li>
                                 <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Programs</a></li>
                                 <li><a href="#membership" onClick={(e) => scrollToSection(e, 'membership')}>Pricing</a></li>
-                                <li><a href="#">Member Login</a></li>
+                                <li><Link to="/login">Member Login</Link></li>
                             </ul>
                         </div>
                         <div className={styles.programs}>
@@ -248,7 +251,7 @@ function LandingPage() {
                     </div>
                 </div>
             </footer>
-        </>
+        </div>
     );
 }
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import dashStyles from '../styles/Dashboard.module.css';
 import styles from '../styles/NutritionPage.module.css';
@@ -186,14 +187,13 @@ function NutritionPage() {
                             <BellIcon />
                             <span className={dashStyles.badge}>3</span>
                         </button>
-                        <a href="#" className={dashStyles.profileDropdownBtn}>
-                            {/* TODO: Replace with React Router <Link to="/profile"> */}
+                        <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
                                 <img src="/images/avatar-placeholder.png" alt="User Avatar"
                                     onError={e => { e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" }}
                                 />
                             </div>
-                        </a>
+                        </Link>
                     </div>
                 </header>
 

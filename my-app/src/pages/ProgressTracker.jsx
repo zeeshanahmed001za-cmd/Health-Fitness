@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import dashStyles from '../styles/Dashboard.module.css';
 import styles from '../styles/ProgressTracker.module.css';
@@ -160,12 +161,12 @@ function ProgressTracker() {
                             <BellIcon />
                             <span className={dashStyles.badge}>2</span>
                         </button>
-                        <a href="#" className={dashStyles.profileDropdownBtn}>
+                        <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
                                 <img src="/images/avatar-placeholder.png" alt="User Avatar"
                                     onError={e => { e.target.src = avatarFallback; }} />
                             </div>
-                        </a>
+                        </Link>
                     </div>
                 </header>
 
