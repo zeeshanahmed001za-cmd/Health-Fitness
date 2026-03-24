@@ -8,6 +8,7 @@ import cardioImg from '../assets/images/cardio.jpg';
 import deadliftImg from '../assets/images/deadlift.jpg';
 import situpsImg from '../assets/images/situps.jpg';
 
+
 function OnboardingQuestions() {
     useDocumentTitle('Join Journey');
     const navigate = useNavigate();

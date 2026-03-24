@@ -7,6 +7,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import googleIcon from '../assets/images/google.svg';
 import facebookIcon from '../assets/images/facebook.svg';
 
+
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = password => password.length >= 10 && !/\s/.test(password);
 
@@ -68,6 +69,7 @@ function SignUpPage() {
                     <h1>Health & Fitness</h1>
                 </Link>
             </nav>
+
 
             <div className={styles.signupWrapper}>
                 <div className={styles.formContainer}>

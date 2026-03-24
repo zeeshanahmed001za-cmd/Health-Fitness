@@ -32,7 +32,9 @@
     -webkit-background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
+    margin: 0;
 }
+
 
 .navBarOptions {
     display: flex;

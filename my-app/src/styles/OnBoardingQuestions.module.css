@@ -1,6 +1,6 @@
 .topBar {
     width: 100%;
-    padding: 20px 5%;
+    padding: 10px 5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -13,6 +13,8 @@
     -webkit-backdrop-filter: blur(4px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+
 
 .progressContainer {
     width: 200px;

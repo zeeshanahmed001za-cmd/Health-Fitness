@@ -68,10 +68,7 @@ function LandingPage() {
             {/* Navbar */}
             <header>
                 <nav className={`${styles.navBar} ${scrolled ? styles.scrolled : ''}`}>
-                    <Link to="/" className={styles.logoText}>
-                        <img src={siteLogo} alt="Logo" className={styles.siteLogoImg} />
-                        <h1>Health & Fitness</h1>
-                    </Link>
+                    <Link to="/" className={styles.logoText}><h1>Health & Fitness</h1></Link>
                     <ul className={styles.navBarOptions}>
                         <li><a href="#home" onClick={(e) => scrollToSection(e, 'home')}>Home</a></li>
                         <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Programs</a></li>

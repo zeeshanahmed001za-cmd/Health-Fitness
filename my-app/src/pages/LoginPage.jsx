@@ -7,6 +7,7 @@ import { useUser } from '../context/UserContext';
 import googleIcon from '../assets/images/google.svg';
 import facebookIcon from '../assets/images/facebook.svg';
 
+
 const emailPolicy = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = password => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(password);
 
@@ -97,6 +98,8 @@ function LoginPage() {
                     <h1>Health & Fitness</h1>
                 </Link>
             </nav>
+
+
 
             <div className={styles.splitWrapper}>
 

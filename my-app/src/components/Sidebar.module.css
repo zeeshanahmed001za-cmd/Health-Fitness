@@ -50,17 +50,7 @@
 
 .logoLink {
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
 }
-
-.logoImg {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-}
-
 
 .sidebarHeader h2 {
     font-weight: 800;
