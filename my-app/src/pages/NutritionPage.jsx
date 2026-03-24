@@ -5,7 +5,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 import SearchBar from '../components/SearchBar';
 import dashStyles from '../styles/Dashboard.module.css';
 import styles from '../styles/NutritionPage.module.css';
-import { useUser } from '../context/UserContext';
+// import { useUser } from '../context/UserContext';
 
 // --- Static Data ---
 const nutrientData = [
@@ -88,7 +88,7 @@ const AVATAR_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2
 
 function NutritionPage() {
     useDocumentTitle('Nutrition');
-    const { userData } = useUser();
+    // const { userData } = useUser();
 
     // Sidebar state
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
