@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/OnboardingQuestions.module.css';
+import styles from '../styles/OnBoardingQuestions.module.css';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 import { useUser } from '../context/UserContext';

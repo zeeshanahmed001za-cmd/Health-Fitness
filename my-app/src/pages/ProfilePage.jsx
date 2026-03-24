@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 import dashStyles from '../styles/Dashboard.module.css';
-import styles from '../styles/ProfilePage.module.css';
+import styles from '../styles/Profilepage.module.css';
 import { useUser } from '../context/UserContext';
 
 // --- Static initial data (later this will come from API/auth) ---
