@@ -82,20 +82,31 @@ function LandingPage() {
             <main>
                 {/* Hero Section */}
                 <section className={styles.heroSection} id="home">
-                    <div className={styles.heroText}>
-                        <span>Transform Your Life<br />Through Fitness</span>
-                        <p className={styles.subText}>
-                            Everything you need to build a healthy lifestyle — structured workouts, expert meal
-                            guidance, and continuous habit tracking — all in one place.
+                    <div className={styles.heroContent}>
+                        <h1 className={styles.heroHeadline}>
+                            Master Your Health with <br/> 
+                            <span className={styles.highlightText}>All-in-One Tracking</span>
+                        </h1>
+                        <p className={styles.heroSubtitle}>
+                            The ultimate platform to track your macros, follow expert workout plans, and analyze your progress—all built to help you reach your goals faster.
                         </p>
+                        
+                        <div className={styles.featureBadges}>
+                            <span className={styles.badge}>Calorie Tracking</span>
+                            <span className={styles.badge}>Macro Logging</span>
+                            <span className={styles.badge}>Workout Plans</span>
+                            <span className={styles.badge}>Progress Analytics</span>
+                        </div>
+
+                        <div className={styles.heroActions}>
+                            <Link to="/onboarding" className={styles.primaryCta}>
+                                Start Tracking Free
+                            </Link>
+                            <a href="#membership" onClick={(e) => scrollToSection(e, 'membership')} className={styles.secondaryCta}>
+                                View Memberships <ArrowIcon size={20} />
+                            </a>
+                        </div>
                     </div>
-                    <button
-                        className={styles.heroCtaBtn}
-                        onClick={(e) => scrollToSection(e, 'membership')}
-                    >
-                        Explore Memberships
-                        <ArrowIcon size={24} />
-                    </button>
                 </section>
 
                 <div className={styles.additionalSections}>
