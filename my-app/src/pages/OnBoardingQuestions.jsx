@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/OnboardingQuestions.module.css';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 import { useUser } from '../context/UserContext';
 import cardioImg from '../assets/images/cardio.jpg';
 import deadliftImg from '../assets/images/deadlift.jpg';
 import situpsImg from '../assets/images/situps.jpg';
 
 function OnboardingQuestions() {
+    useDocumentTitle('Join Journey');
     const navigate = useNavigate();
+
     const { updateUserData } = useUser();
     const totalSteps = 7;
     const [currentStep, setCurrentStep] = useState(0);

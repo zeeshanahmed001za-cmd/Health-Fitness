@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 import styles from '../styles/LandingPage.module.css';
 import weightLossImg from '../assets/images/weightLoss.jpg';
 import muscleGainImg from '../assets/images/MuscleGain.jpg';
@@ -16,6 +18,7 @@ const ArrowIcon = ({ size = 24 }) => (
 
 function LandingPage() {
     const [scrolled, setScrolled] = useState(false);
+
 
     // Navbar scroll effect
     useEffect(() => {

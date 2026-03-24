@@ -4,6 +4,8 @@ import Sidebar from '../components/Sidebar';
 import dashStyles from '../styles/Dashboard.module.css';
 import pageStyles from '../styles/DashboardPage.module.css';
 import { useUser } from '../context/UserContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 
 // SVG Icons
 const HamburgerIcon = () => (
@@ -57,6 +59,8 @@ const AVATAR_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2
 
 function DashboardPage() {
     const { userData } = useUser();
+    useDocumentTitle('Dashboard');
+
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [notificationsClean, setNotificationsClean] = useState(false);
@@ -68,9 +72,9 @@ function DashboardPage() {
     // Use context values instead of local lookups
     const firstName = userData.firstName || 'Alex';
     const completedExercises = useMemo(() => loggedExercises.filter(ex => ex.completed), [loggedExercises]);
-    
+
     const progress = useMemo(() => {
-        if (loggedExercises.length === 0) return 70; 
+        if (loggedExercises.length === 0) return 70;
         return Math.round((completedExercises.length / loggedExercises.length) * 100);
     }, [loggedExercises, completedExercises]);
 
@@ -82,18 +86,18 @@ function DashboardPage() {
 
     // Metric configurations to avoid duplicate JSX
     const metrics = [
-        { 
-            title: 'Steps', value: '8,432', icon: <StepsIcon />, 
-            iconClass: pageStyles.stepsIcon, progress: '84%', 
+        {
+            title: 'Steps', value: '8,432', icon: <StepsIcon />,
+            iconClass: pageStyles.stepsIcon, progress: '84%',
             footer: <><span className={`${pageStyles.trend} ${pageStyles.positive}`}>↑ 12%</span> vs yesterday</>
         },
-        { 
-            title: 'Calories Burned', value: `${totalCalories.toLocaleString()} kcal`, icon: <CaloriesIcon />, 
+        {
+            title: 'Calories Burned', value: `${totalCalories.toLocaleString()} kcal`, icon: <CaloriesIcon />,
             iconClass: pageStyles.caloriesIcon, progress: `${caloriePercent || 65}%`, barClass: pageStyles.caloriesBar,
             footer: <><span className={`${pageStyles.trend} ${pageStyles.positive}`}>↑ 5%</span> vs yesterday</>
         },
-        { 
-            title: 'Active Time', value: '45 mins', icon: <ActiveIcon />, 
+        {
+            title: 'Active Time', value: '45 mins', icon: <ActiveIcon />,
             iconClass: pageStyles.activeIcon, progress: '50%', barClass: pageStyles.activeBar,
             footer: <span>Goal: 90 mins</span>
         }
@@ -148,10 +152,10 @@ function DashboardPage() {
                         </button>
                         <Link to="/profile" className={dashStyles.profileDropdownBtn}>
                             <div className={dashStyles.profileAvatar}>
-                                <img 
-                                    src="../assets/images/avatar-placeholder.png" 
+                                <img
+                                    src="../assets/images/avatar-placeholder.png"
                                     alt="User Avatar"
-                                    onError={e => { e.target.src = AVATAR_FALLBACK; }} 
+                                    onError={e => { e.target.src = AVATAR_FALLBACK; }}
                                 />
                             </div>
                         </Link>

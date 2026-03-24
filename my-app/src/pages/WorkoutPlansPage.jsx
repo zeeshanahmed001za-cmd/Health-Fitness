@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 import dashStyles from '../styles/Dashboard.module.css';
 import pageStyles from '../styles/WorkoutPlansPage.module.css';
 
@@ -54,7 +56,9 @@ const ExerciseItem = ({ ex, onToggle, onRemove }) => (
 );
 
 function WorkoutPlansPage() {
+    useDocumentTitle('Workout Log');
     // Sidebar state
+
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -201,7 +205,15 @@ function WorkoutPlansPage() {
                         </div>
                         <div className={pageStyles.exerciseList}>
                             {exercises.filter(e => e.category === 'pre').length > 0 ? (
-                                exercises.filter(e => e.category === 'pre').map(ex => <ExerciseItem key={ex.id} ex={ex} />)
+                                exercises.filter(e => e.category === 'pre').map(ex => (
+                                    <ExerciseItem 
+                                        key={ex.id} 
+                                        ex={ex} 
+                                        onToggle={toggleExercise} 
+                                        onRemove={removeExercise} 
+                                    />
+                                ))
+
                             ) : (
                                 <div className={pageStyles.emptyState}>No pending stretches.</div>
                             )}
@@ -220,7 +232,15 @@ function WorkoutPlansPage() {
                                     <div key={mg} className={pageStyles.muscleGroupContainer}>
                                         <h4 className={pageStyles.muscleGroupTitle}>{mg}</h4>
                                         <div className={pageStyles.exerciseList}>
-                                            {mainGroups[mg].map(ex => <ExerciseItem key={ex.id} ex={ex} />)}
+                                            {mainGroups[mg].map(ex => (
+                                                <ExerciseItem 
+                                                    key={ex.id} 
+                                                    ex={ex} 
+                                                    onToggle={toggleExercise} 
+                                                    onRemove={removeExercise} 
+                                                />
+                                            ))}
+
                                         </div>
                                     </div>
                                 ))
@@ -238,7 +258,15 @@ function WorkoutPlansPage() {
                         </div>
                         <div className={pageStyles.exerciseList}>
                             {exercises.filter(e => e.category === 'post').length > 0 ? (
-                                exercises.filter(e => e.category === 'post').map(ex => <ExerciseItem key={ex.id} ex={ex} />)
+                                exercises.filter(e => e.category === 'post').map(ex => (
+                                    <ExerciseItem 
+                                        key={ex.id} 
+                                        ex={ex} 
+                                        onToggle={toggleExercise} 
+                                        onRemove={removeExercise} 
+                                    />
+                                ))
+
                             ) : (
                                 <div className={pageStyles.emptyState}>No pending recovery exercises.</div>
                             )}

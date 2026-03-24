@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 import dashStyles from '../styles/Dashboard.module.css';
 import pageStyles from '../styles/WorkoutGuidancePage.module.css';
 
@@ -56,7 +58,9 @@ const BoltIcon = () => (
 );
 
 function WorkoutGuidancePage() {
+    useDocumentTitle('Workout Guidance');
     // Sidebar state
+
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 

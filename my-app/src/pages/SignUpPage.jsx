@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/SignUpPage.module.css';
 import { useUser } from '../context/UserContext';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 import googleIcon from '../assets/images/google.svg';
 import facebookIcon from '../assets/images/facebook.svg';
 
@@ -25,7 +27,9 @@ const EyeClose = () => (
 );
 
 function SignUpPage() {
+    useDocumentTitle('Create Account');
     const navigate = useNavigate();
+
     const { updateUserData } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
+import useDocumentTitle from '../hooks/useDocumentTitle';
+
 import { useUser } from '../context/UserContext';
 import googleIcon from '../assets/images/google.svg';
 import facebookIcon from '../assets/images/facebook.svg';
@@ -26,7 +28,9 @@ const EyeClose = () => (
 );
 
 function LoginPage() {
+    useDocumentTitle('Login');
     const navigate = useNavigate();
+
     const { updateUserData } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
