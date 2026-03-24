@@ -167,27 +167,37 @@
     text-decoration: line-through;
 }
 
-.exCheck {
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
+.exCheckbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
     border: 2px solid var(--text-secondary);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 4px;
+    background-color: transparent;
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
     transition: all var(--transition-fast);
 }
 
-.completed .exCheck {
-    background: var(--accent-primary);
+.exCheckbox:checked {
+    background-color: var(--accent-primary);
     border-color: var(--accent-primary);
 }
 
-.completed .exCheck::after {
-    content: '✓';
-    color: white;
-    font-size: 14px;
+.exCheckbox::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    background-color: white;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.exCheckbox:checked::before {
+    transform: scale(1);
 }
 
 .exBody {
@@ -355,7 +365,8 @@
     margin-bottom: 8px;
 }
 
-.formGroup input, .customSelect {
+.formGroup input,
+.customSelect {
     width: 100%;
     background: var(--bg-primary);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -365,7 +376,8 @@
     outline: none;
 }
 
-.formGroup input:focus, .customSelect:focus {
+.formGroup input:focus,
+.customSelect:focus {
     border-color: var(--accent-primary);
 }
 
@@ -402,7 +414,7 @@
     .workoutSummary {
         grid-template-columns: 1fr 1fr;
     }
-    
+
     .workoutMetaHeader {
         grid-template-columns: 1fr;
     }

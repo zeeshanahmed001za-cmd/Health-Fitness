@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import styles from './Sidebar.module.css';
 import { useUser } from '../context/UserContext';
+import siteLogo from '../assets/images/site.png';
+
 
 // Icons extracted as components outside
 const DashboardIcon = () => (
@@ -71,8 +73,10 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
             <aside className={sidebarClass}>
                 <div className={styles.sidebarHeader}>
                     <Link to="/dashboard" className={styles.logoLink}>
+                        <img src={siteLogo} alt="Logo" className={styles.logoImg} />
                         <h2>Health&Fitness</h2>
                     </Link>
+
                     <button className={styles.closeSidebarBtn} onClick={onClose} aria-label="Close Sidebar">
                         <CloseIcon />
                     </button>
