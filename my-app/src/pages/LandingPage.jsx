@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 import styles from '../styles/LandingPage.module.css';
-import weightLossImg from '../assets/images/weightLoss.jpg';
-import muscleGainImg from '../assets/images/MuscleGain.jpg';
-import generalFitnessImg from '../assets/images/generalFitness.jpg';
+
 import aboutImg from '../assets/images/about1.jpg';
 import siteLogo from '../assets/images/site.png';
 
@@ -13,6 +11,31 @@ const ArrowIcon = ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2"
             strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
+const TargetIcon = ({ size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="6"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+    </svg>
+);
+
+const UtensilsIcon = ({ size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+        <path d="M7 2v20"></path>
+        <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+    </svg>
+);
+
+const CalendarIcon = ({ size = 24 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
     </svg>
 );
 
@@ -43,7 +66,7 @@ function LandingPage() {
         }, observerOptions);
 
         const animatedElements = document.querySelectorAll(
-            `.${styles.programCard}, .${styles.membershipCard}, .${styles.aboutRow}, .${styles.callToActionSection}`
+            `.${styles.programPathCard}, .${styles.membershipCard}, .${styles.aboutRow}, .${styles.callToActionSection}`
         );
         animatedElements.forEach(el => {
             el.style.opacity = '0';
@@ -113,25 +136,57 @@ function LandingPage() {
 
                     {/* Programs Section */}
                     <section className={styles.programsSection} id="programs">
-                        <h1>Our Core Programs</h1>
+                        <div className={styles.sectionHeader}>
+                            <h2>Core Capabilities</h2>
+                            <p>Everything you need to track, plan, and optimize your fitness journey.</p>
+                        </div>
                         <div className={styles.programsContainer}>
-                            <div className={styles.programCard}>
-                                <img src={weightLossImg} alt="Weight Loss Program" />
-                                <h3>Weight Loss</h3>
-                                <p>Effective, science-backed strategies and HIIT workouts to help you shed unwanted
-                                    pounds and achieve a leaner body sustainably.</p>
+                            <div className={styles.programPathCard}>
+                                <div className={styles.programIconWrapper}>
+                                    <TargetIcon size={28} />
+                                </div>
+                                <h3>Strength Training</h3>
+                                <p className={styles.programDesc}>Build muscle effectively with guided workouts and advanced progress tracking.</p>
+                                <ul className={styles.programFeatures}>
+                                    <li>Interactive workout logger</li>
+                                    <li>Exercise technique library</li>
+                                    <li>Volume & progressive overload metrics</li>
+                                </ul>
+                                <Link to="/onboarding" className={styles.programAction}>
+                                    Start Program <ArrowIcon size={16} />
+                                </Link>
                             </div>
-                            <div className={styles.programCard}>
-                                <img src={muscleGainImg} alt="Muscle Gain Program" />
-                                <h3>Muscle Gain</h3>
-                                <p>Structured hypertrophy workout plans and macro-nutrient guidance to help you
-                                    build muscle mass and raw strength effectively.</p>
+
+                            <div className={styles.programPathCard}>
+                                <div className={styles.programIconWrapper}>
+                                    <UtensilsIcon size={28} />
+                                </div>
+                                <h3>Nutrition Tracking</h3>
+                                <p className={styles.programDesc}>Take control of your diet with precise calorie and macro monitoring.</p>
+                                <ul className={styles.programFeatures}>
+                                    <li>Daily macro breakdown</li>
+                                    <li>Extensive food database</li>
+                                    <li>Personalized calorie goals</li>
+                                </ul>
+                                <Link to="/onboarding" className={styles.programAction}>
+                                    Start Program <ArrowIcon size={16} />
+                                </Link>
                             </div>
-                            <div className={styles.programCard}>
-                                <img src={generalFitnessImg} alt="General Fitness Program" />
-                                <h3>General Fitness</h3>
-                                <p>A balanced approach including functional cardio, mobility training, and
-                                    flexibility exercises for total longevity and well-being.</p>
+
+                            <div className={styles.programPathCard}>
+                                <div className={styles.programIconWrapper}>
+                                    <CalendarIcon size={28} />
+                                </div>
+                                <h3>Workout Planning</h3>
+                                <p className={styles.programDesc}>Design structured routines aligned with your goals and performance insights.</p>
+                                <ul className={styles.programFeatures}>
+                                    <li>Custom routine builder</li>
+                                    <li>Calendar scheduling</li>
+                                    <li>Performance analytics dashboard</li>
+                                </ul>
+                                <Link to="/onboarding" className={styles.programAction}>
+                                    Start Program <ArrowIcon size={16} />
+                                </Link>
                             </div>
                         </div>
                     </section>
