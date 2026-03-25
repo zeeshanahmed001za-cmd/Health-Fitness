@@ -5,7 +5,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import SearchBar from "../components/SearchBar";
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/NutritionPage.module.css";
-// import { useUser } from '../context/UserContext';
+import { useUser } from '../context/UserContext';
 
 // --- Static Data ---
 const nutrientData = [
@@ -132,7 +132,7 @@ const AVATAR_FALLBACK =
 
 function NutritionPage() {
   useDocumentTitle("Nutrition");
-  // const { userData } = useUser();
+  const { updateUserData } = useUser();
 
   // Sidebar state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -196,6 +196,7 @@ function NutritionPage() {
   };
 
   const handleApplyTarget = () => {
+    updateUserData({ calorieGoal: calcResult });
     setApplySuccess(true);
     setTimeout(() => setApplySuccess(false), 2000);
   };

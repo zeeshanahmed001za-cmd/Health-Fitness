@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
-import CalorieTrendChart from "../components/CalorieTrendChart";
+
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/DashboardPage.module.css";
 import { useUser } from "../context/UserContext";
@@ -14,6 +14,7 @@ const AVATAR_FALLBACK =
 
 function DashboardPage() {
     const { userData } = useUser();
+    const navigate = useNavigate();
     useDocumentTitle("Dashboard");
 
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -47,8 +48,18 @@ function DashboardPage() {
 
     const caloriePercent = Math.min((totalCalories / 2000) * 100, 100);
 
-    const calorieGoal = 2100;
-    const caloriesConsumed = 1450;
+    const calorieGoal = userData.calorieGoal || 2100;
+    
+    // Calculate consumed calories from the food log data
+    const caloriesConsumed = useMemo(() => {
+        return [
+            { category: "Breakfast", kcal: 420, items: 3 },
+            { category: "Lunch", kcal: 680, items: 2 },
+            { category: "Dinner", kcal: 0, items: 0 },
+            { category: "Snacks", kcal: 350, items: 1 }
+        ].reduce((acc, curr) => acc + curr.kcal, 0);
+    }, []);
+
     const caloriesRemaining = calorieGoal - caloriesConsumed;
     const nutritionProgress = Math.min((caloriesConsumed / calorieGoal) * 100, 100);
 
@@ -105,15 +116,7 @@ function DashboardPage() {
             burned: totalCalories,
             net: calorieGoal - caloriesConsumed + totalCalories
         },
-        trend: [
-            { day: "Mon", consumed: 1850, goal: 2100 },
-            { day: "Tue", consumed: 2200, goal: 2100 },
-            { day: "Wed", consumed: 1950, goal: 2100 },
-            { day: "Thu", consumed: 2050, goal: 2100 },
-            { day: "Fri", consumed: 1700, goal: 2100 },
-            { day: "Sat", consumed: 2300, goal: 2100 },
-            { day: "Sun", consumed: caloriesConsumed, goal: 2100 }
-        ]
+
     };
 
 
@@ -128,9 +131,6 @@ function DashboardPage() {
 
     const handleNotificationClick = () => {
         setNotificationsClean(true);
-        alert(
-            "You have 3 new notifications:\n1. Calorie target reached!\n2. Weekly report ready.\n3. New workout plan recommended.",
-        );
     };
 
     return (
@@ -195,7 +195,7 @@ function DashboardPage() {
                         <div className={pageStyles.welcomeAction}>
                             <button
                                 className={pageStyles.primaryBtn}
-                                onClick={() => alert("Redirecting to workouts...")}
+                                onClick={() => navigate("/workouts")}
                             >
                                 Log Workout
                             </button>
@@ -288,7 +288,7 @@ function DashboardPage() {
                                     <div 
                                         key={idx} 
                                         className={pageStyles.mealRow}
-                                        onClick={() => alert(`Navigating to ${meal.category} log...`)}
+                                        onClick={() => navigate("/nutrition")}
                                     >
                                         <div className={pageStyles.mealInfo}>
                                             <span className={pageStyles.mealCategory}>{meal.category}</span>
@@ -309,7 +309,7 @@ function DashboardPage() {
                                     <p>No meals logged today.</p>
                                     <button 
                                         className={pageStyles.logMealBtn}
-                                        onClick={() => alert("Redirecting to meal logging...")}
+                                        onClick={() => navigate("/nutrition")}
                                     >
                                         Log a Meal
                                     </button>
@@ -347,19 +347,7 @@ function DashboardPage() {
 
 
                     <section className={pageStyles.secondaryGrid}>
-                        <div
-                            className={`${pageStyles.activityCard} ${pageStyles.panelCard}`}
-                        >
-                            <div className={pageStyles.panelHeader}>
-                                <h3>7-Day Calorie Trend</h3>
-                                <div className={pageStyles.panelActions}>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Last 7 Days</span>
-                                </div>
-                            </div>
-                            <div className={pageStyles.chartContent}>
-                                <CalorieTrendChart data={nutritionMetrics.trend} />
-                            </div>
-                        </div>
+
 
                         <div
                             className={`${pageStyles.workoutsCard} ${pageStyles.panelCard}`}
@@ -371,7 +359,7 @@ function DashboardPage() {
                                     className={pageStyles.viewAllLink}
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        alert("Viewing all workouts...");
+                                        navigate("/workouts");
                                     }}
                                 >
                                     View All

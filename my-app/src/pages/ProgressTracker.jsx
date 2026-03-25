@@ -173,9 +173,8 @@ function ProgressTracker() {
     sessionStorage.setItem("onboardingData", JSON.stringify(updatedData));
     localStorage.setItem("userSession", JSON.stringify(updatedData));
     setIsModalActive(false);
-    alert(
-      "Metrics updated successfully! Your progress chart is being recalibrated.",
-    );
+    setIsModalActive(false);
+    console.log("Metrics updated successfully!");
   };
 
   return (
@@ -229,9 +228,7 @@ function ProgressTracker() {
               <button
                 className={styles.secondaryBtn}
                 onClick={() =>
-                  alert(
-                    "Generating your health report... This will be downloaded as a PDF shortly.",
-                  )
+                  console.log("Generating your health report...")
                 }
               >
                 Download Report

@@ -26,7 +26,7 @@ const SearchBar = ({ placeholder = "Search...", onSearch }) => {
         if (onSearch) {
           onSearch(query);
         } else {
-          alert(`Searching for: "${query}"... This feature is coming soon!`);
+          console.log(`Searching for: "${query}"...`);
         }
         e.target.value = "";
       }
