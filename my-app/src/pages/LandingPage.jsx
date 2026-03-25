@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useDocumentTitle from '../hooks/useDocumentTitle';
-
 import styles from '../styles/LandingPage.module.css';
 
-import aboutImg from '../assets/images/about1.jpg';
-import siteLogo from '../assets/images/site.png';
+ import siteLogo from '../assets/images/site.png';
 
 const ArrowIcon = ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -45,6 +43,36 @@ const CheckIcon = ({ size = 16 }) => (
     </svg>
 );
 
+const GridIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+    </svg>
+);
+
+const ActivityIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+    </svg>
+);
+
+const RouteIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="6" cy="19" r="3"></circle>
+        <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"></path>
+        <circle cx="18" cy="5" r="3"></circle>
+    </svg>
+);
+
+const TrendingUpIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        <polyline points="17 6 23 6 23 12"></polyline>
+    </svg>
+);
+
 function LandingPage() {
     const [scrolled, setScrolled] = useState(false);
 
@@ -72,7 +100,7 @@ function LandingPage() {
         }, observerOptions);
 
         const animatedElements = document.querySelectorAll(
-            `.${styles.programPathCard}, .${styles.membershipCard}, .${styles.aboutRow}, .${styles.callToActionSection}`
+            `.${styles.programPathCard}, .${styles.membershipCard}, .${styles.valueBlock}, .${styles.callToActionSection}`
         );
         animatedElements.forEach(el => {
             el.style.opacity = '0';
@@ -113,13 +141,13 @@ function LandingPage() {
                 <section className={styles.heroSection} id="home">
                     <div className={styles.heroContent}>
                         <h1 className={styles.heroHeadline}>
-                            Master Your Health with <br/> 
+                            Master Your Health with <br />
                             <span className={styles.highlightText}>All-in-One Tracking</span>
                         </h1>
                         <p className={styles.heroSubtitle}>
                             The ultimate platform to track your macros, follow expert workout plans, and analyze your progress—all built to help you reach your goals faster.
                         </p>
-                        
+
                         <div className={styles.featureBadges}>
                             <span className={styles.badge}>Calorie Tracking</span>
                             <span className={styles.badge}>Macro Logging</span>
@@ -271,23 +299,40 @@ function LandingPage() {
                         </div>
                     </section>
 
-                    {/* About Section */}
-                    <section className={styles.aboutSection} id="about">
-                        <h1>Our Mission</h1>
-                        <p>At Health & Fitness, we are dedicated to helping individuals of all fitness levels
-                            achieve their health goals. Our mission is to provide accessible, scientifically-backed,
-                            and effective fitness solutions.</p>
+                    {/* Why Choose Us Section */}
+                    <section className={styles.whySection} id="about">
+                        <div className={styles.whyHeader}>
+                            <h2>Why Health & Fitness?</h2>
+                            <p>Most fitness apps give you a single piece of the puzzle. We give you the entire ecosystem—unifying your diet, workouts, and progress in one place.</p>
+                        </div>
 
-                        <div className={styles.aboutRow}>
-                            <img src={aboutImg} alt="About Us Team" />
-                            <div className={styles.aboutPara}>
-                                <p>Our team of experienced fitness professionals is passionate about creating
-                                    personalized workout plans and meal guidance that cater to your unique needs.</p>
-                                <br />
-                                <p>We believe that fitness should be sustainable and empowering. That's why we focus
-                                    on building healthy, long-term habits and fostering a supportive community where
-                                    everyone can thrive.</p>
+                        <div className={styles.valueBlocksContainer}>
+                            <div className={styles.valueBlock}>
+                                <div className={styles.valueIcon}><GridIcon /></div>
+                                <h4>Unified Platform</h4>
+                                <p>Manage your workouts, nutrition, and metrics within a single, seamless application.</p>
                             </div>
+                            <div className={styles.valueBlock}>
+                                <div className={styles.valueIcon}><ActivityIcon /></div>
+                                <h4>Smart Tracking</h4>
+                                <p>Log calories, track macros, and monitor daily performance without friction.</p>
+                            </div>
+                            <div className={styles.valueBlock}>
+                                <div className={styles.valueIcon}><RouteIcon /></div>
+                                <h4>Structured Programs</h4>
+                                <p>Follow guided, science-backed paths instead of guessing your next workout.</p>
+                            </div>
+                            <div className={styles.valueBlock}>
+                                <div className={styles.valueIcon}><TrendingUpIcon /></div>
+                                <h4>Real Progress</h4>
+                                <p>Visualize your continuous improvement over time with detailed, clear analytics.</p>
+                            </div>
+                        </div>
+
+                        <div className={styles.trustDivider}>
+                            <div className={styles.trustLine}></div>
+                            <p>Designed for consistency, not complexity.</p>
+                            <div className={styles.trustLine}></div>
                         </div>
                     </section>
 
