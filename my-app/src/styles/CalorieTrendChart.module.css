@@ -1,0 +1,66 @@
+.professionalChartContainer {
+  width: 100%;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  color: var(--text-secondary);
+}
+
+.mainSvg {
+  flex: 1;
+  width: 100%;
+  overflow: visible;
+}
+
+.horizontalGridLine {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+
+.goalRefLine {
+  stroke: var(--accent-primary);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.trendPathLine {
+  stroke: var(--accent-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.dataMarker {
+  fill: var(--bg-secondary);
+  stroke: var(--accent-primary);
+  stroke-width: 2;
+}
+
+.alertMarker {
+  stroke: #ef4444;
+  fill: #7f1d1d;
+}
+
+.labelsWrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0 0;
+}
+
+.axisLabel {
+  width: 40px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.emptyTrendState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-secondary);
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 8px;
+}

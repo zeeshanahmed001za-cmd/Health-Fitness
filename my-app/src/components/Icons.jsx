@@ -66,3 +66,18 @@ export const EyeClose = () => (
         <line x1="2" y1="2" x2="22" y2="22" />
     </svg>
 );
+
+export const WaterIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+    </svg>
+);
+
+export const MacroIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 2v20"></path>
+        <path d="M2 12h20"></path>
+    </svg>
+);
+
