@@ -36,16 +36,20 @@ function SignUpPage() {
     const [password, setPassword] = useState('');
     const [termsChecked, setTermsChecked] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // FIX 2: removed isSubmitting state — no real async op exists yet,
+    // so it was locking the button permanently after navigate() fired.
+    // Add it back properly with try/catch/finally once a real API call exists.
 
     // Validation states
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [termsError, setTermsError] = useState(false);
 
+    // FIX 2: handleSubmit is now synchronous and clean — no orphaned isSubmitting
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         const isEmailValid = emailPolicy(email.trim());
         const isPasswordValid = passwordPolicy(password);
         const isTermsValid = termsChecked;
@@ -55,12 +59,15 @@ function SignUpPage() {
         setTermsError(!isTermsValid);
 
         if (isEmailValid && isPasswordValid && isTermsValid) {
-            setIsSubmitting(true);
             updateUserData({ email });
-            console.log('Sign up successful');
             navigate('/dashboard');
         }
     };
+
+    // FIX 4: dynamic password hint helpers
+    const tooShort = password.length > 0 && password.length < 10;
+    const hasSpaces = password.length > 0 && /\s/.test(password);
+    const passwordValid = password.length >= 10 && !/\s/.test(password);
 
     return (
         <div className={styles.pageBody}>
@@ -70,14 +77,16 @@ function SignUpPage() {
                 </Link>
             </nav>
 
-
             <div className={styles.signupWrapper}>
                 <div className={styles.formContainer}>
                     <div className={styles.formHeader}>
                         <h2>Almost there! Create your account.</h2>
                     </div>
 
-                    <form id={styles.signupForm} onSubmit={handleSubmit} noValidate>
+                    {/* FIX 1: removed id={styles.signupForm} — was passing a hashed
+                        CSS module class name as an id, which is the wrong type entirely */}
+                    <form className={styles.signupForm} onSubmit={handleSubmit} noValidate>
+
                         {/* Email Input */}
                         <div className={`${styles.inputGroup} ${emailError ? styles.error : ''}`}>
                             <input
@@ -118,7 +127,23 @@ function SignUpPage() {
                                     {showPassword ? <EyeClose /> : <EyeOpen />}
                                 </button>
                             </div>
-                            <p className={styles.passwordHint}>Must be at least 10 characters, no spaces.</p>
+
+                            {/* FIX 4: dynamic hint — tells user exactly which rule they're failing */}
+                            {password.length === 0 ? (
+                                <p className={styles.passwordHint}>
+                                    Must be at least 10 characters, no spaces.
+                                </p>
+                            ) : passwordValid ? (
+                                <p className={`${styles.passwordHint} ${styles.passwordHintSuccess}`}>
+                                    ✓ Looks good
+                                </p>
+                            ) : (
+                                <p className={`${styles.passwordHint} ${styles.passwordHintWarn}`}>
+                                    {tooShort && <span>{10 - password.length} more character{10 - password.length !== 1 ? 's' : ''} needed. </span>}
+                                    {hasSpaces && <span>Remove spaces.</span>}
+                                </p>
+                            )}
+
                             <span className={styles.errorText}>Password does not meet requirements.</span>
                         </div>
 
@@ -146,21 +171,33 @@ function SignUpPage() {
                             <span className={styles.errorText}>You must agree to the terms to continue.</span>
                         </div>
 
-                        {/* Submit */}
-                        <button type="submit" className={styles.primaryBtn} disabled={isSubmitting}>
-                            {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+                        {/* Submit — FIX 2: no isSubmitting, button never locks */}
+                        <button type="submit" className={styles.primaryBtn}>
+                            Sign Up
                         </button>
 
                         <div className={styles.divider}>
                             <span>or</span>
                         </div>
 
+                        {/* FIX 3: social buttons are disabled with title tooltip until implemented —
+                            previously they were clickable but did absolutely nothing silently */}
                         <div className={styles.socialLogin}>
-                            <button type="button" className={styles.socialBtn}>
+                            <button
+                                type="button"
+                                className={styles.socialBtn}
+                                disabled
+                                title="Coming soon"
+                            >
                                 <img src={googleIcon} alt="Google" />
                                 Continue with Google
                             </button>
-                            <button type="button" className={styles.socialBtn}>
+                            <button
+                                type="button"
+                                className={styles.socialBtn}
+                                disabled
+                                title="Coming soon"
+                            >
                                 <img src={facebookIcon} alt="Facebook" />
                                 Continue with Facebook
                             </button>

@@ -4,9 +4,9 @@ import styles from '../styles/OnBoardingQuestions.module.css';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 import { useUser } from '../context/UserContext';
-import workoutImg from '../assets/images/workout3.jpg';
+import workoutImg from '../assets/images/fitnessTracker.png';
 import mealImg from '../assets/images/meal.jpg';
-import situpsImg from '../assets/images/workout1.webp';
+import situpsImg from '../assets/images/workout2.jpg';
 
 const PRIMARY_GOALS = [
     { value: 'weight_loss', title: 'Weight Loss', desc: 'Shed pounds and lean out' },
@@ -91,14 +91,34 @@ function OnboardingQuestions() {
             ? !isNaN(currentWeight) && currentWeight >= 50 && currentWeight <= 1000
             : !isNaN(currentWeight) && currentWeight >= 20 && currentWeight <= 450;
 
-        const isGoalWeightValid = formData.weightUnit === 'imperial'
-            ? !isNaN(goalWeight) && goalWeight >= 50 && goalWeight <= 1000
-            : !isNaN(goalWeight) && goalWeight >= 20 && goalWeight <= 450;
+        // 1. Identify active goals
+        const isWeightLoss = formData.primaryGoal.includes('weight_loss');
+        const isMuscleGain = formData.primaryGoal.includes('muscle_gain');
+        
+        // 2. Check if goal weight field is empty
+        const isGoalEmpty = !formData.goalWeightValue || String(formData.goalWeightValue).trim() === '';
+
+        // 3. Determine if goal weight is valid (skip base validation if empty AND not required)
+        let isGoalWeightValid = true;
+        if (!isGoalEmpty || isWeightLoss || isMuscleGain) {
+            isGoalWeightValid = formData.weightUnit === 'imperial'
+                ? !isNaN(goalWeight) && goalWeight >= 50 && goalWeight <= 1000
+                : !isNaN(goalWeight) && goalWeight >= 20 && goalWeight <= 450;
+        }
 
         if (isHeightValid && isWeightValid && isGoalWeightValid) {
-            if (goalWeight <= currentWeight) {
-                return { valid: false, error: 'Goal weight must be greater than your current weight.' };
+            if (!isGoalEmpty) {
+                // If goal is Weight Loss, goal weight MUST be less than current weight
+                if (isWeightLoss && goalWeight >= currentWeight) {
+                    return { valid: false, error: 'Goal weight must be less than your current weight.' };
+                }
+                
+                // If goal is Muscle Gain, goal weight MUST be greater than current weight
+                if (isMuscleGain && goalWeight <= currentWeight) {
+                    return { valid: false, error: 'Goal weight must be greater than your current weight.' };
+                }
             }
+            
             return { valid: true, error: '' };
         }
 
@@ -277,10 +297,10 @@ function OnboardingQuestions() {
                             <p className={styles.subtitle}>What should we call you?</p>
                         </div>
                         <div className={styles.formGroup}>
-                            <input type="text" className={styles.textInput} placeholder="First Name"
+                            <input type="text" name="firstName" autoComplete="given-name" className={styles.textInput} placeholder="First Name"
                                 value={formData.firstName}
                                 onChange={e => setFormData(prev => ({ ...prev, firstName: e.target.value }))} />
-                            <input type="text" className={styles.textInput} placeholder="Last Name"
+                            <input type="text" name="lastName" autoComplete="family-name" className={styles.textInput} placeholder="Last Name"
                                 value={formData.lastName}
                                 onChange={e => setFormData(prev => ({ ...prev, lastName: e.target.value }))} />
                         </div>
@@ -383,9 +403,9 @@ function OnboardingQuestions() {
                                     </label>
                                 ))}
                             </div>
-                            <input type="date" className={`${styles.textInput} ${styles.customDateInput}`}
+                            <input type="date" name="bday" autoComplete="bday" className={`${styles.textInput} ${styles.customDateInput}`}
                                 value={formData.dob} onChange={e => handleDobChange(e.target.value)} />
-                            <input type="text" className={styles.textInput}
+                            <input type="text" name="location" autoComplete="address-level2" className={styles.textInput}
                                 placeholder="Where do you live? (City, Country)"
                                 value={formData.location}
                                 onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))} />
@@ -491,8 +511,8 @@ function OnboardingQuestions() {
                                 <button type="button" className={styles.ctaBtn} onClick={handleNext} disabled={!metricsState.valid}>Next</button>
                             </div>
                         </div>
-                    )
-                })}
+                    );
+                })()}
 
             </main>
         </>

@@ -1,5 +1,12 @@
 /* Sign Up Page Styles */
 
+.pageBody {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+}
+
 .navBar {
     width: 100%;
     padding: 20px 5%;
@@ -62,7 +69,9 @@
     color: var(--text-primary);
 }
 
-#signupForm {
+/* FIX 1: was #signupForm (dead id selector after JSX fix removed the id).
+   Now a proper CSS module class — add className={styles.signupForm} to <form> in JSX. */
+.signupForm {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -118,6 +127,13 @@
     width: 100%;
 }
 
+/* FIX 4: explicitly re-anchors the password label to the wrapper
+   so it stays vertically aligned consistently with the email label */
+.passwordWrapper .floatLabel {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .TogglePassword {
     position: absolute;
     right: 15px;
@@ -141,6 +157,22 @@
 .passwordHint {
     font-size: 0.85rem;
     color: var(--text-secondary);
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+/* FIX 3: new classes required by the dynamic password hint in JSX */
+.passwordHintSuccess {
+    color: var(--accent-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+.passwordHintWarn {
+    color: #f59e0b;
+    font-size: 0.85rem;
     margin-top: 5px;
     padding-left: 5px;
 }
@@ -276,8 +308,16 @@
     transition: background-color var(--transition-fast);
 }
 
-.socialBtn:hover {
+/* FIX 2: added :not(:disabled) guard so hover effect
+   doesn't fire on the now-disabled social buttons */
+.socialBtn:hover:not(:disabled) {
     background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* FIX 3: disabled social buttons look intentionally unavailable */
+.socialBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 .socialBtn img {
