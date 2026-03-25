@@ -10,7 +10,7 @@ body {
   left: 0;
   width: 100%;
   padding: 0 5%;
-  min-height: 80px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   background: transparent;
@@ -100,9 +100,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 5% 50px 5%;
+  padding: 80px 5% 40px 5%; /* Tightened */
   background-color: var(--bg-primary);
   position: relative;
+  overflow: hidden; /* Prevent scrolling on main container */
 }
 
 .formContainer {
@@ -112,7 +113,7 @@ body {
 }
 
 .formHeader {
-  margin-bottom: 40px;
+  margin-bottom: 25px; /* Reduced from 40px */
 }
 
 .formHeader h2 {
@@ -129,7 +130,18 @@ body {
 
 .inputGroup {
   position: relative;
-  margin-bottom: 25px;
+  margin-bottom: 28px; /* Reduced from 30px */
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Ensure components within password wrapper stay organized */
+.passwordWrapper {
+  position: relative;
   width: 100%;
 }
 
@@ -159,7 +171,7 @@ body {
 .floatLabel {
   position: absolute;
   left: 16px;
-  top: 50%;
+  top: 24px; /* Center based on padding: 20px top + 10px bottom */
   transform: translateY(-50%);
   color: var(--text-secondary);
   font-size: 1rem;
@@ -173,6 +185,7 @@ body {
   font-size: 0.75rem;
   color: var(--accent-cyan);
   font-weight: 600;
+  transform: translateY(-20%);
 }
 
 .inputGroup.error .floatInput {
@@ -191,20 +204,21 @@ body {
 
 .errorText {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: #ef4444;
-  margin-top: 5px;
-  height: 0;
+  margin-top: 6px;
+  min-height: 1rem; /* Reserved space */
   opacity: 0;
-  overflow: hidden;
-  transition: all var(--transition-fast);
+  visibility: hidden;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+  font-weight: 500;
 }
 
 .inputGroup.error .errorText,
 .termsGroup.error .errorText {
-  height: auto;
   opacity: 1;
-  margin-top: 8px;
+  visibility: visible;
 }
 
 .passwordWrapper {
@@ -232,13 +246,15 @@ body {
 }
 
 .forgotPassword {
-  display: block;
-  text-align: right;
-  font-size: 0.9rem;
+  position: absolute;
+  bottom: -22px; /* Position below the input but above error reserved space */
+  right: 0;
+  font-size: 0.82rem;
   color: var(--accent-cyan);
-  margin-top: 10px;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
+  transition: color var(--transition-fast);
+  z-index: 5;
 }
 
 .forgotPassword:hover {
@@ -247,7 +263,7 @@ body {
 }
 
 .termsGroup {
-  margin-bottom: 30px;
+  margin-bottom: 20px; /* Reduced from 30px */
 }
 
 .checkboxWrapper {
@@ -317,9 +333,9 @@ body {
   );
   color: var(--bg-primary);
   border: none;
-  padding: 16px;
+  padding: 14px; /* Reduced padding */
   border-radius: 50px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   font-family: var(--font-main);
   cursor: pointer;
@@ -327,7 +343,7 @@ body {
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-  margin-bottom: 25px;
+  margin-bottom: 20px; /* Reduced margin */
 }
 
 .primaryBtn:hover {
@@ -338,7 +354,7 @@ body {
 .divider {
   position: relative;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px; /* Reduced margin */
 }
 
 .divider::before,
@@ -368,8 +384,8 @@ body {
 
 .socialLogin {
   display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 20px; /* Reduced margin */
 }
 
 .socialBtn {

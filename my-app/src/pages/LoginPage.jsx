@@ -117,19 +117,21 @@ function LoginPage() {
             <form onSubmit={handleSubmit} noValidate>
               {/* Email Input */}
               <div className={getGroupClass(emailStatus)}>
-                <input
-                  type="email"
-                  id="EmailInput"
-                  className={styles.floatInput}
-                  placeholder=" "
-                  value={email}
-                  onChange={(e) => handleEmailChange(e.target.value)}
-                  onBlur={handleEmailBlur}
-                  required
-                />
-                <label htmlFor="EmailInput" className={styles.floatLabel}>
-                  Email Address
-                </label>
+                <div className={styles.inputWrapper}>
+                  <input
+                    type="email"
+                    id="EmailInput"
+                    className={styles.floatInput}
+                    placeholder=" "
+                    value={email}
+                    onChange={(e) => handleEmailChange(e.target.value)}
+                    onBlur={handleEmailBlur}
+                    required
+                  />
+                  <label htmlFor="EmailInput" className={styles.floatLabel}>
+                    Email Address
+                  </label>
+                </div>
                 <span className={styles.errorText}>
                   Please enter a valid email address.
                 </span>
@@ -138,19 +140,21 @@ function LoginPage() {
               {/* Password Input */}
               <div className={getGroupClass(passwordStatus)}>
                 <div className={styles.passwordWrapper}>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="PasswordInput"
-                    className={styles.floatInput}
-                    placeholder=" "
-                    value={password}
-                    onChange={(e) => handlePasswordChange(e.target.value)}
-                    onBlur={handlePasswordBlur}
-                    required
-                  />
-                  <label htmlFor="PasswordInput" className={styles.floatLabel}>
-                    Password
-                  </label>
+                  <div className={styles.inputWrapper}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="PasswordInput"
+                      className={styles.floatInput}
+                      placeholder=" "
+                      value={password}
+                      onChange={(e) => handlePasswordChange(e.target.value)}
+                      onBlur={handlePasswordBlur}
+                      required
+                    />
+                    <label htmlFor="PasswordInput" className={styles.floatLabel}>
+                      Password
+                    </label>
+                  </div>
                   <button
                     type="button"
                     className={styles.TogglePassword}
@@ -161,8 +165,7 @@ function LoginPage() {
                   </button>
                 </div>
                 <span className={styles.errorText}>
-                  Password must be at least 10 chars, include uppercase,
-                  lowercase, number, and special char.
+                  Must be 10+ chars with symbols & numbers.
                 </span>
                 <a href="#" className={styles.forgotPassword}>
                   Forgot Password?
