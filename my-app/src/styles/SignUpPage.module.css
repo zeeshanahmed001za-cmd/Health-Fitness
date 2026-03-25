@@ -1,352 +1,362 @@
 /* Sign Up Page Styles */
 
 .pageBody {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
 }
 
 .navBar {
-    width: 100%;
-    padding: 20px 5%;
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
+  width: 100%;
+  padding: 20px 5%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
 }
 
 .logoLink {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .logoLink h1 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: -0.5px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(
+    135deg,
+    var(--accent-primary),
+    var(--accent-cyan)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
 }
 
 .signupWrapper {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 100px 5% 50px 5%;
-    min-height: 100vh;
-    background-color: var(--bg-primary);
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 5% 50px 5%;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
 }
 
 .formContainer {
-    width: 100%;
-    max-width: 450px;
-    background-color: var(--bg-secondary);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-lg);
-    padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .formHeader {
-    text-align: center;
-    margin-bottom: 30px;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .formHeader h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 /* FIX 1: was #signupForm (dead id selector after JSX fix removed the id).
    Now a proper CSS module class — add className={styles.signupForm} to <form> in JSX. */
 .signupForm {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .inputGroup {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .floatInput {
-    width: 100%;
-    background-color: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-md);
-    padding: 15px 20px;
-    font-family: inherit;
-    font-size: 1rem;
-    color: var(--text-primary);
-    outline: none;
-    transition: all var(--transition-fast);
+  width: 100%;
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 15px 20px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: all var(--transition-fast);
 }
 
 .floatLabel {
-    position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.0rem;
-    color: var(--text-secondary);
-    pointer-events: none;
-    transition: all 0.2s ease;
-    background-color: var(--bg-secondary);
-    padding: 0 5px;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background-color: var(--bg-secondary);
+  padding: 0 5px;
 }
 
 .floatInput:focus,
 .floatInput:not(:placeholder-shown) {
-    border-color: var(--accent-primary);
+  border-color: var(--accent-primary);
 }
 
-.floatInput:focus+.floatLabel,
-.floatInput:not(:placeholder-shown)+.floatLabel {
-    top: 0;
-    font-size: 0.85rem;
-    color: var(--accent-primary);
+.floatInput:focus + .floatLabel,
+.floatInput:not(:placeholder-shown) + .floatLabel {
+  top: 0;
+  font-size: 0.85rem;
+  color: var(--accent-primary);
 }
 
 .passwordWrapper {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 /* FIX 4: explicitly re-anchors the password label to the wrapper
    so it stays vertically aligned consistently with the email label */
 .passwordWrapper .floatLabel {
-    top: 50%;
-    transform: translateY(-50%);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .TogglePassword {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color var(--transition-fast);
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
 }
 
 .TogglePassword:hover {
-    color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .passwordHint {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 5px;
-    padding-left: 5px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 5px;
+  padding-left: 5px;
 }
 
 /* FIX 3: new classes required by the dynamic password hint in JSX */
 .passwordHintSuccess {
-    color: var(--accent-primary);
-    font-weight: 600;
-    font-size: 0.85rem;
-    margin-top: 5px;
-    padding-left: 5px;
+  color: var(--accent-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  padding-left: 5px;
 }
 
 .passwordHintWarn {
-    color: #f59e0b;
-    font-size: 0.85rem;
-    margin-top: 5px;
-    padding-left: 5px;
+  color: #f59e0b;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  padding-left: 5px;
 }
 
 .errorText {
-    display: none;
-    color: #ef4444;
-    font-size: 0.85rem;
-    margin-top: 5px;
-    padding-left: 5px;
+  display: none;
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  padding-left: 5px;
 }
 
 .inputGroup.error .floatInput {
-    border-color: #ef4444;
+  border-color: #ef4444;
 }
 
 .inputGroup.error .errorText,
 .termsGroup.error .errorText {
-    display: block;
+  display: block;
 }
 
 .recaptchaText {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-align: left;
-    line-height: 1.4;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: left;
+  line-height: 1.4;
 }
 
 .recaptchaText a {
-    color: var(--accent-cyan);
-    text-decoration: none;
+  color: var(--accent-cyan);
+  text-decoration: none;
 }
 
 .termsGroup {
-    display: flex;
-    flex-direction: column;
-    margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
 }
 
 .checkboxWrapper {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
 }
 
 .customCheckbox {
-    accent-color: var(--accent-primary);
-    width: 18px;
-    height: 18px;
-    margin-top: 2px;
-    cursor: pointer;
+  accent-color: var(--accent-primary);
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
 }
 
 .checkboxWrapper label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    line-height: 1.4;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1.4;
 }
 
 .checkboxWrapper label a {
-    color: var(--accent-primary);
-    text-decoration: none;
-    font-weight: 600;
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .primaryBtn {
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
-    color: var(--bg-primary);
-    border: none;
-    padding: 1rem;
-    border-radius: var(--radius-md);
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-    margin-top: 10px;
-    width: 100%;
+  background: linear-gradient(
+    135deg,
+    var(--accent-primary),
+    var(--accent-cyan)
+  );
+  color: var(--bg-primary);
+  border: none;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  margin-top: 10px;
+  width: 100%;
 }
 
 .primaryBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
 }
 
 .primaryBtn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 10px 0;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 10px 0;
 }
 
 .divider::before,
 .divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .divider span {
-    padding: 0 15px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    text-transform: lowercase;
+  padding: 0 15px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: lowercase;
 }
 
 .socialLogin {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .socialBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background-color: transparent;
-    color: var(--text-primary);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.8rem;
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
 }
 
 /* FIX 2: added :not(:disabled) guard so hover effect
    doesn't fire on the now-disabled social buttons */
 .socialBtn:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* FIX 3: disabled social buttons look intentionally unavailable */
 .socialBtn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .socialBtn img {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 .socialHint {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-align: center;
-    margin-top: -5px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: -5px;
 }
 
 .signupPrompt {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-top: 10px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-top: 10px;
 }
 
 .signupPrompt a {
-    color: var(--accent-primary);
-    text-decoration: none;
-    font-weight: 600;
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 @media (max-width: 480px) {
-    .formContainer {
-        padding: 30px 20px;
-    }
+  .formContainer {
+    padding: 30px 20px;
+  }
 }
