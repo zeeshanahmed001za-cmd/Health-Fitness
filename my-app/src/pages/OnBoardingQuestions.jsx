@@ -8,6 +8,29 @@ import cardioImg from '../assets/images/cardio.jpg';
 import deadliftImg from '../assets/images/deadlift.jpg';
 import situpsImg from '../assets/images/situps.jpg';
 
+const PRIMARY_GOALS = [
+    { value: 'weight_loss', title: 'Weight Loss', desc: 'Shed pounds and lean out' },
+    { value: 'muscle_gain', title: 'Muscle Gain', desc: 'Build size and strength' },
+    { value: 'general_fitness', title: 'General Fitness', desc: 'Improve overall health' },
+    { value: 'maintain_weight', title: 'Maintain Weight', desc: 'Stay at my current weight and tone up' },
+    { value: 'manage_stress', title: 'Manage Stress', desc: 'Use exercise for mental well-being and relaxation' },
+    { value: 'improve_flexibility', title: 'Improve Flexibility', desc: 'Enhance mobility, range of motion, and posture' },
+    { value: 'build_endurance', title: 'Build Endurance', desc: 'Increase stamina for runs, hikes, or sports' },
+    { value: 'increase_energy', title: 'Increase Energy', desc: 'Boost daily energy levels and overcome fatigue' },
+];
+
+const ACTIVITY_LEVELS = [
+    { value: 'sedentary', title: 'Not Very Active', desc: 'Mostly sitting (office work, driving, etc.)' },
+    { value: 'lightly_active', title: 'Lightly Active', desc: 'On your feet often (teaching, retail, light walks)' },
+    { value: 'active', title: 'Active', desc: 'Moving most of the day or regular exercise' },
+    { value: 'very_active', title: 'Very Active', desc: 'Heavy physical labor or intense daily training' },
+];
+
+const FITNESS_LEVELS = [
+    { value: 'beginner', title: 'Beginner', desc: 'I rarely exercise or am just starting out.' },
+    { value: 'intermediate', title: 'Intermediate', desc: 'I exercise 1-3 times a week consistently.' },
+    { value: 'advanced', title: 'Advanced', desc: 'I train 4+ times a week and know my way around a gym.' },
+];
 
 function OnboardingQuestions() {
     useDocumentTitle('Join Journey');
@@ -33,7 +56,7 @@ function OnboardingQuestions() {
     const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
 
     // --- Validation ---
-    const isNameValid = formData.firstName.trim() !== '' && formData.lastName.trim() !== '';
+    const isNameValid = Boolean(formData.firstName.trim() && formData.lastName.trim());
 
     const validateAge = (dob) => {
         if (!dob) return { valid: false, underage: false };
@@ -99,7 +122,6 @@ function OnboardingQuestions() {
     const handleNext = () => {
         if (currentStep === totalSteps - 1) {
             updateUserData(formData);
-            console.log('Final Form Data:', formData);
             navigate('/signup');
             return;
         }
@@ -192,7 +214,6 @@ function OnboardingQuestions() {
                     <div className={styles.progressBar} style={{ width: `${progressPercentage}%` }} />
                 </div>
                 <div className={styles.authLinks}>
-                    {/* <button className={styles.loginBtn} onClick={() => navigate('/login')}>Login</button> */}
                     <div className={styles.accountIcon}>
                         <div onClick={() => navigate('/login')} style={{ cursor: 'pointer' }}>
                             <svg focusable="false" aria-hidden="true" viewBox="0 0 24 24">
@@ -253,16 +274,7 @@ function OnboardingQuestions() {
                             <p className={styles.subtitle}>Select up to two to help us tailor your experience.</p>
                         </div>
                         <div className={styles.optionsList}>
-                            {[
-                                { value: 'weight_loss', title: 'Weight Loss', desc: 'Shed pounds and lean out' },
-                                { value: 'muscle_gain', title: 'Muscle Gain', desc: 'Build size and strength' },
-                                { value: 'general_fitness', title: 'General Fitness', desc: 'Improve overall health' },
-                                { value: 'maintain_weight', title: 'Maintain Weight', desc: 'Stay at my current weight and tone up' },
-                                { value: 'manage_stress', title: 'Manage Stress', desc: 'Use exercise for mental well-being and relaxation' },
-                                { value: 'improve_flexibility', title: 'Improve Flexibility', desc: 'Enhance mobility, range of motion, and posture' },
-                                { value: 'build_endurance', title: 'Build Endurance', desc: 'Increase stamina for runs, hikes, or sports' },
-                                { value: 'increase_energy', title: 'Increase Energy', desc: 'Boost daily energy levels and overcome fatigue' },
-                            ].map(option => (
+                            {PRIMARY_GOALS.map(option => (
                                 <div key={option.value}
                                     className={`${styles.optionCard} ${styles.listStyle} ${formData.primaryGoal.includes(option.value) ? styles.selected : ''}`}
                                     onClick={() => handleCardSelect('primaryGoal', option.value, 2)}>
@@ -286,12 +298,7 @@ function OnboardingQuestions() {
                             <p className={styles.subtitle}>This helps us calculate your energy needs.</p>
                         </div>
                         <div className={styles.optionsList}>
-                            {[
-                                { value: 'sedentary', title: 'Not Very Active', desc: 'Mostly sitting (office work, driving, etc.)' },
-                                { value: 'lightly_active', title: 'Lightly Active', desc: 'On your feet often (teaching, retail, light walks)' },
-                                { value: 'active', title: 'Active', desc: 'Moving most of the day or regular exercise' },
-                                { value: 'very_active', title: 'Very Active', desc: 'Heavy physical labor or intense daily training' },
-                            ].map(option => (
+                            {ACTIVITY_LEVELS.map(option => (
                                 <div key={option.value}
                                     className={`${styles.optionCard} ${styles.listStyle} ${formData.activityLevel === option.value ? styles.selected : ''}`}
                                     onClick={() => handleCardSelect('activityLevel', option.value, 1)}>
@@ -315,11 +322,7 @@ function OnboardingQuestions() {
                             <p className={styles.subtitle}>Be honest, this sets your starting point.</p>
                         </div>
                         <div className={styles.optionsList}>
-                            {[
-                                { value: 'beginner', title: 'Beginner', desc: 'I rarely exercise or am just starting out.' },
-                                { value: 'intermediate', title: 'Intermediate', desc: 'I exercise 1-3 times a week consistently.' },
-                                { value: 'advanced', title: 'Advanced', desc: 'I train 4+ times a week and know my way around a gym.' },
-                            ].map(option => (
+                            {FITNESS_LEVELS.map(option => (
                                 <div key={option.value}
                                     className={`${styles.optionCard} ${styles.listStyle} ${formData.fitnessLevel === option.value ? styles.selected : ''}`}
                                     onClick={() => handleCardSelect('fitnessLevel', option.value, 1)}>
@@ -370,14 +373,16 @@ function OnboardingQuestions() {
                 )}
 
                 {/* STEP 7: Body Metrics */}
-                {currentStep === 6 && (
+                {currentStep === 6 && (() => {
+                    const metricsState = validateMetrics();
+                    return (
                     <div className={styles.step}>
                         <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
                             <h2>How tall are you?</h2>
                         </div>
                         <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
-                            {validateMetrics().error && (
-                                <div className={styles.errorMessage}>{validateMetrics().error}</div>
+                            {metricsState.error && (
+                                <div className={styles.errorMessage}>{metricsState.error}</div>
                             )}
                             {formData.heightUnit === 'imperial' ? (
                                 <div className={styles.metricRow}>
@@ -458,10 +463,10 @@ function OnboardingQuestions() {
 
                         <div className={styles.navigationButtons} style={{ marginTop: '10px' }}>
                             <button type="button" className={styles.secondaryBtn} onClick={handleBack}>Back</button>
-                            <button type="button" className={styles.ctaBtn} onClick={handleNext} disabled={!validateMetrics().valid}>Next</button>
+                            <button type="button" className={styles.ctaBtn} onClick={handleNext} disabled={!metricsState.valid}>Next</button>
                         </div>
                     </div>
-                )}
+                )})}
 
             </main>
         </>
