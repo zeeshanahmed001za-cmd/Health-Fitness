@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import styles from '../styles/LandingPage.module.css';
 
- import siteLogo from '../assets/images/site.png';
+import siteLogo from '../assets/images/site.png';
 
 const ArrowIcon = ({ size = 24 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -70,6 +70,26 @@ const TrendingUpIcon = ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
         <polyline points="17 6 23 6 23 12"></polyline>
+    </svg>
+);
+
+const FacebookIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3.81l.39-4h-4.2V7a1 1 0 0 1 1-1h3z"></path>
+    </svg>
+);
+
+const InstagramIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+    </svg>
+);
+
+const GithubIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
     </svg>
 );
 
@@ -141,11 +161,11 @@ function LandingPage() {
                 <section className={styles.heroSection} id="home">
                     <div className={styles.heroContent}>
                         <h1 className={styles.heroHeadline}>
-                            Master Your Health with <br />
-                            <span className={styles.highlightText}>All-in-One Tracking</span>
+                            Stop guessing. <br />
+                            <span className={styles.highlightText}>Start tracking.</span>
                         </h1>
                         <p className={styles.heroSubtitle}>
-                            The ultimate platform to track your macros, follow expert workout plans, and analyze your progress—all built to help you reach your goals faster.
+                            Take complete control of your fitness journey. Log your workouts, hit your macro targets, and let precise data drive your real-world results.
                         </p>
 
                         <div className={styles.featureBadges}>
@@ -353,38 +373,63 @@ function LandingPage() {
             {/* Footer */}
             <footer className={styles.footer}>
                 <div className={styles.footerContainer}>
-                    <div className={styles.innerContainer}>
-                        <div className={styles.footerLogo}>
-                            <Link to="/"><img src={siteLogo} alt="Health & Fitness Logo" /></Link>
-                            <span>Health & Fitness</span>
+                    <div className={styles.footerTop}>
+                        {/* Brand Area */}
+                        <div className={styles.footerBrand}>
+                            <Link to="/" className={styles.footerLogo}>
+                                <img src={siteLogo} alt="Health & Fitness Logo" />
+                                <span>Health & Fitness</span>
+                            </Link>
+                            <p className={styles.footerDescription}>
+                                All-in-one fitness tracking and program management platform.
+                            </p>
+                            <div className={styles.socialLinks}>
+                                <a href="#" aria-label="Facebook"><FacebookIcon size={20} /></a>
+                                <a href="#" aria-label="Instagram"><InstagramIcon size={20} /></a>
+                                <a href="#" aria-label="GitHub"><GithubIcon size={20} /></a>
+                            </div>
                         </div>
-                        <div className={styles.quickLinks}>
-                            <h2>Quick Links</h2>
-                            <ul>
-                                <li><a href="#home" onClick={(e) => scrollToSection(e, 'home')}>Home</a></li>
-                                <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Programs</a></li>
-                                <li><a href="#membership" onClick={(e) => scrollToSection(e, 'membership')}>Pricing</a></li>
-                                <li><Link to="/login">Member Login</Link></li>
-                            </ul>
-                        </div>
-                        <div className={styles.programs}>
-                            <h2>Our Focus</h2>
-                            <ul>
-                                <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Weight Loss</a></li>
-                                <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Muscle Gain</a></li>
-                                <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Functional Fitness</a></li>
-                                <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Mobility</a></li>
-                            </ul>
-                        </div>
-                        <div className={styles.contacts}>
-                            <h2>Contact Us</h2>
-                            <p>contact@healthfitness.com</p>
-                            <p>Phone: +1 (555) 123-4567</p>
-                            <p>Location: New York, USA</p>
+
+                        {/* Navigation Groups */}
+                        <div className={styles.footerNav}>
+                            <div className={styles.navColumn}>
+                                <h3>Product</h3>
+                                <ul>
+                                    <li><a href="#programs" onClick={(e) => scrollToSection(e, 'programs')}>Programs</a></li>
+                                    <li><a href="#membership" onClick={(e) => scrollToSection(e, 'membership')}>Memberships</a></li>
+                                    <li><Link to="/onboarding">Nutrition Tracking</Link></li>
+                                </ul>
+                            </div>
+
+                            <div className={styles.navColumn}>
+                                <h3>Company</h3>
+                                <ul>
+                                    <li><a href="#about" onClick={(e) => scrollToSection(e, 'about')}>About</a></li>
+                                    <li><Link to="#">Contact</Link></li>
+                                    <li><Link to="#">FAQ</Link></li>
+                                </ul>
+                            </div>
+
+                            <div className={styles.navColumn}>
+                                <h3>Resources</h3>
+                                <ul>
+                                    <li><Link to="#">Guides</Link></li>
+                                    <li><Link to="#">Support</Link></li>
+                                    <li><Link to="#">Community</Link></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div className={styles.copyrights}>
-                        <p>&copy; 2026 Health & Fitness. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+
+                    {/* Legal Area */}
+                    <div className={styles.footerBottomUnified}>
+                        <p>
+                            &copy; 2026 Health & Fitness. All rights reserved.
+                            <span className={styles.legalSeparator}>|</span>
+                            <Link to="#">Privacy Policy</Link>
+                            <span className={styles.legalSeparator}>|</span>
+                            <Link to="#">Terms of Service</Link>
+                        </p>
                     </div>
                 </div>
             </footer>
