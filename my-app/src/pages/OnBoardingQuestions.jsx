@@ -4,9 +4,9 @@ import styles from '../styles/OnBoardingQuestions.module.css';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 import { useUser } from '../context/UserContext';
-import cardioImg from '../assets/images/cardio.jpg';
-import deadliftImg from '../assets/images/deadlift.jpg';
-import situpsImg from '../assets/images/situps.jpg';
+import workoutImg from '../assets/images/workout3.jpg';
+import mealImg from '../assets/images/meal.jpg';
+import situpsImg from '../assets/images/workout1.webp';
 
 const PRIMARY_GOALS = [
     { value: 'weight_loss', title: 'Weight Loss', desc: 'Shed pounds and lean out' },
@@ -117,6 +117,30 @@ function OnboardingQuestions() {
     useEffect(() => {
         return () => { if (ageTimerRef.current) clearTimeout(ageTimerRef.current); };
     }, []);
+
+    // Enter to proceed
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                let canProceed = false;
+                if (currentStep === 0) canProceed = true;
+                else if (currentStep === 1) canProceed = isNameValid;
+                else if (currentStep === 2) canProceed = formData.primaryGoal.length > 0;
+                else if (currentStep === 3) canProceed = !!formData.activityLevel;
+                else if (currentStep === 4) canProceed = !!formData.fitnessLevel;
+                else if (currentStep === 5) canProceed = isDetailsValid();
+                else if (currentStep === 6) canProceed = validateMetrics().valid;
+
+                if (canProceed) {
+                    handleNext();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    });
 
     // --- Handlers ---
     const handleNext = () => {
@@ -231,11 +255,12 @@ function OnboardingQuestions() {
                     <div className={styles.step}>
                         <div className={styles.welcomeHeader}>
                             <h2>Welcome to <span className={styles.gradientText}>Health & Fitness</span></h2>
-                            <p className={styles.subtitle}>Are you ready to start your fitness journey and build a personalized workout plan designed around your goals, experience level, and lifestyle?</p>
+                            <p className={styles.subtitle}>Everything you need in one place — track what you eat, follow a workout plan, and watch your body actually change.</p>
+                            <p className={styles.subtitle} style={{ fontSize: '0.9rem', marginTop: '12px' }}>Let's take 60 seconds to personalize your experience.</p>
                         </div>
                         <div className={styles.imagesContainer}>
-                            <div className={styles.imageWrapper}><img src={cardioImg} alt="Cardio Training" /></div>
-                            <div className={styles.imageWrapper}><img src={deadliftImg} alt="Strength Training" /></div>
+                            <div className={styles.imageWrapper}><img src={workoutImg} alt="Workout Training" /></div>
+                            <div className={styles.imageWrapper}><img src={mealImg} alt="Healthy Nutrition" /></div>
                             <div className={styles.imageWrapper}><img src={situpsImg} alt="Core Training" /></div>
                         </div>
                         <div className={styles.navigationButtons}>
@@ -376,97 +401,98 @@ function OnboardingQuestions() {
                 {currentStep === 6 && (() => {
                     const metricsState = validateMetrics();
                     return (
-                    <div className={styles.step}>
-                        <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
-                            <h2>How tall are you?</h2>
-                        </div>
-                        <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
-                            {metricsState.error && (
-                                <div className={styles.errorMessage}>{metricsState.error}</div>
-                            )}
-                            {formData.heightUnit === 'imperial' ? (
-                                <div className={styles.metricRow}>
-                                    <div className={styles.inputGroupVertical}>
-                                        <label className={styles.inputLabel}>Height (feet)</label>
-                                        <input type="number" className={styles.textInput} placeholder="ft" min="0"
-                                            value={formData.heightFeet}
-                                            onChange={e => setFormData(prev => ({ ...prev, heightFeet: e.target.value }))} />
+                        <div className={styles.step}>
+                            <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
+                                <h2>How tall are you?</h2>
+                            </div>
+                            <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
+                                {metricsState.error && (
+                                    <div className={styles.errorMessage}>{metricsState.error}</div>
+                                )}
+                                {formData.heightUnit === 'imperial' ? (
+                                    <div className={styles.metricRow}>
+                                        <div className={styles.inputGroupVertical}>
+                                            <label className={styles.inputLabel}>Height (feet)</label>
+                                            <input type="number" className={styles.textInput} placeholder="ft" min="0"
+                                                value={formData.heightFeet}
+                                                onChange={e => setFormData(prev => ({ ...prev, heightFeet: e.target.value }))} />
+                                        </div>
+                                        <div className={styles.inputGroupVertical}>
+                                            <label className={styles.inputLabel}>Height (inches)</label>
+                                            <input type="number" className={styles.textInput} placeholder="in" min="0" max="11"
+                                                value={formData.heightInches}
+                                                onChange={e => setFormData(prev => ({ ...prev, heightInches: e.target.value }))} />
+                                        </div>
                                     </div>
-                                    <div className={styles.inputGroupVertical}>
-                                        <label className={styles.inputLabel}>Height (inches)</label>
-                                        <input type="number" className={styles.textInput} placeholder="in" min="0" max="11"
-                                            value={formData.heightInches}
-                                            onChange={e => setFormData(prev => ({ ...prev, heightInches: e.target.value }))} />
+                                ) : (
+                                    <div className={styles.metricRow}>
+                                        <div className={styles.inputGroupVertical}>
+                                            <label className={styles.inputLabel}>Height (cm)</label>
+                                            <div className={styles.inputWithUnit} style={{ width: '100%' }}>
+                                                <input type="number" className={styles.textInput} placeholder="cm" min="0" step="0.1"
+                                                    value={formData.heightCm}
+                                                    onChange={e => setFormData(prev => ({ ...prev, heightCm: e.target.value }))} />
+                                            </div>
+                                        </div>
                                     </div>
+                                )}
+                                <div className={styles.toggleContainer}>
+                                    <a href="#" className={styles.unitToggle} onClick={handleToggleHeight}>
+                                        {formData.heightUnit === 'imperial' ? 'Switch to centimeters' : 'Switch to feet/inches'}
+                                    </a>
                                 </div>
-                            ) : (
+                            </div>
+
+                            <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
+                                <h2>How much do you weigh?</h2>
+                                <p className={styles.subtitle} style={{ fontSize: '0.95rem' }}>It's OK to estimate. You can update this later.</p>
+                            </div>
+                            <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
                                 <div className={styles.metricRow}>
                                     <div className={styles.inputGroupVertical}>
-                                        <label className={styles.inputLabel}>Height (cm)</label>
+                                        <label className={styles.inputLabel}>Current weight</label>
                                         <div className={styles.inputWithUnit} style={{ width: '100%' }}>
-                                            <input type="number" className={styles.textInput} placeholder="cm" min="0" step="0.1"
-                                                value={formData.heightCm}
-                                                onChange={e => setFormData(prev => ({ ...prev, heightCm: e.target.value }))} />
+                                            <input type="number" className={styles.textInput}
+                                                placeholder={formData.weightUnit === 'imperial' ? 'lbs' : 'kg'} min="0" step="0.1"
+                                                value={formData.weightValue}
+                                                onChange={e => setFormData(prev => ({ ...prev, weightValue: e.target.value }))} />
+                                            <span className={styles.unitLabel}>{formData.weightUnit === 'imperial' ? 'lbs' : 'kg'}</span>
                                         </div>
                                     </div>
                                 </div>
-                            )}
-                            <div className={styles.toggleContainer}>
-                                <a href="#" className={styles.unitToggle} onClick={handleToggleHeight}>
-                                    {formData.heightUnit === 'imperial' ? 'Switch to centimeters' : 'Switch to feet/inches'}
-                                </a>
                             </div>
-                        </div>
 
-                        <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
-                            <h2>How much do you weigh?</h2>
-                            <p className={styles.subtitle} style={{ fontSize: '0.95rem' }}>It's OK to estimate. You can update this later.</p>
-                        </div>
-                        <div className={styles.formGroup} style={{ marginBottom: '20px' }}>
-                            <div className={styles.metricRow}>
-                                <div className={styles.inputGroupVertical}>
-                                    <label className={styles.inputLabel}>Current weight</label>
-                                    <div className={styles.inputWithUnit} style={{ width: '100%' }}>
-                                        <input type="number" className={styles.textInput}
-                                            placeholder={formData.weightUnit === 'imperial' ? 'lbs' : 'kg'} min="0" step="0.1"
-                                            value={formData.weightValue}
-                                            onChange={e => setFormData(prev => ({ ...prev, weightValue: e.target.value }))} />
-                                        <span className={styles.unitLabel}>{formData.weightUnit === 'imperial' ? 'lbs' : 'kg'}</span>
+                            <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
+                                <h2>What's your goal weight?</h2>
+                                <p className={styles.subtitle} style={{ fontSize: '0.9rem' }}>Don't worry. This doesn't affect your daily calorie goal and you can always change it later.</p>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <div className={styles.metricRow}>
+                                    <div className={styles.inputGroupVertical}>
+                                        <label className={styles.inputLabel}>Goal weight</label>
+                                        <div className={styles.inputWithUnit} style={{ width: '100%' }}>
+                                            <input type="number" className={styles.textInput}
+                                                placeholder={formData.weightUnit === 'imperial' ? 'lbs' : 'kg'} min="0" step="0.1"
+                                                value={formData.goalWeightValue}
+                                                onChange={e => setFormData(prev => ({ ...prev, goalWeightValue: e.target.value }))} />
+                                            <span className={styles.unitLabel}>{formData.weightUnit === 'imperial' ? 'lbs' : 'kg'}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div className={styles.questionHeader} style={{ marginBottom: '20px' }}>
-                            <h2>What's your goal weight?</h2>
-                            <p className={styles.subtitle} style={{ fontSize: '0.9rem' }}>Don't worry. This doesn't affect your daily calorie goal and you can always change it later.</p>
-                        </div>
-                        <div className={styles.formGroup}>
-                            <div className={styles.metricRow}>
-                                <div className={styles.inputGroupVertical}>
-                                    <label className={styles.inputLabel}>Goal weight</label>
-                                    <div className={styles.inputWithUnit} style={{ width: '100%' }}>
-                                        <input type="number" className={styles.textInput}
-                                            placeholder={formData.weightUnit === 'imperial' ? 'lbs' : 'kg'} min="0" step="0.1"
-                                            value={formData.goalWeightValue}
-                                            onChange={e => setFormData(prev => ({ ...prev, goalWeightValue: e.target.value }))} />
-                                        <span className={styles.unitLabel}>{formData.weightUnit === 'imperial' ? 'lbs' : 'kg'}</span>
-                                    </div>
+                                <div className={styles.toggleContainer}>
+                                    <a href="#" className={styles.unitToggle} onClick={handleToggleWeight}>
+                                        {formData.weightUnit === 'imperial' ? 'Switch to kilograms' : 'Switch to pounds'}
+                                    </a>
                                 </div>
                             </div>
-                            <div className={styles.toggleContainer}>
-                                <a href="#" className={styles.unitToggle} onClick={handleToggleWeight}>
-                                    {formData.weightUnit === 'imperial' ? 'Switch to kilograms' : 'Switch to pounds'}
-                                </a>
+
+                            <div className={styles.navigationButtons} style={{ marginTop: '10px' }}>
+                                <button type="button" className={styles.secondaryBtn} onClick={handleBack}>Back</button>
+                                <button type="button" className={styles.ctaBtn} onClick={handleNext} disabled={!metricsState.valid}>Next</button>
                             </div>
                         </div>
-
-                        <div className={styles.navigationButtons} style={{ marginTop: '10px' }}>
-                            <button type="button" className={styles.secondaryBtn} onClick={handleBack}>Back</button>
-                            <button type="button" className={styles.ctaBtn} onClick={handleNext} disabled={!metricsState.valid}>Next</button>
-                        </div>
-                    </div>
-                )})}
+                    )
+                })}
 
             </main>
         </>

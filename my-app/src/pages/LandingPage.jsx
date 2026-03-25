@@ -73,6 +73,23 @@ const TrendingUpIcon = ({ size = 20 }) => (
     </svg>
 );
 
+const UsersIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+);
+
+const WatchIcon = ({ size = 20 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="7"></circle>
+        <polyline points="12 9 12 12 13.5 13.5"></polyline>
+        <path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"></path>
+    </svg>
+);
+
 const FacebookIcon = ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3.81l.39-4h-4.2V7a1 1 0 0 1 1-1h3z"></path>
@@ -347,12 +364,16 @@ function LandingPage() {
                                 <h4>Real Progress</h4>
                                 <p>Visualize your continuous improvement over time with detailed, clear analytics.</p>
                             </div>
-                        </div>
-
-                        <div className={styles.trustDivider}>
-                            <div className={styles.trustLine}></div>
-                            <p>Designed for consistency, not complexity.</p>
-                            <div className={styles.trustLine}></div>
+                            <div className={styles.valueBlock}>
+                                <div className={styles.valueIcon}><UsersIcon /></div>
+                                <h4>Active Community</h4>
+                                <p>Surround yourself with a supportive network sharing tips, routines, and motivation.</p>
+                            </div>
+                            <div className={styles.valueBlock}>
+                                <div className={styles.valueIcon}><WatchIcon /></div>
+                                <h4>Device Syncing</h4>
+                                <p>Seamlessly connect with your favorite wearables to import activity data automatically.</p>
+                            </div>
                         </div>
                     </section>
 
