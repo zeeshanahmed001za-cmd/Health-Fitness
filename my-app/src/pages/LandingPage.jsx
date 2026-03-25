@@ -39,6 +39,12 @@ const CalendarIcon = ({ size = 24 }) => (
     </svg>
 );
 
+const CheckIcon = ({ size = 16 }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+);
+
 function LandingPage() {
     const [scrolled, setScrolled] = useState(false);
 
@@ -193,24 +199,36 @@ function LandingPage() {
 
                     {/* Membership Section */}
                     <section className={styles.membershipSection} id="membership">
-                        <span className={styles.memLabel}>Memberships</span>
-                        <p className={styles.memSubText}>Choose your fitness journey</p>
+                        <div className={styles.sectionHeader}>
+                            <h2>Flexible Memberships</h2>
+                            <p>Choose the plan that fits your goals and get immediate access to our ecosystem.</p>
+                        </div>
 
-                        <ul className={styles.membershipFeatureList}>
-                            <li>Access to personalized workout plans tailored to your fitness level.</li>
-                            <li>Comprehensive meal plans designed by certified nutritionists.</li>
-                            <li>Advanced progress tracking tools to monitor your improvements.</li>
-                            <li>Exclusive access to our supportive, private community.</li>
-                        </ul>
+                        <div className={styles.membershipSummaryBox}>
+                            <div className={styles.summaryContent}>
+                                <h3>Unlock your full potential</h3>
+                                <p>Get the guidance you need to succeed with science-backed routines, verified nutrition experts, and a community that supports your journey.</p>
+                            </div>
+                            <div className={styles.summaryStats}>
+                                <div className={styles.statItem}>
+                                    <span className={styles.statValue}>10k+</span>
+                                    <span className={styles.statLabel}>Active Members</span>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <span className={styles.statValue}>95%</span>
+                                    <span className={styles.statLabel}>Success Rate</span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div className={styles.membershipCards}>
                             <div className={styles.membershipCard}>
                                 <h3>Basic</h3>
                                 <p>$9.99<span className={styles.perMonth}>/mo</span></p>
-                                <ul>
-                                    <li>Access to basic workout plans</li>
-                                    <li>Standard meal templates</li>
-                                    <li>Basic progress tracking</li>
+                                <ul className={styles.cardFeatureList}>
+                                    <li><CheckIcon size={16} /> Basic workout plans</li>
+                                    <li><CheckIcon size={16} /> Standard meal templates</li>
+                                    <li><CheckIcon size={16} /> Progress tracking</li>
                                 </ul>
                                 <Link to="/onboarding" className={styles.membershipCtaLink}>
                                     <button className={styles.membershipCtaBtn}>
@@ -222,11 +240,11 @@ function LandingPage() {
                             <div className={styles.membershipCard}>
                                 <h3>Premium</h3>
                                 <p>$19.99<span className={styles.perMonth}>/mo</span></p>
-                                <ul>
-                                    <li>Access to ALL workout plans</li>
-                                    <li>Customized weekly meal plans</li>
-                                    <li>Advanced analytics tracking</li>
-                                    <li>Exclusive community access</li>
+                                <ul className={styles.cardFeatureList}>
+                                    <li><CheckIcon size={16} /> All workout plans</li>
+                                    <li><CheckIcon size={16} /> Custom meal plans</li>
+                                    <li><CheckIcon size={16} /> Advanced analytics</li>
+                                    <li><CheckIcon size={16} /> Community access</li>
                                 </ul>
                                 <Link to="/onboarding" className={styles.membershipCtaLink}>
                                     <button className={styles.membershipCtaBtn}>
@@ -238,11 +256,11 @@ function LandingPage() {
                             <div className={styles.membershipCard}>
                                 <h3>Elite</h3>
                                 <p>$39.99<span className={styles.perMonth}>/mo</span></p>
-                                <ul>
-                                    <li>All Premium features</li>
-                                    <li>1-on-1 coaching sessions</li>
-                                    <li>Monthly live Q&A events</li>
-                                    <li>Priority 24/7 support</li>
+                                <ul className={styles.cardFeatureList}>
+                                    <li><CheckIcon size={16} /> All Premium features</li>
+                                    <li><CheckIcon size={16} /> 1-on-1 coaching</li>
+                                    <li><CheckIcon size={16} /> Monthly live Q&A</li>
+                                    <li><CheckIcon size={16} /> Priority 24/7 support</li>
                                 </ul>
                                 <Link to="/onboarding" className={styles.membershipCtaLink}>
                                     <button className={styles.membershipCtaBtn}>
