@@ -2,6 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import useSidebarShortcut from "../hooks/useSidebarShortcut";
+import SearchBar from "../components/SearchBar";
+
+import { useUser } from "../context/UserContext";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/WorkoutPlansPage.module.css";
@@ -175,11 +179,13 @@ const ExerciseItem = ({ ex, onToggle, onRemove }) => (
 );
 
 function WorkoutPlansPage() {
+  const { sidebarCollapsed, toggleSidebar } = useUser();
   useDocumentTitle("Workout Log");
   // Sidebar state
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useSidebarShortcut(toggleSidebar);
 
   // Data state
   const [exercises, setExercises] = useState(() => {
@@ -246,7 +252,7 @@ function WorkoutPlansPage() {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen((prev) => !prev);
     } else {
-      setSidebarCollapsed((prev) => !prev);
+      toggleSidebar();
     }
   };
 

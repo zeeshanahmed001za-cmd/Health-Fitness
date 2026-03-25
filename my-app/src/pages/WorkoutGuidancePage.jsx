@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import useSidebarShortcut from "../hooks/useSidebarShortcut";
+import SearchBar from "../components/SearchBar";
+
+import { useUser } from "../context/UserContext";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/WorkoutGuidancePage.module.css";
@@ -138,18 +142,20 @@ const BoltIcon = () => (
 );
 
 function WorkoutGuidancePage() {
+  const { sidebarCollapsed, toggleSidebar } = useUser();
   useDocumentTitle("Workout Guidance");
   // Sidebar state
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useSidebarShortcut(toggleSidebar);
 
   // Handlers
   const handleSidebarToggle = () => {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen((prev) => !prev);
     } else {
-      setSidebarCollapsed((prev) => !prev);
+      toggleSidebar();
     }
   };
 

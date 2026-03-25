@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import useSidebarShortcut from "../hooks/useSidebarShortcut";
+import SearchBar from "../components/SearchBar";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/Profilepage.module.css";
@@ -84,11 +86,12 @@ const EditIcon = () => (
 
 function ProfilePage() {
   useDocumentTitle("Profile");
-  const { userData, updateUserData } = useUser();
+  const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
 
   // Sidebar state
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useSidebarShortcut(toggleSidebar);
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
@@ -121,7 +124,7 @@ function ProfilePage() {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen((prev) => !prev);
     } else {
-      setSidebarCollapsed((prev) => !prev);
+      toggleSidebar();
     }
   };
 

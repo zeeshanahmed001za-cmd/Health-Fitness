@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import SearchBar from "../components/SearchBar";
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/NutritionPage.module.css";
 import { useUser } from '../context/UserContext';
+import { useNutrition } from '../context/NutritionContext';
 
 // --- Static Data ---
 const nutrientData = [
@@ -132,11 +134,13 @@ const AVATAR_FALLBACK =
 
 function NutritionPage() {
   useDocumentTitle("Nutrition");
-  const { updateUserData } = useUser();
+  const { updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
+  const { addFoodLog } = useNutrition();
 
   // Sidebar state
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useSidebarShortcut(toggleSidebar);
 
   // Accordion state
   const [expandedNutrients, setExpandedNutrients] = useState([]);
@@ -215,7 +219,7 @@ function NutritionPage() {
     if (window.innerWidth <= 768) {
       setMobileSidebarOpen((prev) => !prev);
     } else {
-      setSidebarCollapsed((prev) => !prev);
+      toggleSidebar();
     }
   };
 
@@ -438,6 +442,64 @@ function NutritionPage() {
                     </button>
                   </div>
                 )}
+              </section>
+
+              {/* Food Logging System */}
+              <section className={`${styles.card} ${styles.interactiveCard} ${styles.loggingSection}`}>
+                <h2>Log a Meal</h2>
+                <p className={styles.calcDesc}>Track your macros for specific meals.</p>
+                <form 
+                  className={styles.calcForm} 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const log = {
+                      name: formData.get('foodName'),
+                      calories: Number(formData.get('kcal')),
+                      protein: Number(formData.get('protein')),
+                      carbs: Number(formData.get('carbs')),
+                      fat: Number(formData.get('fat')),
+                      category: formData.get('mealCategory')
+                    };
+                    addFoodLog(log);
+                    e.target.reset();
+                  }}
+                >
+                  <div className={styles.formGroup}>
+                    <label>Food Name</label>
+                    <input name="foodName" placeholder="e.g. Avocado Toast" required />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Meal Type</label>
+                    <div className={styles.selectWrapper}>
+                      <select name="mealCategory" required>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snacks">Snacks</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className={styles.macroInputsGrid}>
+                    <div className={styles.formGroup}>
+                      <label>Calories</label>
+                      <input type="number" name="kcal" placeholder="kcal" required />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Protein</label>
+                      <input type="number" name="protein" placeholder="g" required />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Carbs</label>
+                      <input type="number" name="carbs" placeholder="g" required />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Fat</label>
+                      <input type="number" name="fat" placeholder="g" required />
+                    </div>
+                  </div>
+                  <button type="submit" className={styles.btnPrimary}>Log Food</button>
+                </form>
               </section>
 
               {/* Hydration Tracker */}

@@ -6,20 +6,24 @@ import SearchBar from "../components/SearchBar";
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/DashboardPage.module.css";
 import { useUser } from "../context/UserContext";
+import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import * as Icons from "../components/Icons";
 
 const AVATAR_FALLBACK =
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
 function DashboardPage() {
-    const { userData } = useUser();
+    const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
+    const { totals, groupedLogs, nutritionGoals } = useNutrition(); // Added this line
     useDocumentTitle("Dashboard");
 
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [notificationsClean, setNotificationsClean] = useState(false);
+
+    useSidebarShortcut(toggleSidebar);
 
     const loggedExercises = useMemo(() => {
         return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];
@@ -39,29 +43,19 @@ function DashboardPage() {
         );
     }, [loggedExercises, completedExercises]);
 
-    const totalCalories = useMemo(() => {
+    const totalBurned = useMemo(() => { // Changed from totalCalories to totalBurned
         return completedExercises.reduce(
             (acc, curr) => acc + (parseInt(curr.calories) || 0),
             0,
         );
     }, [completedExercises]);
 
-    const caloriePercent = Math.min((totalCalories / 2000) * 100, 100);
-
-    const calorieGoal = userData.calorieGoal || 2100;
+    const calorieGoal = nutritionGoals.calories; // Updated to use nutritionGoals
     
     // Calculate consumed calories from the food log data
-    const caloriesConsumed = useMemo(() => {
-        return [
-            { category: "Breakfast", kcal: 420, items: 3 },
-            { category: "Lunch", kcal: 680, items: 2 },
-            { category: "Dinner", kcal: 0, items: 0 },
-            { category: "Snacks", kcal: 350, items: 1 }
-        ].reduce((acc, curr) => acc + curr.kcal, 0);
-    }, []);
-
-    const caloriesRemaining = calorieGoal - caloriesConsumed;
-    const nutritionProgress = Math.min((caloriesConsumed / calorieGoal) * 100, 100);
+    const caloriesConsumed = totals.calories; // Updated to use totals
+    const caloriesRemaining = Math.max(calorieGoal - caloriesConsumed, 0); // Updated calculation
+    const nutritionProgress = Math.min((caloriesConsumed / calorieGoal) * 100, 100); // Updated calculation
 
     const [waterGlasses, setWaterGlasses] = useState(6);
     const waterGoal = 10;
@@ -85,9 +79,27 @@ function DashboardPage() {
         macros: {
             title: "Macros",
             items: [
-                { label: "Protein", consumed: "95g", left: "65g", color: "#2dd4bf", pct: 60 },
-                { label: "Carbohydrates", consumed: "160g", left: "140g", color: "#f59e0b", pct: 53 },
-                { label: "Fats", consumed: "55g", left: "20g", color: "#818cf8", pct: 73 },
+                { 
+                    label: "Protein", 
+                    consumed: `${Math.round(totals.protein)}g`, 
+                    left: `${Math.max(nutritionGoals.protein - totals.protein, 0).toFixed(0)}g left`, 
+                    color: "#2dd4bf", 
+                    pct: Math.min((totals.protein / nutritionGoals.protein) * 100, 100) 
+                },
+                { 
+                    label: "Carbohydrates", 
+                    consumed: `${Math.round(totals.carbs)}g`, 
+                    left: `${Math.max(nutritionGoals.carbs - totals.carbs, 0).toFixed(0)}g left`, 
+                    color: "#f59e0b", 
+                    pct: Math.min((totals.carbs / nutritionGoals.carbs) * 100, 100) 
+                },
+                { 
+                    label: "Fats", 
+                    consumed: `${Math.round(totals.fat)}g`, 
+                    left: `${Math.max(nutritionGoals.fat - totals.fat, 0).toFixed(0)}g left`, 
+                    color: "#818cf8", 
+                    pct: Math.min((totals.fat / nutritionGoals.fat) * 100, 100) 
+                },
             ]
         },
 
@@ -97,24 +109,18 @@ function DashboardPage() {
         foodLog: {
             title: "Today's Food Log",
             meals: [
-                { category: "Breakfast", kcal: 420, items: 3 },
-                { category: "Lunch", kcal: 680, items: 2 },
-                { category: "Dinner", kcal: 0, items: 0 },
-                { category: "Snacks", kcal: 350, items: 1 }
+                { category: "Breakfast", kcal: groupedLogs.breakfast.reduce((s, x) => s + x.calories, 0), items: groupedLogs.breakfast.length },
+                { category: "Lunch", kcal: groupedLogs.lunch.reduce((s, x) => s + x.calories, 0), items: groupedLogs.lunch.length },
+                { category: "Dinner", kcal: groupedLogs.dinner.reduce((s, x) => s + x.calories, 0), items: groupedLogs.dinner.length },
+                { category: "Snacks", kcal: groupedLogs.snacks.reduce((s, x) => s + x.calories, 0), items: groupedLogs.snacks.length }
             ]
-        },
-        summary: {
-            title: "Burned",
-            value: `${totalCalories.toLocaleString()}`,
-            unit: "kcal",
-            progress: `${caloriePercent}%`,
         },
         summary: {
             title: "Summary",
             goal: calorieGoal,
             consumed: caloriesConsumed,
-            burned: totalCalories,
-            net: calorieGoal - caloriesConsumed + totalCalories
+            burned: totalBurned,
+            net: calorieGoal - caloriesConsumed + totalBurned
         },
 
     };
@@ -125,7 +131,7 @@ function DashboardPage() {
         if (window.innerWidth <= 768) {
             setMobileSidebarOpen((prev) => !prev);
         } else {
-            setSidebarCollapsed((prev) => !prev);
+            toggleSidebar();
         }
     };
 

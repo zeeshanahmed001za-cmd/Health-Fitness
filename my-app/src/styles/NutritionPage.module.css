@@ -189,6 +189,9 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .formGroup input,
@@ -201,6 +204,8 @@
   font-family: var(--font-main);
   transition: border-color var(--transition-fast);
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .formGroup input:focus,
@@ -398,6 +403,28 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+.loggingSection {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px; /* Ensure a baseline for the form */
+}
+.macroInputsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.macroInputsGrid .formGroup {
+  min-width: 0; /* Critical for grid item containing input */
+}
+
+.loggingSection .formGroup input {
+  font-size: 0.9rem;
+  padding: 0.6rem;
 }
 
 /* Responsive */

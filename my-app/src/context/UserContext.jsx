@@ -41,10 +41,26 @@ export const UserProvider = ({ children }) => {
     });
   }, []);
 
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const pref = localStorage.getItem("sidebar_collapsed");
+    // If no preference found (new user), default to true (collapsed)
+    return pref === null ? true : JSON.parse(pref);
+  });
+
+  // Persist sidebar preference
+  useEffect(() => {
+    localStorage.setItem("sidebar_collapsed", JSON.stringify(sidebarCollapsed));
+  }, [sidebarCollapsed]);
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((prev) => !prev);
+  }, []);
+
   const logout = useCallback(() => {
     setUserData({});
     sessionStorage.removeItem("onboardingData");
     localStorage.removeItem("userSession");
+    localStorage.removeItem("sidebar_collapsed"); // Reset on logout
   }, []);
 
   // Memoize the value to prevent unnecessary re-renders of consumers
@@ -53,8 +69,10 @@ export const UserProvider = ({ children }) => {
       userData,
       updateUserData,
       logout,
+      sidebarCollapsed,
+      toggleSidebar,
     }),
-    [userData, updateUserData, logout],
+    [userData, updateUserData, logout, sidebarCollapsed, toggleSidebar],
   );
 
   return (
