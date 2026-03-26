@@ -61,17 +61,32 @@ export const NutritionProvider = ({ children }) => {
   }, []);
 
   const addWaterLog = useCallback(() => {
-    const newEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      amount: 250, // per glass
-      activityType: 'water'
-    };
-    setWaterLogs((prev) => [...prev, newEntry]);
+    setWaterLogs((prev) => {
+      const today = new Date().toISOString().split('T')[0];
+      const todaysWater = prev.filter(log => log.timestamp.startsWith(today));
+      if (todaysWater.length >= 8) return prev; // max 8 glasses
+
+      const newEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        amount: 250, // per glass
+        activityType: 'water'
+      };
+      return [...prev, newEntry];
+    });
   }, []);
 
   const removeWaterLog = useCallback(() => {
-    setWaterLogs((prev) => prev.slice(0, -1)); // Remove last entry
+    setWaterLogs((prev) => {
+      const today = new Date().toISOString().split('T')[0];
+      // Find the last index of today's log to remove it specifically
+      for (let i = prev.length - 1; i >= 0; i--) {
+        if (prev[i].timestamp.startsWith(today)) {
+          return [...prev.slice(0, i), ...prev.slice(i + 1)];
+        }
+      }
+      return prev;
+    });
   }, []);
 
   const updateGoal = useCallback((newGoals) => {

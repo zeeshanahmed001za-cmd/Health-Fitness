@@ -322,9 +322,15 @@ function NutritionPage() {
                       <button
                         key={i}
                         className={`${pageStyles.glass} ${i < waterTotal ? pageStyles.active : ""}`}
-                        onClick={() =>
-                          i === waterTotal - 1 ? removeWaterLog() : addWaterLog()
-                        }
+                        onClick={() => {
+                          if (i < waterTotal) {
+                            removeWaterLog();
+                          } else {
+                            if (waterTotal < TOTAL_GLASSES_GOAL) {
+                              addWaterLog();
+                            }
+                          }
+                        }}
                       />
                     ))}
                   </div>
