@@ -124,14 +124,14 @@ const FoodItem = ({ food, onRemove }) => (
 
 function NutritionPage() {
   const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
-  const { 
-    foodLogs, 
-    addFoodLog, 
-    removeFoodLog, 
-    waterTotal, 
-    addWaterLog, 
+  const {
+    foodLogs,
+    addFoodLog,
+    removeFoodLog,
+    waterTotal,
+    addWaterLog,
     removeWaterLog,
-    totals 
+    totals
   } = useNutrition();
 
   useDocumentTitle("Nutrition Tracking");
@@ -404,8 +404,8 @@ function NutritionPage() {
                   <div className={pageStyles.resultBox}>
                     <p className={pageStyles.resultTitle}>Your Suggested Intake</p>
                     <p className={pageStyles.resultValue}>{calcResult} kcal</p>
-                    <button 
-                      className={pageStyles.guidanceBtn} 
+                    <button
+                      className={pageStyles.guidanceBtn}
                       style={{ marginTop: '12px', border: 'none' }}
                       onClick={() => updateUserData({ calorieGoal: calcResult })}
                     >
