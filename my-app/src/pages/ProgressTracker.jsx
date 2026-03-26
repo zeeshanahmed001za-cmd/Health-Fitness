@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
-import SearchBar from "../components/SearchBar";
 import { useUser } from "../context/UserContext";
 
 import dashStyles from "../styles/Dashboard.module.css";
@@ -204,7 +203,6 @@ function ProgressTracker() {
             <h1 className={dashStyles.pageTitle}>Progress Tracker</h1>
           </div>
           <div className={dashStyles.navRight}>
-            <SearchBar />
             <button className={dashStyles.iconBtn} aria-label="Notifications">
               <BellIcon />
               <span className={dashStyles.badge}>2</span>

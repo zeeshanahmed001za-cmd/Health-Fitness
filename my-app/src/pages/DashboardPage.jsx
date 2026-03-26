@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import SearchBar from "../components/SearchBar";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/DashboardPage.module.css";
@@ -17,7 +16,7 @@ const AVATAR_FALLBACK =
 function DashboardPage() {
     const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
-    const { totals, groupedLogs, nutritionGoals } = useNutrition(); // Added this line
+    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs } = useNutrition();
     useDocumentTitle("Dashboard");
 
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -64,17 +63,17 @@ function DashboardPage() {
     const nutritionMetrics = {
         hero: {
             title: "Calories Today",
-            primary: `${caloriesConsumed.toLocaleString()}`,
-            secondary: `/ ${calorieGoal.toLocaleString()} kcal`,
+            primary: `${(caloriesConsumed || 0).toLocaleString()}`,
+            secondary: `/ ${(calorieGoal || 2000).toLocaleString()} kcal`,
             footer: (
                 <>
                     <span style={{ color: "var(--accent-primary)", fontWeight: "600" }}>
-                        {caloriesRemaining.toLocaleString()} kcal
+                        {(caloriesRemaining || 0).toLocaleString()} kcal
                     </span>{" "}
                     remaining
                 </>
             ),
-            progress: `${nutritionProgress}%`,
+            progress: `${nutritionProgress || 0}%`,
         },
         macros: {
             title: "Macros",
@@ -126,6 +125,60 @@ function DashboardPage() {
     };
 
 
+    const recentActivities = useMemo(() => {
+        const activities = [];
+
+        // Add Food Logs
+        (foodLogs || []).forEach(log => {
+            if (log && log.timestamp) {
+                activities.push({
+                    id: log.id,
+                    title: log.name,
+                    subtitle: log.category,
+                    timestamp: log.timestamp,
+                    type: 'food',
+                    value: `${log.calories || 0} kcal`,
+                    icon: <Icons.MacroIcon />,
+                    colorClass: pageStyles['bg-orange']
+                });
+            }
+        });
+
+        // Add Water Logs
+        (waterLogs || []).forEach(log => {
+            if (log && log.timestamp) {
+                activities.push({
+                    id: log.id,
+                    title: 'Hydration',
+                    subtitle: 'Water intake',
+                    timestamp: log.timestamp,
+                    type: 'water',
+                    value: '250 ml',
+                    icon: <Icons.WaterIcon />,
+                    colorClass: pageStyles['bg-blue']
+                });
+            }
+        });
+
+        // Add Workout Logs
+        (loggedExercises || []).forEach(ex => {
+            if (ex && ex.completed && ex.completedAt) {
+                activities.push({
+                    id: ex.id,
+                    title: ex.name,
+                    subtitle: ex.muscleGroup,
+                    timestamp: ex.completedAt,
+                    type: 'workout',
+                    value: `${ex.calories || 0} kcal`,
+                    icon: <Icons.RunIcon />,
+                    colorClass: pageStyles['bg-purple']
+                });
+            }
+        });
+
+        return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
+    }, [foodLogs, waterLogs, loggedExercises]);
+
     // Handlers
     const handleSidebarToggle = () => {
         if (window.innerWidth <= 768) {
@@ -161,7 +214,6 @@ function DashboardPage() {
                         <h1 className={dashStyles.pageTitle}>Overview</h1>
                     </div>
                     <div className={dashStyles.navRight}>
-                        <SearchBar />
                         <button
                             className={dashStyles.iconBtn}
                             onClick={handleNotificationClick}
@@ -203,7 +255,7 @@ function DashboardPage() {
                                 className={pageStyles.primaryBtn}
                                 onClick={() => navigate("/workouts")}
                             >
-                                Log Workout
+                                Log Activity
                             </button>
                         </div>
                     </section>
@@ -355,89 +407,51 @@ function DashboardPage() {
                     <section className={pageStyles.secondaryGrid}>
 
 
-                        <div
-                            className={`${pageStyles.workoutsCard} ${pageStyles.panelCard}`}
-                        >
+                        <div className={pageStyles.panelCard}>
                             <div className={pageStyles.panelHeader}>
-                                <h3>Recent Workouts</h3>
-                                <a
-                                    href="#"
-                                    className={pageStyles.viewAllLink}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        navigate("/workouts");
-                                    }}
-                                >
-                                    View All
-                                </a>
+                                <h3>Recent Logs</h3>
+                                <div className={pageStyles.panelHeaderRight}>
+                                    <button 
+                                        className={pageStyles.viewAllLink}
+                                        onClick={() => navigate("/nutrition")}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                                    >
+                                        Nutrition
+                                    </button>
+                                    <span style={{ opacity: 0.3 }}>•</span>
+                                    <button 
+                                        className={pageStyles.viewAllLink}
+                                        onClick={() => navigate("/workouts")}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                                    >
+                                        Workouts
+                                    </button>
+                                </div>
                             </div>
                             <div className={pageStyles.workoutList}>
-                                {loggedExercises.length > 0 && (
-                                    <div
-                                        className={`${pageStyles.workoutItem} ${pageStyles.pulseOutline}`}
-                                    >
-                                        <div
-                                            className={`${pageStyles.workoutIcon} ${pageStyles.bgBlue}`}
-                                        >
-                                            <Icons.RunIcon />
+                                {recentActivities.length > 0 ? (
+                                    recentActivities.map((activity, idx) => (
+                                        <div key={activity.id} className={pageStyles.workoutItem}>
+                                            <div className={`${pageStyles.workoutIcon} ${activity.colorClass}`}>
+                                                {activity.icon}
+                                            </div>
+                                            <div className={pageStyles.workoutDetails}>
+                                                <h4>{activity.title}</h4>
+                                                <p>{activity.subtitle}</p>
+                                            </div>
+                                            <div className={pageStyles.workoutStats}>
+                                                <span>{activity.value}</span>
+                                                <span className={pageStyles.duration}>
+                                                    {activity.timestamp ? new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className={pageStyles.workoutDetails}>
-                                            <h4>Active Routine</h4>
-                                            <p>Latest Session</p>
-                                        </div>
-                                        <div className={pageStyles.workoutStats}>
-                                            <span>{loggedExercises.length} Exercises</span>
-                                            <span className={pageStyles.duration}>
-                                                {progress}% Done
-                                            </span>
-                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={pageStyles.emptyLogState} style={{ padding: '2rem 0' }}>
+                                        <p>No recent activity items found.</p>
                                     </div>
                                 )}
-                                <div className={pageStyles.workoutItem}>
-                                    <div
-                                        className={`${pageStyles.workoutIcon} ${pageStyles.bgBlue}`}
-                                    >
-                                        <Icons.RunIcon />
-                                    </div>
-                                    <div className={pageStyles.workoutDetails}>
-                                        <h4>Morning Run</h4>
-                                        <p>Today, 6:00 AM</p>
-                                    </div>
-                                    <div className={pageStyles.workoutStats}>
-                                        <span>5.2 km</span>
-                                        <span className={pageStyles.duration}>45 min</span>
-                                    </div>
-                                </div>
-                                <div className={pageStyles.workoutItem}>
-                                    <div
-                                        className={`${pageStyles.workoutIcon} ${pageStyles.bgOrange}`}
-                                    >
-                                        <Icons.StrengthIcon />
-                                    </div>
-                                    <div className={pageStyles.workoutDetails}>
-                                        <h4>Upper Body Strength</h4>
-                                        <p>Yesterday, 5:30 PM</p>
-                                    </div>
-                                    <div className={pageStyles.workoutStats}>
-                                        <span>8 exercises</span>
-                                        <span className={pageStyles.duration}>1h 15m</span>
-                                    </div>
-                                </div>
-                                <div className={pageStyles.workoutItem}>
-                                    <div
-                                        className={`${pageStyles.workoutIcon} ${pageStyles.bgPurple}`}
-                                    >
-                                        <Icons.YogaIcon />
-                                    </div>
-                                    <div className={pageStyles.workoutDetails}>
-                                        <h4>Yoga Flow</h4>
-                                        <p>Tue, 7:00 AM</p>
-                                    </div>
-                                    <div className={pageStyles.workoutStats}>
-                                        <span>Flexibility</span>
-                                        <span className={pageStyles.duration}>30 min</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </section>

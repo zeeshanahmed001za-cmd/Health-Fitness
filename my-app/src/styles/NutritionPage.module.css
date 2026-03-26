@@ -58,11 +58,9 @@
 }
 
 .metaCard {
-  background: linear-gradient(
-    135deg,
-    rgba(30, 41, 59, 0.7),
-    rgba(15, 23, 42, 0.8)
-  );
+  background: linear-gradient(135deg,
+      rgba(30, 41, 59, 0.7),
+      rgba(15, 23, 42, 0.8));
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: var(--radius-lg);
@@ -116,11 +114,6 @@
   box-shadow: 0 4px 15px var(--accent-glow);
 }
 
-.primaryBtn:hover {
-  transform: translateY(-2px);
-  background-color: var(--accent-hover);
-  box-shadow: 0 6px 20px var(--accent-glow);
-}
 
 /* Panel Card Base */
 .panelCard {
@@ -133,11 +126,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.panelCard:hover {
-  border-color: rgba(16, 185, 129, 0.2);
-  transform: translateY(-4px);
 }
 
 /* Logging System Layout */
@@ -156,12 +144,16 @@
 .hydrationSection {
   height: 100%;
 }
+
 .hydrationTracker {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Change from center to flex-start */
-  gap: 32px; /* Increase gap */
-  text-align: left; /* Change from center to left */
+  align-items: flex-start;
+  /* Change from center to flex-start */
+  gap: 32px;
+  /* Increase gap */
+  text-align: left;
+  /* Change from center to left */
   height: 100%;
   flex: 1;
 }
@@ -171,7 +163,8 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  justify-content: flex-start; /* Change from center to flex-start */
+  justify-content: flex-start;
+  /* Change from center to flex-start */
   margin-bottom: 8px;
 }
 
@@ -186,8 +179,10 @@
 
 .glassGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); /* more responsive */
-  gap: 16px; /* more spacing */
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  /* more responsive */
+  gap: 16px;
+  /* more spacing */
   width: 100%;
 }
 

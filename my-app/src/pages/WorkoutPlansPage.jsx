@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
-import SearchBar from "../components/SearchBar";
 
 import { useUser } from "../context/UserContext";
 
@@ -252,7 +251,12 @@ function WorkoutPlansPage() {
     setExercises((prev) =>
       prev.map((ex) => {
         if (ex.id === id) {
-          return { ...ex, completed: !ex.completed };
+          const isCompleting = !ex.completed;
+          return { 
+            ...ex, 
+            completed: isCompleting,
+            completedAt: isCompleting ? new Date().toISOString() : null
+          };
         }
         return ex;
       }),

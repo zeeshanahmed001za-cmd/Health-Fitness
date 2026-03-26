@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import SearchBar from "../components/SearchBar";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -125,7 +124,14 @@ const FoodItem = ({ food, onRemove }) => (
 
 function NutritionPage() {
   const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
-  const { foodLogs, addFoodLog, removeFoodLog } = useNutrition();
+  const { 
+    foodLogs, 
+    addFoodLog, 
+    removeFoodLog, 
+    waterTotal, 
+    addWaterLog, 
+    removeWaterLog 
+  } = useNutrition();
 
   useDocumentTitle("Nutrition Tracking");
   useSidebarShortcut(toggleSidebar);
@@ -133,7 +139,6 @@ function NutritionPage() {
   // States
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [hydration, setHydration] = useState(3);
 
   // Calorie Calculator state
   const [calcUnit, setCalcUnit] = useState("metric");
@@ -328,16 +333,16 @@ function NutritionPage() {
                     {Array.from({ length: TOTAL_GLASSES_GOAL }).map((_, i) => (
                       <button
                         key={i}
-                        className={`${pageStyles.glass} ${i < hydration ? pageStyles.active : ""}`}
+                        className={`${pageStyles.glass} ${i < waterTotal ? pageStyles.active : ""}`}
                         onClick={() =>
-                          setHydration(i === hydration - 1 ? i : i + 1)
+                          i === waterTotal - 1 ? removeWaterLog() : addWaterLog()
                         }
                       />
                     ))}
                   </div>
                   <p className={pageStyles.hydrationStats}>
-                    {hydration} / {TOTAL_GLASSES_GOAL} Glasses (
-                    {hydration * 250}ml)
+                    {waterTotal} / {TOTAL_GLASSES_GOAL} Glasses (
+                    {waterTotal * 250}ml)
                   </p>
                 </div>
               </div>

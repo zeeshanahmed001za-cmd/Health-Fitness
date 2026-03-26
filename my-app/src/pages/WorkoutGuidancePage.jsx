@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
-import SearchBar from "../components/SearchBar";
 
 import { useUser } from "../context/UserContext";
 

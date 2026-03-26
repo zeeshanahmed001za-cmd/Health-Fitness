@@ -3,13 +3,18 @@ import { createContext, useContext, useState, useEffect, useMemo, useCallback } 
 const NutritionContext = createContext();
 
 /**
- * NutritionProvider: Manages the single source of truth for food logs and goals.
+ * NutritionProvider: Manages the single source of truth for food logs, water, and goals.
  * Business logic for totals and persistence is handled here.
  */
 export const NutritionProvider = ({ children }) => {
   // 1. Initial State from localStorage
   const [foodLogs, setFoodLogs] = useState(() => {
     const saved = localStorage.getItem('journal_food_logs');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [waterLogs, setWaterLogs] = useState(() => {
+    const saved = localStorage.getItem('journal_water_logs');
     return saved ? JSON.parse(saved) : [];
   });
 
@@ -33,6 +38,10 @@ export const NutritionProvider = ({ children }) => {
   }, [foodLogs]);
 
   useEffect(() => {
+    localStorage.setItem('journal_water_logs', JSON.stringify(waterLogs));
+  }, [waterLogs]);
+
+  useEffect(() => {
     localStorage.setItem('journal_nutrition_goals', JSON.stringify(nutritionGoals));
   }, [nutritionGoals]);
 
@@ -42,6 +51,7 @@ export const NutritionProvider = ({ children }) => {
       ...foodItem,
       id: Date.now().toString(),
       timestamp: new Date().toISOString(),
+      activityType: 'food'
     };
     setFoodLogs((prev) => [...prev, newEntry]);
   }, []);
@@ -50,12 +60,25 @@ export const NutritionProvider = ({ children }) => {
     setFoodLogs((prev) => prev.filter(item => item.id !== id));
   }, []);
 
+  const addWaterLog = useCallback(() => {
+    const newEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date().toISOString(),
+      amount: 250, // per glass
+      activityType: 'water'
+    };
+    setWaterLogs((prev) => [...prev, newEntry]);
+  }, []);
+
+  const removeWaterLog = useCallback(() => {
+    setWaterLogs((prev) => prev.slice(0, -1)); // Remove last entry
+  }, []);
+
   const updateGoal = useCallback((newGoals) => {
     setNutritionGoals((prev) => ({ ...prev, ...newGoals }));
   }, []);
 
   // 4. Derived State (Calculations)
-  // We use useMemo to avoid re-calculating on every render unless logs change
   const totals = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
     const todaysLogs = foodLogs.filter(log => log.timestamp.startsWith(today));
@@ -67,6 +90,12 @@ export const NutritionProvider = ({ children }) => {
       fat: acc.fat + (Number(curr.fat) || 0),
     }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
   }, [foodLogs]);
+
+  const waterTotal = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const todaysWater = waterLogs.filter(log => log.timestamp.startsWith(today));
+    return todaysWater.length; // counts of glasses
+  }, [waterLogs]);
 
   // Group logs by category for UI
   const groupedLogs = useMemo(() => {
@@ -83,13 +112,17 @@ export const NutritionProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     foodLogs,
+    waterLogs,
     nutritionGoals,
     totals,
+    waterTotal,
     groupedLogs,
     addFoodLog,
     removeFoodLog,
+    addWaterLog,
+    removeWaterLog,
     updateGoal
-  }), [foodLogs, nutritionGoals, totals, groupedLogs, addFoodLog, removeFoodLog, updateGoal]);
+  }), [foodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal]);
 
   return (
     <NutritionContext.Provider value={value}>
