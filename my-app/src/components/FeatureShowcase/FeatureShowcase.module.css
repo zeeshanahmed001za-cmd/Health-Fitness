@@ -1,0 +1,146 @@
+.showcaseSection {
+  padding: 100px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 80px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sectionHeader h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.sectionHeader p {
+  font-size: 1.125rem;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+.featureBlock {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  width: 100%;
+}
+
+.featureImageWrapper {
+  flex: 1;
+  position: relative;
+}
+
+.imageContainer {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px;
+}
+
+.featureBlock:hover .imageContainer {
+  transform: translateY(-10px) scale(1.02);
+}
+
+.screenshot {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.featureContent {
+  flex: 1;
+  max-width: 500px;
+}
+
+.featureTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fcfcfc;
+  margin-bottom: 20px;
+}
+
+.featureDescription {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.benefitsList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.checkIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #e6fffa;
+  color: #38b2ac;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Responsiveness */
+@media (max-width: 968px) {
+  .featureBlock {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 40px;
+    padding: 60px 0;
+  }
+
+  .featureContent {
+    max-width: 100%;
+  }
+
+  .benefitsList {
+    align-items: center;
+  }
+
+  .sectionHeader h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .showcaseSection {
+    padding: 60px 0;
+    gap: 40px;
+  }
+
+  .featureTitle {
+    font-size: 1.5rem;
+  }
+}

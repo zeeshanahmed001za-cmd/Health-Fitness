@@ -4,6 +4,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import styles from "../styles/LandingPage.module.css";
 
 import siteLogo from "../assets/images/site.png";
+import FeatureShowcase from "../components/FeatureShowcase/FeatureShowcase";
 
 const ArrowIcon = ({ size = 24 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -258,7 +259,7 @@ function LandingPage() {
     }, observerOptions);
 
     const animatedElements = document.querySelectorAll(
-      `.${styles.programPathCard}, .${styles.membershipCard}, .${styles.valueBlock}, .${styles.callToActionSection}`,
+      `.${styles.programPathCard}, .${styles.valueBlock}, .${styles.callToActionSection}`,
     );
     animatedElements.forEach((el) => {
       el.style.opacity = "0";
@@ -303,10 +304,10 @@ function LandingPage() {
             </li>
             <li>
               <a
-                href="#membership"
-                onClick={(e) => scrollToSection(e, "membership")}
+                href="#features"
+                onClick={(e) => scrollToSection(e, "features")}
               >
-                Membership
+                Features
               </a>
             </li>
             <li>
@@ -349,11 +350,11 @@ function LandingPage() {
                 Start Tracking Free
               </Link>
               <a
-                href="#membership"
-                onClick={(e) => scrollToSection(e, "membership")}
+                href="#features"
+                onClick={(e) => scrollToSection(e, "features")}
                 className={styles.secondaryCta}
               >
-                View Memberships <ArrowIcon size={20} />
+                Learn Features <ArrowIcon size={20} />
               </a>
             </div>
           </div>
@@ -429,114 +430,8 @@ function LandingPage() {
             </div>
           </section>
 
-          {/* Membership Section */}
-          <section className={styles.membershipSection} id="membership">
-            <div className={styles.sectionHeader}>
-              <h2>Flexible Memberships</h2>
-              <p>
-                Choose the plan that fits your goals and get immediate access to
-                our ecosystem.
-              </p>
-            </div>
-
-            <div className={styles.membershipSummaryBox}>
-              <div className={styles.summaryContent}>
-                <h3>Unlock your full potential</h3>
-                <p>
-                  Get the guidance you need to succeed with science-backed
-                  routines, verified nutrition experts, and a community that
-                  supports your journey.
-                </p>
-              </div>
-              <div className={styles.summaryStats}>
-                <div className={styles.statItem}>
-                  <span className={styles.statValue}>10k+</span>
-                  <span className={styles.statLabel}>Active Members</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statValue}>95%</span>
-                  <span className={styles.statLabel}>Success Rate</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.membershipCards}>
-              <div className={styles.membershipCard}>
-                <h3>Basic</h3>
-                <p>
-                  $9.99<span className={styles.perMonth}>/mo</span>
-                </p>
-                <ul className={styles.cardFeatureList}>
-                  <li>
-                    <CheckIcon size={16} /> Basic workout plans
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Standard meal templates
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Progress tracking
-                  </li>
-                </ul>
-                <Link to="/onboarding" className={styles.membershipCtaLink}>
-                  <button className={styles.membershipCtaBtn}>
-                    Get Basic <ArrowIcon size={20} />
-                  </button>
-                </Link>
-              </div>
-
-              <div className={styles.membershipCard}>
-                <h3>Premium</h3>
-                <p>
-                  $19.99<span className={styles.perMonth}>/mo</span>
-                </p>
-                <ul className={styles.cardFeatureList}>
-                  <li>
-                    <CheckIcon size={16} /> All workout plans
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Custom meal plans
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Advanced analytics
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Community access
-                  </li>
-                </ul>
-                <Link to="/onboarding" className={styles.membershipCtaLink}>
-                  <button className={styles.membershipCtaBtn}>
-                    Go Premium <ArrowIcon size={20} />
-                  </button>
-                </Link>
-              </div>
-
-              <div className={styles.membershipCard}>
-                <h3>Elite</h3>
-                <p>
-                  $39.99<span className={styles.perMonth}>/mo</span>
-                </p>
-                <ul className={styles.cardFeatureList}>
-                  <li>
-                    <CheckIcon size={16} /> All Premium features
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> 1-on-1 coaching
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Monthly live Q&A
-                  </li>
-                  <li>
-                    <CheckIcon size={16} /> Priority 24/7 support
-                  </li>
-                </ul>
-                <Link to="/onboarding" className={styles.membershipCtaLink}>
-                  <button className={styles.membershipCtaBtn}>
-                    Get Elite <ArrowIcon size={20} />
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </section>
+          {/* Feature Showcase Section */}
+          <FeatureShowcase />
 
           {/* Why Choose Us Section */}
           <section className={styles.whySection} id="about">
@@ -670,10 +565,10 @@ function LandingPage() {
                   </li>
                   <li>
                     <a
-                      href="#membership"
-                      onClick={(e) => scrollToSection(e, "membership")}
+                      href="#features"
+                      onClick={(e) => scrollToSection(e, "features")}
                     >
-                      Memberships
+                      Features
                     </a>
                   </li>
                   <li>
