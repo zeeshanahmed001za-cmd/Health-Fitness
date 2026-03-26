@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import styles from "./FeatureShowcase.module.css";
 
 // Import screenshots
@@ -21,7 +22,6 @@ const featureData = [
     ],
     image: dashboardImg,
     reverse: false,
-    hasAlternateBg: false,
   },
   {
     id: 2,
@@ -35,7 +35,6 @@ const featureData = [
     ],
     image: nutritionImg,
     reverse: true,
-    hasAlternateBg: false,
   },
   {
     id: 3,
@@ -49,7 +48,6 @@ const featureData = [
     ],
     image: workoutsImg,
     reverse: false,
-    hasAlternateBg: false,
   },
   {
     id: 4,
@@ -63,15 +61,15 @@ const featureData = [
     ],
     image: progressImg,
     reverse: true,
-    hasAlternateBg: false,
   },
 ];
 
-const FeatureBlock = ({ feature }) => {
-  const { title, description, benefits, image, reverse, hasAlternateBg } = feature;
+const FeatureBlock = ({ feature, index }) => {
+  const { title, description, benefits, image, reverse } = feature;
+  const isAlternate = index % 2 !== 0;
 
   return (
-    <section className={`${styles.showcaseSection} ${hasAlternateBg ? styles.alternateBg : ""}`}>
+    <section className={`${styles.showcaseSection} ${isAlternate ? styles.alternateBg : ""}`}>
       <div className={styles.container}>
         <motion.div
           className={styles.featureBlock}
@@ -91,13 +89,24 @@ const FeatureBlock = ({ feature }) => {
             <h3 className={styles.featureTitle}>{title}</h3>
             <p className={styles.featureDescription}>{description}</p>
             <ul className={styles.benefitsList}>
-              {benefits.map((benefit, index) => (
-                <li key={index} className={styles.benefitItem}>
+              {benefits.map((benefit, bIndex) => (
+                <motion.li
+                  key={bIndex}
+                  className={styles.benefitItem}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.2 + bIndex * 0.1,
+                    ease: "easeOut",
+                  }}
+                >
                   <div className={styles.checkIconWrapper}>
-                    <Check size={14} strokeWidth={3} />
+                    <Check size={16} strokeWidth={3} />
                   </div>
                   <span>{benefit}</span>
-                </li>
+                </motion.li>
               ))}
             </ul>
           </div>
@@ -110,7 +119,8 @@ const FeatureBlock = ({ feature }) => {
 const FeatureShowcase = () => {
   return (
     <div id="features">
-      <section className={styles.showcaseSection} style={{ paddingBottom: 0 }}>
+      {/* Section Header */}
+      <section className={styles.showcaseSection} style={{ borderBottom: "none" }}>
         <div className={styles.container}>
           <motion.div
             className={styles.sectionHeader}
@@ -119,14 +129,17 @@ const FeatureShowcase = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2>Features</h2>
+            <h2>App Features</h2>
+            <p>Everything you need to track your health and reach your goals in one place.</p>
           </motion.div>
         </div>
       </section>
 
-      {featureData.map((feature) => (
-        <FeatureBlock key={feature.id} feature={feature} />
+      {/* Feature Blocks */}
+      {featureData.map((feature, index) => (
+        <FeatureBlock key={feature.id} feature={feature} index={index} />
       ))}
+
     </div>
   );
 };

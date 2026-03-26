@@ -366,8 +366,8 @@ function LandingPage() {
             <div className={styles.sectionHeader}>
               <h2>Core Capabilities</h2>
               <p>
-                Everything you need to track, plan, and optimize your fitness
-                journey.
+                Transform your ambition into tangible results with science-backed
+                protocols designed for your unique evolution.
               </p>
             </div>
             <div className={styles.programsContainer}>

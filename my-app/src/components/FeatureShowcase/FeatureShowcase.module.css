@@ -1,68 +1,78 @@
 .showcaseSection {
-  padding: 100px 0;
+  padding: 80px 0;
   display: flex;
   flex-direction: column;
-  gap: 80px;
   overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.alternateBg {
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 .sectionHeader {
   text-align: center;
-  margin-bottom: 80px;
+  margin-bottom: 100px;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .sectionHeader h2 {
-  font-size: 2.5rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 20px;
-  line-height: 1.2;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .sectionHeader p {
-  font-size: 1.125rem;
-  color: #ffffff;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
   line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .featureBlock {
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 80px;
   width: 100%;
 }
 
 .featureImageWrapper {
-  flex: 1;
+  flex: 1.2;
   position: relative;
 }
 
 .imageContainer {
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 8px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  transition: transform var(--transition-smooth), border-color var(--transition-fast);
+  background: var(--bg-secondary);
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .featureBlock:hover .imageContainer {
-  transform: translateY(-10px) scale(1.02);
+  transform: translateY(-12px) scale(1.02);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .screenshot {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 .featureContent {
@@ -71,17 +81,18 @@
 }
 
 .featureTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #fcfcfc;
-  margin-bottom: 20px;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
 }
 
 .featureDescription {
-  font-size: 1.1rem;
-  color: #4a5568;
-  margin-bottom: 30px;
-  line-height: 1.6;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  line-height: 1.7;
 }
 
 .benefitsList {
@@ -89,14 +100,14 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 .benefitItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #2d3748;
+  gap: 16px;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -104,12 +115,53 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  background-color: #e6fffa;
-  color: #38b2ac;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--accent-primary);
   border-radius: 50%;
   flex-shrink: 0;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* End of Section CTA */
+.sectionCta {
+  text-align: center;
+  padding: 100px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sectionCta h3 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.sectionCta p {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+  color: white;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1.125rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.primaryButton:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
 }
 
 /* Responsiveness */
@@ -117,8 +169,7 @@
   .featureBlock {
     flex-direction: column !important;
     text-align: center;
-    gap: 40px;
-    padding: 60px 0;
+    gap: 48px;
   }
 
   .featureContent {
@@ -128,19 +179,18 @@
   .benefitsList {
     align-items: center;
   }
-
-  .sectionHeader h2 {
-    font-size: 2rem;
-  }
 }
 
 @media (max-width: 640px) {
   .showcaseSection {
-    padding: 60px 0;
-    gap: 40px;
+    padding: 80px 0;
   }
 
-  .featureTitle {
-    font-size: 1.5rem;
+  .sectionHeader h2 {
+    font-size: 2.25rem;
+  }
+
+  .sectionCta h3 {
+    font-size: 2rem;
   }
 }
