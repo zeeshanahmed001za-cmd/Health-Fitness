@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import useDocumentTitle from "../hooks/useDocumentTitle";
 import styles from "../styles/LandingPage.module.css";
 
 import siteLogo from "../assets/images/site.png";

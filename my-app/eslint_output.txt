@@ -1,0 +1,22 @@
+﻿
+C:\Users\zeesh\OneDrive\Pictures\Documents\VSCodeProjects\projects\health-fitness\my-app\src\components\FeatureShowcase\FeatureShowcase.jsx
+  1:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\zeesh\OneDrive\Pictures\Documents\VSCodeProjects\projects\health-fitness\my-app\src\context\NutritionContext.jsx
+  134:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\zeesh\OneDrive\Pictures\Documents\VSCodeProjects\projects\health-fitness\my-app\src\context\UserContext.jsx
+  83:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\zeesh\OneDrive\Pictures\Documents\VSCodeProjects\projects\health-fitness\my-app\src\pages\DashboardPage.jsx
+  424:69  error  'idx' is defined but never used  no-unused-vars
+
+C:\Users\zeesh\OneDrive\Pictures\Documents\VSCodeProjects\projects\health-fitness\my-app\src\pages\LandingPage.jsx
+  3:8  error  'useDocumentTitle' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Users\zeesh\OneDrive\Pictures\Documents\VSCodeProjects\projects\health-fitness\my-app\src\pages\NutritionPage.jsx
+    1:20  error  'useMemo' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  274:18  error  'dailySummary' is not defined                                                   no-undef
+
+Γ£û 7 problems (7 errors, 0 warnings)
+

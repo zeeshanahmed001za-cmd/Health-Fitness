@@ -28,7 +28,7 @@ function DashboardPage() {
         return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];
     }, []);
 
-    // Use context values instead of local lookups
+    // Use context values
     const firstName = userData.firstName || "Alex";
     const completedExercises = useMemo(
         () => loggedExercises.filter((ex) => ex.completed),
@@ -42,24 +42,18 @@ function DashboardPage() {
         );
     }, [loggedExercises, completedExercises]);
 
-    const totalBurned = useMemo(() => { // Changed from totalCalories to totalBurned
+    const totalBurned = useMemo(() => {
         return completedExercises.reduce(
             (acc, curr) => acc + (parseInt(curr.calories) || 0),
             0,
         );
     }, [completedExercises]);
 
-    const calorieGoal = nutritionGoals.calories; // Updated to use nutritionGoals
-    
-    // Calculate consumed calories from the food log data
-    const caloriesConsumed = totals.calories; // Updated to use totals
-    const caloriesRemaining = Math.max(calorieGoal - caloriesConsumed, 0); // Updated calculation
-    const nutritionProgress = Math.min((caloriesConsumed / calorieGoal) * 100, 100); // Updated calculation
+    const calorieGoal = nutritionGoals.calories;
+    const caloriesConsumed = totals.calories;
+    const caloriesRemaining = Math.max(calorieGoal - caloriesConsumed, 0);
+    const nutritionProgress = Math.min((caloriesConsumed / calorieGoal) * 100, 100);
 
-    const [waterGlasses, setWaterGlasses] = useState(6);
-    const waterGoal = 10;
-
-    // New Nutrition-focused metrics
     const nutritionMetrics = {
         hero: {
             title: "Calories Today",
@@ -98,12 +92,9 @@ function DashboardPage() {
                     left: `${Math.max(nutritionGoals.fat - totals.fat, 0).toFixed(0)}g left`, 
                     color: "#818cf8", 
                     pct: Math.min((totals.fat / nutritionGoals.fat) * 100, 100) 
-                },
+                }
             ]
         },
-
-
-
 
         foodLog: {
             title: "Today's Food Log",
@@ -430,7 +421,7 @@ function DashboardPage() {
                             </div>
                             <div className={pageStyles.workoutList}>
                                 {recentActivities.length > 0 ? (
-                                    recentActivities.map((activity, idx) => (
+                                    recentActivities.map((activity) => (
                                         <div key={activity.id} className={pageStyles.workoutItem}>
                                             <div className={`${pageStyles.workoutIcon} ${activity.colorClass}`}>
                                                 {activity.icon}

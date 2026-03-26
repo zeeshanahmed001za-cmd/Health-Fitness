@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { useUser } from "../context/UserContext";
@@ -130,7 +130,8 @@ function NutritionPage() {
     removeFoodLog, 
     waterTotal, 
     addWaterLog, 
-    removeWaterLog 
+    removeWaterLog,
+    totals 
   } = useNutrition();
 
   useDocumentTitle("Nutrition Tracking");
@@ -153,19 +154,6 @@ function NutritionPage() {
   const [bmiHeight, setBmiHeight] = useState("");
   const [bmiResult, setBmiResult] = useState(null);
 
-  // Derive Daily Stats
-  const dailySummary = useMemo(() => {
-    return foodLogs.reduce(
-      (acc, curr) => {
-        acc.calories += curr.calories;
-        acc.protein += curr.protein;
-        acc.carbs += curr.carbs;
-        acc.fat += curr.fat;
-        return acc;
-      },
-      { calories: 0, protein: 0, carbs: 0, fat: 0 },
-    );
-  }, [foodLogs]);
 
   // Handlers
   const handleSidebarToggle = () => {
@@ -284,7 +272,7 @@ function NutritionPage() {
             <div className={pageStyles.metaCard}>
               <span className={pageStyles.metaLabel}>Consumed Today</span>
               <span className={pageStyles.metaValue} style={{ color: "var(--accent-primary)" }}>
-                {dailySummary.calories} / {userData.calorieGoal || 2500} kcal
+                {totals.calories} / {userData.calorieGoal || 2500} kcal
               </span>
             </div>
           </section>
