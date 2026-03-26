@@ -10,6 +10,7 @@ import SignUpPage from "./pages/SignUpPage";
 import OnBoardingQuestions from "./pages/OnBoardingQuestions";
 import DashboardPage from "./pages/DashboardPage";
 import NutritionPage from "./pages/NutritionPage";
+import NutritionGuidancePage from "./pages/NutritionGuidancePage";
 import WorkoutPlansPage from "./pages/WorkoutPlansPage";
 import WorkoutGuidancePage from "./pages/WorkoutGuidancePage";
 import ProgressTracker from "./pages/ProgressTracker";
@@ -25,6 +26,7 @@ function App() {
         <Route path="/onboarding" element={<OnBoardingQuestions />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/nutrition" element={<NutritionPage />} />
+        <Route path="/nutrition-guidance" element={<NutritionGuidancePage />} />
         <Route path="/workouts" element={<WorkoutPlansPage />} />
         <Route path="/workout-guidance" element={<WorkoutGuidancePage />} />
         <Route path="/progress" element={<ProgressTracker />} />

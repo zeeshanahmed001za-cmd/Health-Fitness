@@ -211,14 +211,6 @@ function WorkoutPlansPage() {
     localStorage.setItem("loggedExercises_grouped", JSON.stringify(exercises));
   }, [exercises]);
 
-  // Derived states
-  const currentDate = useMemo(() => {
-    return new Date().toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  }, []);
 
   const completionPercent = useMemo(() => {
     if (exercises.length === 0) return 0;
@@ -317,7 +309,6 @@ function WorkoutPlansPage() {
             <h1 className={dashStyles.pageTitle}>Workout Log</h1>
           </div>
           <div className={dashStyles.navRight}>
-            <div className={pageStyles.currentDate}>{currentDate}</div>
             <Link to="/workout-guidance" className={pageStyles.guidanceBtn}>
               <InfoIcon />
               <span>Workout Guidance</span>

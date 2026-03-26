@@ -1,68 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import SearchBar from "../components/SearchBar";
+import { useUser } from "../context/UserContext";
+import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
-import SearchBar from "../components/SearchBar";
+
 import dashStyles from "../styles/Dashboard.module.css";
-import styles from "../styles/NutritionPage.module.css";
-import { useUser } from '../context/UserContext';
-import { useNutrition } from '../context/NutritionContext';
-
-// --- Static Data ---
-const nutrientData = [
-  {
-    id: "protein",
-    title: "Protein",
-    type: "Macronutrient",
-    brief:
-      "Large molecules consisting of amino acids that our bodies need to function properly.",
-    importance:
-      "Essential for building and repairing tissues, preserving muscle mass, and making enzymes and hormones.",
-    sources: "Meat, poultry, fish, eggs, dairy, legumes, and nuts.",
-  },
-  {
-    id: "carbs",
-    title: "Carbohydrates",
-    type: "Macronutrient",
-    brief:
-      "Sugar molecules that your body breaks down into glucose for energy.",
-    importance:
-      "Your body's primary and preferred source of energy. Fuels brain function and physical activity.",
-    sources: "Whole grains, fruits, vegetables, beans, and oats.",
-  },
-  {
-    id: "fats",
-    title: "Fats",
-    type: "Macronutrient",
-    brief: "Essential lipids that provide a concentrated source of energy.",
-    importance:
-      "Crucial for nutrient absorption, nerve transmission, protecting organs, and hormone production.",
-    sources: "Avocados, olive oil, nuts, seeds, and fatty fish.",
-  },
-  {
-    id: "micros",
-    title: "Vitamins & Minerals",
-    type: "Micronutrient",
-    brief:
-      "Essential dietary elements needed in varying, but small quantities.",
-    importance:
-      "Orchestrate bone health, brain function, immune system boosting, and disease prevention.",
-    sources: "A diverse diet rich in fruits, vegetables, and whole foods.",
-  },
-  {
-    id: "water",
-    title: "Water",
-    type: "Essential Nutrient",
-    brief:
-      "The most crucial nutrient; you can only survive a few days without it.",
-    importance:
-      "Acts as a solvent and temperature regulator. Flushes waste, lubricates joints, aids in digestion and nutrient absorption.",
-    sources: "Drinking water, water-rich fruits and vegetables, and teas.",
-  },
-];
-
-const TOTAL_GLASSES = 8;
+import pageStyles from "../styles/NutritionPage.module.css";
 
 // Icons
 const HamburgerIcon = () => (
@@ -82,13 +28,25 @@ const HamburgerIcon = () => (
     <line x1="3" y1="18" x2="21" y2="18"></line>
   </svg>
 );
-// const SearchIcon = () => (
-//     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//         <circle cx="11" cy="11" r="8"></circle>
-//         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-//     </svg>
-// );
-const BellIcon = () => (
+
+const TrashIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>
+);
+
+const InfoIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
@@ -100,97 +58,148 @@ const BellIcon = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
   </svg>
 );
-const ChevronDown = () => (
+
+const DropletIcon = () => (
   <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
-    width="18"
-    height="18"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-);
-const WaterIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--accent-cyan)"
-    strokeWidth="2"
-    width="24"
-    height="24"
-  >
-    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
   </svg>
 );
 
+const MealIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M12 2a10 10 0 0 0 0 20"></path>
+    <path d="M12 12h.01"></path>
+  </svg>
+);
+
+const TOTAL_GLASSES_GOAL = 8;
 const AVATAR_FALLBACK =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
+const FoodItem = ({ food, onRemove }) => (
+  <div className={pageStyles.foodItem}>
+    <div className={pageStyles.mealIcon}>
+      <MealIcon />
+    </div>
+    <div className={pageStyles.foodInfo}>
+      <h5>{food.name}</h5>
+      <p>{food.category}</p>
+    </div>
+    <div className={pageStyles.foodMacros}>
+      <span className={pageStyles.kcalValue}>{food.calories} kcal</span>
+      <span className={pageStyles.macroBreakdown}>
+        P: {food.protein}g | C: {food.carbs}g | F: {food.fat}g
+      </span>
+    </div>
+    <button className={pageStyles.removeFood} onClick={() => onRemove(food.id)}>
+      <TrashIcon />
+    </button>
+  </div>
+);
+
 function NutritionPage() {
-  useDocumentTitle("Nutrition");
-  const { updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
-  const { addFoodLog } = useNutrition();
+  const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
+  const { foodLogs, addFoodLog, removeFoodLog } = useNutrition();
 
-  // Sidebar state
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
+  useDocumentTitle("Nutrition Tracking");
   useSidebarShortcut(toggleSidebar);
 
-  // Accordion state
-  const [expandedNutrients, setExpandedNutrients] = useState([]);
+  // States
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hydration, setHydration] = useState(3);
 
-  // Calorie calculator state
-  const [unit, setUnit] = useState("metric");
+  // Calorie Calculator state
+  const [calcUnit, setCalcUnit] = useState("metric");
   const [calcWeight, setCalcWeight] = useState("");
+  const [calcHeight, setCalcHeight] = useState("");
   const [calcGoal, setCalcGoal] = useState("maintain");
-  const [calcHeightCm, setCalcHeightCm] = useState("");
-  const [calcHeightFt, setCalcHeightFt] = useState("");
-  const [calcHeightIn, setCalcHeightIn] = useState("");
   const [calcResult, setCalcResult] = useState(null);
-  const [applySuccess, setApplySuccess] = useState(false);
 
-  // Hydration state
-  const [filledGlasses, setFilledGlasses] = useState(3);
+  // BMI state
+  const [bmiUnit, setBmiUnit] = useState("metric");
+  const [bmiWeight, setBmiWeight] = useState("");
+  const [bmiHeight, setBmiHeight] = useState("");
+  const [bmiResult, setBmiResult] = useState(null);
 
-  // Cleanup for timeouts
-  useEffect(() => {
-    let timer;
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, []);
-
-  // --- Handlers ---
-  const toggleNutrient = (id) => {
-    setExpandedNutrients((prev) =>
-      prev.includes(id) ? prev.filter((n) => n !== id) : [...prev, id],
+  // Derive Daily Stats
+  const dailySummary = useMemo(() => {
+    return foodLogs.reduce(
+      (acc, curr) => {
+        acc.calories += curr.calories;
+        acc.protein += curr.protein;
+        acc.carbs += curr.carbs;
+        acc.fat += curr.fat;
+        return acc;
+      },
+      { calories: 0, protein: 0, carbs: 0, fat: 0 },
     );
+  }, [foodLogs]);
+
+  // Handlers
+  const handleSidebarToggle = () => {
+    if (window.innerWidth <= 768) {
+      setMobileSidebarOpen((prev) => !prev);
+    } else {
+      toggleSidebar();
+    }
   };
 
-  const handleCalcSubmit = (e) => {
+  const handleAddFood = (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    const newLog = {
+      id: Date.now(),
+      name: formData.get("foodName"),
+      category: formData.get("mealType"),
+      calories: Number(formData.get("kcal")),
+      protein: Number(formData.get("protein")),
+      carbs: Number(formData.get("carbs")),
+      fat: Number(formData.get("fat")),
+    };
+    addFoodLog(newLog);
+    setIsModalOpen(false);
+    e.target.reset();
+  };
 
+  const handleCalorieCalc = (e) => {
+    e.preventDefault();
     let weight = parseFloat(calcWeight);
-    let height = 0;
+    let height = parseFloat(calcHeight);
+    if (!weight || !height) return;
 
-    if (unit === "imperial") {
-      const ft = parseFloat(calcHeightFt) || 0;
-      const inches = parseFloat(calcHeightIn) || 0;
-      if (!weight || (ft === 0 && inches === 0)) return;
+    if (calcUnit === "imperial") {
       weight = weight * 0.453592;
-      height = ft * 30.48 + inches * 2.54;
-    } else {
-      height = parseFloat(calcHeightCm);
-      if (!weight || !height) return;
+      height = height * 2.54;
     }
 
-    let bmr = 10 * weight + 6.25 * height - 5 * 30 + 1;
+    let bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
     let tdee = bmr * 1.55;
 
     if (calcGoal === "lose") tdee -= 500;
@@ -199,29 +208,24 @@ function NutritionPage() {
     setCalcResult(Math.round(tdee));
   };
 
-  const handleApplyTarget = () => {
-    updateUserData({ calorieGoal: calcResult });
-    setApplySuccess(true);
-    setTimeout(() => setApplySuccess(false), 2000);
-  };
+  const handleBMICalc = (e) => {
+    e.preventDefault();
+    let weight = parseFloat(bmiWeight);
+    let height = parseFloat(bmiHeight);
+    if (!weight || !height) return;
 
-  const handleGlassClick = (index) => {
-    // If clicking a filled glass — unfill from that glass onward
-    if (index < filledGlasses) {
-      setFilledGlasses(index);
+    if (bmiUnit === "imperial") {
+      // Imperial Formula: 703 × weight (lbs) / [height (in)]^2
+      const bmi = (703 * weight) / (height * height);
+      setBmiResult(bmi.toFixed(1));
     } else {
-      // Fill up to and including this glass
-      setFilledGlasses(index + 1);
+      // Metric Formula: weight (kg) / [height (m)]^2
+      const heightInMeters = height / 100;
+      const bmi = weight / (heightInMeters * heightInMeters);
+      setBmiResult(bmi.toFixed(1));
     }
   };
 
-  const handleSidebarToggle = () => {
-    if (window.innerWidth <= 768) {
-      setMobileSidebarOpen((prev) => !prev);
-    } else {
-      toggleSidebar();
-    }
-  };
 
   return (
     <div className={dashStyles.pageWrapper}>
@@ -233,7 +237,6 @@ function NutritionPage() {
       />
 
       <div className={dashStyles.mainWrapper}>
-        {/* Top Navbar */}
         <header className={dashStyles.topNavbar}>
           <div className={dashStyles.navLeft}>
             <button
@@ -243,14 +246,13 @@ function NutritionPage() {
             >
               <HamburgerIcon />
             </button>
-            <h1 className={dashStyles.pageTitle}>Nutrition</h1>
+            <h1 className={dashStyles.pageTitle}>Nutrition Tracking</h1>
           </div>
           <div className={dashStyles.navRight}>
-            <SearchBar />
-            <button className={dashStyles.iconBtn} aria-label="Notifications">
-              <BellIcon />
-              <span className={dashStyles.badge}>3</span>
-            </button>
+            <Link to="/nutrition-guidance" className={pageStyles.guidanceBtn}>
+              <InfoIcon />
+              <span>Nutrition Guidance</span>
+            </Link>
             <Link to="/profile" className={dashStyles.profileDropdownBtn}>
               <div className={dashStyles.profileAvatar}>
                 <img
@@ -265,269 +267,276 @@ function NutritionPage() {
           </div>
         </header>
 
-        {/* Main Content */}
-        <main className={styles.nutritionDashboard}>
-          {/* Understanding Nutrients Section */}
-          <section className={styles.understandingNutrientsSection}>
-            <h2 className={styles.sectionTitle}>Understanding Nutrients</h2>
-            <p className={styles.sectionIntro}>
-              Nutrients are chemical compounds in food that are crucial to human
-              growth, disease prevention, and overall health. They are divided
-              into macros (needed in large amounts) and micros (needed in
-              smaller amounts).
-            </p>
-
-            <div className={styles.nutrientsList}>
-              {nutrientData.map((nutrient) => {
-                const isExpanded = expandedNutrients.includes(nutrient.id);
-                return (
-                  <div
-                    key={nutrient.id}
-                    className={`${styles.nutrientRow} ${isExpanded ? styles.expanded : ""}`}
-                    onClick={() => toggleNutrient(nutrient.id)}
-                    tabIndex={0}
-                    aria-expanded={isExpanded}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && toggleNutrient(nutrient.id)
-                    }
-                  >
-                    <div className={styles.nutrientHeaderRow}>
-                      <div className={styles.nutrientTitleGroup}>
-                        <div>
-                          <h3>{nutrient.title}</h3>
-                          <span className={styles.nutrientType}>
-                            {nutrient.type}
-                          </span>
-                        </div>
-                      </div>
-                      <div className={styles.accordionIcon}>
-                        <ChevronDown />
-                      </div>
-                    </div>
-                    <p className={styles.nutrientBrief}>{nutrient.brief}</p>
-                    {isExpanded && (
-                      <div className={styles.nutrientDropdownContent}>
-                        <div className={styles.nutrientDropdownInner}>
-                          <p>
-                            <strong>Importance & Function:</strong>{" "}
-                            {nutrient.importance}
-                          </p>
-                          <p>
-                            <strong>Food Sources:</strong> {nutrient.sources}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+        <main className={pageStyles.dashboardContent}>
+          {/* Section 1 - Daily Summary Header */}
+          <section className={pageStyles.trackingHeader}>
+            <div className={pageStyles.metaCard}>
+              <span className={pageStyles.metaLabel}>Daily Calorie Target</span>
+              <span className={pageStyles.metaValue}>
+                {userData.calorieGoal || 2500} kcal
+              </span>
+            </div>
+            <div className={pageStyles.metaCard}>
+              <span className={pageStyles.metaLabel}>Consumed Today</span>
+              <span className={pageStyles.metaValue} style={{ color: "var(--accent-primary)" }}>
+                {dailySummary.calories} / {userData.calorieGoal || 2500} kcal
+              </span>
             </div>
           </section>
 
-          {/* Dashboard Grid */}
-          <div className={styles.dashboardGrid}>
-            <aside className={styles.sidebarColumn}>
-              {/* Calorie Calculator */}
-              <section
-                className={`${styles.card} ${styles.interactiveCard} ${styles.calculatorSection}`}
-              >
-                <h2>Calculate Target</h2>
-                <p className={styles.calcDesc}>
-                  Enter your details to generate personalized targets.
-                </p>
-
-                <form className={styles.calcForm} onSubmit={handleCalcSubmit}>
-                  {/* Unit Toggle */}
-                  <div className={styles.unitToggle}>
-                    <input
-                      type="radio"
-                      id="unit-metric"
-                      name="unit-type"
-                      value="metric"
-                      checked={unit === "metric"}
-                      onChange={() => setUnit("metric")}
-                    />
-                    <label htmlFor="unit-metric" className={styles.toggleBtn}>
-                      Metric
-                    </label>
-
-                    <input
-                      type="radio"
-                      id="unit-imperial"
-                      name="unit-type"
-                      value="imperial"
-                      checked={unit === "imperial"}
-                      onChange={() => setUnit("imperial")}
-                    />
-                    <label htmlFor="unit-imperial" className={styles.toggleBtn}>
-                      Imperial
-                    </label>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label>
-                      {unit === "metric" ? "Weight (kg)" : "Weight (lbs)"}
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="e.g. 75"
-                      step="0.1"
-                      value={calcWeight}
-                      onChange={(e) => setCalcWeight(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label>Primary Goal</label>
-                    <div className={styles.selectWrapper}>
-                      <select
-                        value={calcGoal}
-                        onChange={(e) => setCalcGoal(e.target.value)}
-                        required
-                      >
-                        <option value="lose">Lose Weight</option>
-                        <option value="maintain">Maintain Weight</option>
-                        <option value="gain">Build Muscle</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label>
-                      {unit === "metric" ? "Height (cm)" : "Height"}
-                    </label>
-                    {unit === "metric" ? (
-                      <input
-                        type="number"
-                        placeholder="e.g. 175"
-                        value={calcHeightCm}
-                        onChange={(e) => setCalcHeightCm(e.target.value)}
-                        required
-                      />
-                    ) : (
-                      <div className={styles.imperialHeightInputs}>
-                        <input
-                          type="number"
-                          placeholder="ft"
-                          value={calcHeightFt}
-                          onChange={(e) => setCalcHeightFt(e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          placeholder="in"
-                          value={calcHeightIn}
-                          onChange={(e) => setCalcHeightIn(e.target.value)}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <button type="submit" className={styles.btnPrimary}>
-                    Calculate
+          {/* Section 1 - Main Functinal Area */}
+          <div className={pageStyles.loggingContainer}>
+            {/* Food Logger */}
+            <section className={pageStyles.logSection}>
+              <div className={pageStyles.panelCard}>
+                <div className={pageStyles.sectionHeader}>
+                  <h3>Meal Log</h3>
+                  <button
+                    className={pageStyles.primaryBtn}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    Add Meal
                   </button>
-                </form>
-
-                {calcResult !== null && (
-                  <div className={styles.calcResult}>
-                    <h4>Suggested Target</h4>
-                    <div className={styles.resultValue}>
-                      {calcResult.toLocaleString()} kcal
-                    </div>
-                    <button
-                      className={styles.btnSecondary}
-                      onClick={handleApplyTarget}
-                    >
-                      {applySuccess ? "Applied!" : "Apply to Dashboard"}
-                    </button>
-                  </div>
-                )}
-              </section>
-
-              {/* Food Logging System */}
-              <section className={`${styles.card} ${styles.interactiveCard} ${styles.loggingSection}`}>
-                <h2>Log a Meal</h2>
-                <p className={styles.calcDesc}>Track your macros for specific meals.</p>
-                <form 
-                  className={styles.calcForm} 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    const log = {
-                      name: formData.get('foodName'),
-                      calories: Number(formData.get('kcal')),
-                      protein: Number(formData.get('protein')),
-                      carbs: Number(formData.get('carbs')),
-                      fat: Number(formData.get('fat')),
-                      category: formData.get('mealCategory')
-                    };
-                    addFoodLog(log);
-                    e.target.reset();
-                  }}
-                >
-                  <div className={styles.formGroup}>
-                    <label>Food Name</label>
-                    <input name="foodName" placeholder="e.g. Avocado Toast" required />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Meal Type</label>
-                    <div className={styles.selectWrapper}>
-                      <select name="mealCategory" required>
-                        <option value="breakfast">Breakfast</option>
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="snacks">Snacks</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className={styles.macroInputsGrid}>
-                    <div className={styles.formGroup}>
-                      <label>Calories</label>
-                      <input type="number" name="kcal" placeholder="kcal" required />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Protein</label>
-                      <input type="number" name="protein" placeholder="g" required />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Carbs</label>
-                      <input type="number" name="carbs" placeholder="g" required />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Fat</label>
-                      <input type="number" name="fat" placeholder="g" required />
-                    </div>
-                  </div>
-                  <button type="submit" className={styles.btnPrimary}>Log Food</button>
-                </form>
-              </section>
-
-              {/* Hydration Tracker */}
-              <section className={`${styles.card} ${styles.hydrationSection}`}>
-                <div className={styles.hydrationHeader}>
-                  <h2>Hydration</h2>
-                  <WaterIcon />
                 </div>
-                <div className={styles.hydrationTracker}>
-                  <div className={styles.glassContainer}>
-                    {Array.from({ length: TOTAL_GLASSES }).map((_, index) => (
+                <div className={pageStyles.foodList}>
+                  {foodLogs.length > 0 ? (
+                    foodLogs.map((log) => (
+                      <FoodItem
+                        key={log.id}
+                        food={log}
+                        onRemove={removeFoodLog}
+                      />
+                    ))
+                  ) : (
+                    <div className={pageStyles.emptyState}>
+                      No meals logged for today.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Hydration Tracker */}
+            <section className={pageStyles.hydrationSection}>
+              <div className={pageStyles.panelCard}>
+                <div className={pageStyles.hydrationTracker}>
+                  <div className={pageStyles.hydrationHeader}>
+                    <DropletIcon className={pageStyles.dropletIcon} />
+                    <h4>Hydration</h4>
+                  </div>
+                  <div className={pageStyles.glassGrid}>
+                    {Array.from({ length: TOTAL_GLASSES_GOAL }).map((_, i) => (
                       <button
-                        key={index}
-                        className={`${styles.glass} ${index < filledGlasses ? styles.active : ""}`}
-                        onClick={() => handleGlassClick(index)}
-                        aria-label={`Glass ${index + 1}`}
+                        key={i}
+                        className={`${pageStyles.glass} ${i < hydration ? pageStyles.active : ""}`}
+                        onClick={() =>
+                          setHydration(i === hydration - 1 ? i : i + 1)
+                        }
                       />
                     ))}
                   </div>
-                  <p className={styles.hydrationStatus}>
-                    {filledGlasses} / {TOTAL_GLASSES} glasses (
-                    {filledGlasses * 250}ml)
+                  <p className={pageStyles.hydrationStats}>
+                    {hydration} / {TOTAL_GLASSES_GOAL} Glasses (
+                    {hydration * 250}ml)
                   </p>
                 </div>
-              </section>
-            </aside>
+              </div>
+            </section>
           </div>
+
+          {/* Section 2 - Tools */}
+          <section id="tools">
+            <h3 className={pageStyles.categoryTitle} style={{ marginBottom: "24px" }}>
+              Nutrition Tools
+            </h3>
+            <div className={pageStyles.toolsGrid}>
+              {/* Calorie Calculator */}
+              <div className={pageStyles.toolCard}>
+                <h4>Calorie Target Calculator</h4>
+                <p className={pageStyles.toolDesc}>
+                  Discover your ideal daily intake based on your goals.
+                </p>
+                <form className={pageStyles.toolForm} onSubmit={handleCalorieCalc}>
+                  <div className={pageStyles.unitToggle}>
+                    <button
+                      type="button"
+                      className={`${pageStyles.tBtn} ${calcUnit === "metric" ? pageStyles.active : ""}`}
+                      onClick={() => setCalcUnit("metric")}
+                    >
+                      Metric
+                    </button>
+                    <button
+                      type="button"
+                      className={`${pageStyles.tBtn} ${calcUnit === "imperial" ? pageStyles.active : ""}`}
+                      onClick={() => setCalcUnit("imperial")}
+                    >
+                      Imperial
+                    </button>
+                  </div>
+                  <div className={pageStyles.formGroup}>
+                    <label>Weight ({calcUnit === "metric" ? "kg" : "lbs"})</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={calcWeight}
+                      onChange={(e) => setCalcWeight(e.target.value)}
+                      placeholder="e.g. 70"
+                    />
+                  </div>
+                  <div className={pageStyles.formGroup}>
+                    <label>Height ({calcUnit === "metric" ? "cm" : "in"})</label>
+                    <input
+                      type="number"
+                      value={calcHeight}
+                      onChange={(e) => setCalcHeight(e.target.value)}
+                      placeholder="e.g. 175"
+                    />
+                  </div>
+                  <div className={pageStyles.formGroup}>
+                    <label>My Goal</label>
+                    <select
+                      value={calcGoal}
+                      onChange={(e) => setCalcGoal(e.target.value)}
+                    >
+                      <option value="lose">Weight Loss</option>
+                      <option value="maintain">Maintainance</option>
+                      <option value="gain">Muscle Gain</option>
+                    </select>
+                  </div>
+                  <button type="submit" className={pageStyles.primaryBtn}>
+                    Calculate
+                  </button>
+                </form>
+                {calcResult && (
+                  <div className={pageStyles.resultBox}>
+                    <p className={pageStyles.resultTitle}>Your Suggested Intake</p>
+                    <p className={pageStyles.resultValue}>{calcResult} kcal</p>
+                    <button 
+                      className={pageStyles.guidanceBtn} 
+                      style={{ marginTop: '12px', border: 'none' }}
+                      onClick={() => updateUserData({ calorieGoal: calcResult })}
+                    >
+                      Apply Target
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* BMI Calculator */}
+              <div className={pageStyles.toolCard}>
+                <h4>BMI Calculator</h4>
+                <p className={pageStyles.toolDesc}>
+                  Quickly check your Body Mass Index score.
+                </p>
+                <form className={pageStyles.toolForm} onSubmit={handleBMICalc}>
+                  <div className={pageStyles.unitToggle}>
+                    <button
+                      type="button"
+                      className={`${pageStyles.tBtn} ${bmiUnit === "metric" ? pageStyles.active : ""}`}
+                      onClick={() => setBmiUnit("metric")}
+                    >
+                      Metric
+                    </button>
+                    <button
+                      type="button"
+                      className={`${pageStyles.tBtn} ${bmiUnit === "imperial" ? pageStyles.active : ""}`}
+                      onClick={() => setBmiUnit("imperial")}
+                    >
+                      Imperial
+                    </button>
+                  </div>
+                  <div className={pageStyles.formGroup}>
+                    <label>Weight ({bmiUnit === "metric" ? "kg" : "lbs"})</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={bmiWeight}
+                      onChange={(e) => setBmiWeight(e.target.value)}
+                      placeholder={bmiUnit === "metric" ? "e.g. 70" : "e.g. 154"}
+                    />
+                  </div>
+                  <div className={pageStyles.formGroup}>
+                    <label>Height ({bmiUnit === "metric" ? "cm" : "in"})</label>
+                    <input
+                      type="number"
+                      value={bmiHeight}
+                      onChange={(e) => setBmiHeight(e.target.value)}
+                      placeholder={bmiUnit === "metric" ? "e.g. 175" : "e.g. 69"}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className={pageStyles.primaryBtn}
+                    style={{ backgroundColor: "var(--accent-cyan)", boxShadow: "0 4px 15px rgba(6, 182, 212, 0.2)" }}
+                  >
+                    Check BMI
+                  </button>
+                </form>
+                {bmiResult && (
+                  <div className={pageStyles.resultBox}>
+                    <p className={pageStyles.resultTitle}>Your BMI Score</p>
+                    <p className={pageStyles.resultValue} style={{ color: 'var(--accent-cyan)' }}>{bmiResult}</p>
+                    <p style={{ fontSize: '0.8rem', marginTop: '8px', color: 'var(--text-secondary)' }}>
+                      {bmiResult < 18.5 ? "Underweight" : bmiResult < 25 ? "Healthy Weight" : bmiResult < 30 ? "Overweight" : "Obese"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
         </main>
+      </div>
+
+      {/* Modal */}
+      <div className={`${pageStyles.modalOverlay} ${isModalOpen ? pageStyles.active : ""}`}>
+        <div className={pageStyles.modalContent}>
+          <h3>Log Meal Entry</h3>
+          <form onSubmit={handleAddFood}>
+            <div className={pageStyles.formGroup}>
+              <label>Meal/Food Name</label>
+              <input name="foodName" required placeholder="e.g. Salmon and Rice" />
+            </div>
+            <div className={pageStyles.formGroup}>
+              <label>Meal Type</label>
+              <select name="mealType">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+              </select>
+            </div>
+            <div className={pageStyles.macroGrid}>
+              <div className={pageStyles.formGroup}>
+                <label>Kcal</label>
+                <input type="number" name="kcal" required placeholder="0" />
+              </div>
+              <div className={pageStyles.formGroup}>
+                <label>Prot (g)</label>
+                <input type="number" name="protein" required placeholder="0" />
+              </div>
+              <div className={pageStyles.formGroup}>
+                <label>Carb (g)</label>
+                <input type="number" name="carbs" required placeholder="0" />
+              </div>
+              <div className={pageStyles.formGroup}>
+                <label>Fat (g)</label>
+                <input type="number" name="fat" required placeholder="0" />
+              </div>
+            </div>
+            <div className={pageStyles.modalActions}>
+              <button
+                type="button"
+                className={pageStyles.btnCancel}
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className={pageStyles.primaryBtn}>
+                Add to Log
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
