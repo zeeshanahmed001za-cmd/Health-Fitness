@@ -4,9 +4,12 @@ import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import { useUser } from "../context/UserContext";
+import { useNutrition } from "../context/NutritionContext";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/ProgressTracker.module.css";
+
+console.log("ProgressTracker rendering...");
 
 // Icons
 const HamburgerIcon = () => (
@@ -47,40 +50,109 @@ const AVATAR_FALLBACK =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
 function ProgressTracker() {
-  const { sidebarCollapsed, toggleSidebar } = useUser();
+  const { userData, sidebarCollapsed, toggleSidebar } = useUser();
+  const { foodLogs } = useNutrition();
   useDocumentTitle("Progress Tracker");
-  // Sidebar state
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [notificationsRead, setNotificationsRead] = useState(false);
 
   useSidebarShortcut(toggleSidebar);
 
   // Data state
   const [onboardingData, setOnboardingData] = useState(() => {
-    return (
-      JSON.parse(sessionStorage.getItem("onboardingData")) ||
+    const sessionData = JSON.parse(sessionStorage.getItem("onboardingData")) ||
       JSON.parse(localStorage.getItem("userSession")) ||
-      {}
-    );
+      {};
+    return { ...sessionData, ...userData };
   });
+
+  // Keep onboardingData in sync with context
+  useEffect(() => {
+    if (userData && Object.keys(userData).length > 0) {
+      setOnboardingData(prev => ({ ...prev, ...userData }));
+    }
+  }, [userData]);
   const [loggedExercises] = useState(() => {
     return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];
   });
+  const [weightHistory, setWeightHistory] = useState(() => {
+    const saved = JSON.parse(localStorage.getItem("weightHistory"));
+    if (saved && saved.length > 0) return saved;
+
+    // Fallback: Use initial weight from onboarding if available
+    if (onboardingData.weightValue) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      return [{ date: todayStr, weight: parseFloat(onboardingData.weightValue) }];
+    }
+    return [];
+  });
+
+  // Keep weight history in sync if onboarding data exists but history doesn't
+  useEffect(() => {
+    if (weightHistory.length === 0 && onboardingData.weightValue) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const initialEntry = [{ date: todayStr, weight: parseFloat(onboardingData.weightValue) }];
+      setWeightHistory(initialEntry);
+      localStorage.setItem("weightHistory", JSON.stringify(initialEntry));
+    }
+  }, [onboardingData.weightValue, weightHistory.length]);
+
+  const [dailyCalorieLogs, setDailyCalorieLogs] = useState([]);
+  const [dailyMacroLogs, setDailyMacroLogs] = useState([]);
+
+  // Generate daily history from foodLogs
+  useEffect(() => {
+    if (!foodLogs) return;
+    
+    const grouped = foodLogs.reduce((acc, log) => {
+      const date = log.timestamp?.split('T')[0];
+      if (!date) return acc;
+      if (!acc[date]) acc[date] = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+      acc[date].calories += Number(log.calories) || 0;
+      acc[date].protein += Number(log.protein) || 0;
+      acc[date].carbs += Number(log.carbs) || 0;
+      acc[date].fat += Number(log.fat) || 0;
+      return acc;
+    }, {});
+
+    const sortedDates = Object.keys(grouped).sort();
+    
+    setDailyCalorieLogs(sortedDates.map(date => ({
+      date,
+      calories: grouped[date].calories
+    })));
+    
+    setDailyMacroLogs(sortedDates.map(date => ({
+      date,
+      protein: grouped[date].protein,
+      carbs: grouped[date].carbs,
+      fat: grouped[date].fat,
+      proteinGoal: 150 
+    })));
+  }, [foodLogs]);
 
   // Chart filter state
   const [chartFilter, setChartFilter] = useState("3M");
   const [chartOpacity, setChartOpacity] = useState(1);
-  const [chartPath, setChartPath] = useState(
-    "M0,150 Q100,140 200,120 T400,100 T600,80 T800,70",
-  );
 
   // Modal state
   const [isModalActive, setIsModalActive] = useState(false);
   const [formData, setFormData] = useState({
     currentWeight: onboardingData.weightValue || "",
     bodyFat: onboardingData.bodyFat || "",
-    waistSize: onboardingData.waistSize || "",
   });
+
+  // Global Esc key listener for modal
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setIsModalActive(false);
+    };
+    if (isModalActive) {
+      window.addEventListener("keydown", handleEsc);
+    }
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isModalActive]);
 
   // Cleanup for timeouts
   useEffect(() => {
@@ -92,17 +164,35 @@ function ProgressTracker() {
 
   // Calculations
   const bmi = useMemo(() => {
-    const { weightValue, heightValue, weightUnit, heightUnit } = onboardingData;
-    if (!weightValue || !heightValue) return "--.-";
+    console.log("BMI Calc - onboardingData:", onboardingData);
+    const { weightValue, heightFeet, heightInches, heightCm, weightUnit, heightUnit } = onboardingData;
+
+    if (!weightValue || (!heightFeet && !heightCm)) {
+      console.log("BMI Calc - Missing data:", { weightValue, heightFeet, heightCm });
+      return "--.-";
+    }
 
     let w = parseFloat(weightValue);
-    let h = parseFloat(heightValue);
+    let h;
+
+    if (heightUnit === 'imperial') {
+      const totalInches = (parseFloat(heightFeet) || 0) * 12 + (parseFloat(heightInches) || 0);
+      h = totalInches * 0.0254;
+      console.log("BMI Calc - Imperial:", { totalInches, h });
+    } else {
+      h = (parseFloat(heightCm) || 0) / 100;
+      console.log("BMI Calc - Metric:", { heightCm, h });
+    }
+
+    if (h === 0) {
+      console.log("BMI Calc - Height is 0");
+      return "--.-";
+    }
 
     if (weightUnit === "imperial") w *= 0.453592;
-    if (heightUnit === "imperial") h *= 0.0254;
-    else h /= 100;
 
     const b = w / (h * h);
+    console.log("BMI Calc - Result:", { w, h, b });
     return b.toFixed(1);
   }, [onboardingData]);
 
@@ -117,18 +207,137 @@ function ProgressTracker() {
 
   const compEx = useMemo(
     () => loggedExercises.filter((e) => e.completed).length,
-    [loggedExercises],
+    [loggedExercises]
   );
-  const totalEx = loggedExercises.length || 15;
-  const goalPercent = (compEx / totalEx) * 100;
+  const totalEx = loggedExercises.length;
+  const goalPercent = totalEx > 0 ? (compEx / totalEx) * 100 : 0;
 
-  const bodyFatValue = onboardingData.bodyFat || 18.5;
-  const radialOffset = 283 - 283 * (bodyFatValue / 100);
+  const bodyFatValue = onboardingData.bodyFat;
+  const radialOffset = bodyFatValue !== undefined ? 283 - 283 * (bodyFatValue / 100) : 283;
 
-  const currentWaistSize = onboardingData.waistSize || 82;
-  const waistBarWidth = Math.min((currentWaistSize / 120) * 100, 100);
+  const bodyFatStatus = useMemo(() => {
+    if (bodyFatValue === undefined || bodyFatValue === "") return null;
+    const bf = parseFloat(bodyFatValue);
+    // Generic ranges (can be refined by gender if available)
+    if (bf < 6) return "Very Low";
+    if (bf < 14) return "Athletic";
+    if (bf < 18) return "Fitness";
+    if (bf < 25) return "Healthy Range";
+    return "Above Average";
+  }, [bodyFatValue]);
+
+
 
   const consistency = Math.min(Math.round((compEx / 10) * 100), 100);
+
+  // Nutrition Calculations
+  const avgDailyCalories = useMemo(() => {
+    if (dailyCalorieLogs.length === 0) return null;
+    const last7Days = dailyCalorieLogs.slice(-7);
+    const sum = last7Days.reduce((acc, log) => acc + (log.calories || 0), 0);
+    return Math.round(sum / last7Days.length);
+  }, [dailyCalorieLogs]);
+
+  const proteinGoalHit = useMemo(() => {
+    if (dailyMacroLogs.length === 0) return null;
+    const last7Days = dailyMacroLogs.slice(-7);
+    const hitDays = last7Days.filter(log => log.protein >= (log.proteinGoal || 150)).length;
+    return Math.round((hitDays / last7Days.length) * 100);
+  }, [dailyMacroLogs]);
+
+  const bestCalorieStreak = useMemo(() => {
+    if (dailyCalorieLogs.length === 0) return 0;
+    let maxStreak = 0;
+    let currentStreak = 0;
+
+    // Assuming a generic goal of 2000 if not specified
+    const target = onboardingData.calorieGoal || 2000;
+    const threshold = target * 0.1;
+
+    dailyCalorieLogs.forEach(log => {
+      const isWithinRange = Math.abs(log.calories - target) <= threshold;
+      if (isWithinRange) {
+        currentStreak++;
+        if (currentStreak > maxStreak) maxStreak = currentStreak;
+      } else {
+        currentStreak = 0;
+      }
+    });
+    return maxStreak;
+  }, [dailyCalorieLogs, onboardingData.calorieGoal]);
+
+
+  // Chart Handlers & Calculations
+  const filteredWeightHistory = useMemo(() => {
+    if (!weightHistory || weightHistory.length === 0) return [];
+
+    const now = new Date();
+    let cutoffDate = new Date();
+
+    switch (chartFilter) {
+      case "3M":
+        cutoffDate.setMonth(now.getMonth() - 3);
+        break;
+      case "6M":
+        cutoffDate.setMonth(now.getMonth() - 6);
+        break;
+      case "1Y":
+        cutoffDate.setFullYear(now.getFullYear() - 1);
+        break;
+      case "All":
+      default:
+        cutoffDate = new Date(0); // very old date
+        break;
+    }
+
+    return weightHistory.filter(w => new Date(w.date) >= cutoffDate).sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [weightHistory, chartFilter]);
+
+  const chartData = useMemo(() => {
+    if (filteredWeightHistory.length === 0) return null;
+
+    const weights = filteredWeightHistory.map(w => parseFloat(w.weight));
+    const minW = Math.min(...weights);
+    const maxW = Math.max(...weights);
+
+    // If only one point, create a small range for visibility
+    const padding = (maxW - minW) * 0.2 || 5;
+    const yMin = minW - padding;
+    const yMax = maxW + padding;
+
+    if (filteredWeightHistory.length === 1) {
+      // Single point: no path needed, just the point
+      return {
+        path: `M400,100`,
+        points: [{ x: 400, y: 100, ...filteredWeightHistory[0] }]
+      };
+    }
+
+    const wSpan = filteredWeightHistory.length - 1;
+    const xStep = 800 / wSpan;
+
+    const points = filteredWeightHistory.map((entry, idx) => {
+      const x = idx * xStep;
+      // prevent division by zero if yMax === yMin
+      const y = yMax === yMin ? 100 : 200 - ((parseFloat(entry.weight) - yMin) / (yMax - yMin)) * 200;
+      return { x, y, ...entry };
+    });
+
+    // Create a smooth bezier curve path
+    let d = `M${points[0].x},${points[0].y}`;
+    if (points.length === 2) {
+      d += ` L${points[1].x},${points[1].y}`;
+    } else {
+      for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const cPointX = (p1.x + p2.x) / 2;
+        d += ` C${cPointX},${p1.y} ${cPointX},${p2.y} ${p2.x},${p2.y}`;
+      }
+    }
+
+    return { path: d, points };
+  }, [filteredWeightHistory]);
 
   // Handlers
   const handleSidebarToggle = () => {
@@ -139,16 +348,16 @@ function ProgressTracker() {
     }
   };
 
+  const handleNotificationsClick = () => {
+    setNotificationsRead(true);
+    alert("Notification drawer placeholder - To be replaced with a real drawer");
+  };
+
   const handleFilterChange = (filter) => {
     setChartFilter(filter);
     setChartOpacity(0.3);
     setTimeout(() => {
       setChartOpacity(1);
-      const points = [150, 140, 120, 100, 80, 70].map(
-        (p) => p + (Math.random() * 20 - 10),
-      );
-      const d = `M0,${points[0]} Q100,${points[1]} 200,${points[2]} T400,${points[3]} T600,${points[4]} T800,${points[5]}`;
-      setChartPath(d);
     }, 300);
   };
 
@@ -156,30 +365,46 @@ function ProgressTracker() {
     setFormData({
       currentWeight: onboardingData.weightValue || "",
       bodyFat: onboardingData.bodyFat || "",
-      waistSize: onboardingData.waistSize || "",
     });
     setIsModalActive(true);
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    const newWeight = parseFloat(formData.currentWeight);
     const updatedData = {
       ...onboardingData,
-      weightValue: parseFloat(formData.currentWeight),
-      bodyFat: formData.bodyFat
-        ? parseFloat(formData.bodyFat)
-        : onboardingData.bodyFat,
-      waistSize: formData.waistSize
-        ? parseFloat(formData.waistSize)
-        : onboardingData.waistSize,
+      weightValue: newWeight,
+      bodyFat: formData.bodyFat ? parseFloat(formData.bodyFat) : "",
     };
     setOnboardingData(updatedData);
     sessionStorage.setItem("onboardingData", JSON.stringify(updatedData));
     localStorage.setItem("userSession", JSON.stringify(updatedData));
+
+    if (!isNaN(newWeight)) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const newWH = [...weightHistory];
+
+      // check if today already exists
+      const todayIdx = newWH.findIndex(w => w.date === todayStr);
+      if (todayIdx >= 0) {
+        newWH[todayIdx].weight = newWeight;
+      } else {
+        newWH.push({ date: todayStr, weight: newWeight });
+      }
+      setWeightHistory(newWH);
+      localStorage.setItem('weightHistory', JSON.stringify(newWH));
+    }
+
     setIsModalActive(false);
-    setIsModalActive(false);
-    console.log("Metrics updated successfully!");
   };
+
+  // Milestone Conditions
+  const isWeightMaster = onboardingData.goalWeightValue && parseFloat(onboardingData.weightValue) === parseFloat(onboardingData.goalWeightValue);
+  const isConsistencyKing = compEx >= 7;
+  const isIronGrip = totalEx >= 50;
+
+  const unlockedCount = [isWeightMaster, isConsistencyKing, isIronGrip].filter(Boolean).length;
 
   return (
     <div className={dashStyles.pageWrapper}>
@@ -203,18 +428,19 @@ function ProgressTracker() {
             <h1 className={dashStyles.pageTitle}>Progress Tracker</h1>
           </div>
           <div className={dashStyles.navRight}>
-            <button className={dashStyles.iconBtn} aria-label="Notifications">
+            <button
+              className={dashStyles.iconBtn}
+              aria-label="Notifications"
+              onClick={handleNotificationsClick}
+            >
               <BellIcon />
-              <span className={dashStyles.badge}>2</span>
+              {!notificationsRead && <span className={dashStyles.badge}>2</span>}
             </button>
             <Link to="/profile" className={dashStyles.profileDropdownBtn}>
               <div className={dashStyles.profileAvatar}>
                 <img
-                  src="../assets/images/avatar-placeholder.png"
+                  src={AVATAR_FALLBACK}
                   alt="User Avatar"
-                  onError={(e) => {
-                    e.target.src = AVATAR_FALLBACK;
-                  }}
                 />
               </div>
             </Link>
@@ -230,9 +456,8 @@ function ProgressTracker() {
             <div className={styles.headerActions}>
               <button
                 className={styles.secondaryBtn}
-                onClick={() =>
-                  console.log("Generating your health report...")
-                }
+                disabled
+                title="Coming soon"
               >
                 Download Report
               </button>
@@ -257,19 +482,20 @@ function ProgressTracker() {
                 </span>
               </div>
               <span
-                className={`${styles.statTrend} ${onboardingData.goalWeightValue && onboardingData.weightValue === onboardingData.goalWeightValue ? styles.positive : styles.negative}`}
+                className={`${styles.statTrend} ${onboardingData.goalWeightValue && parseFloat(onboardingData.weightValue) === parseFloat(onboardingData.goalWeightValue) ? styles.positive : styles.neutral}`}
               >
                 {onboardingData.goalWeightValue
-                  ? onboardingData.weightValue ===
-                    onboardingData.goalWeightValue
+                  ? parseFloat(onboardingData.weightValue) ===
+                    parseFloat(onboardingData.goalWeightValue)
                     ? "Goal Reached! 🏆"
-                    : onboardingData.goalWeightValue <
-                        onboardingData.weightValue
-                      ? `${(onboardingData.weightValue - onboardingData.goalWeightValue).toFixed(1)} ${onboardingData.weightUnit === "imperial" ? "lbs" : "kg"} over goal`
-                      : `${(onboardingData.goalWeightValue - onboardingData.weightValue).toFixed(1)} ${onboardingData.weightUnit === "imperial" ? "lbs" : "kg"} to go!`
+                    : parseFloat(onboardingData.goalWeightValue) <
+                      parseFloat(onboardingData.weightValue)
+                      ? `${(parseFloat(onboardingData.weightValue) - parseFloat(onboardingData.goalWeightValue)).toFixed(1)} ${onboardingData.weightUnit === "imperial" ? "lbs" : "kg"} over goal`
+                      : `${(parseFloat(onboardingData.goalWeightValue) - parseFloat(onboardingData.weightValue)).toFixed(1)} ${onboardingData.weightUnit === "imperial" ? "lbs" : "kg"} to go!`
                   : "Set a goal!"}
               </span>
             </div>
+
             <div className={styles.statCard}>
               <span className={styles.statLabel}>Workout Consistency</span>
               <div className={styles.statValueContainer}>
@@ -282,6 +508,7 @@ function ProgressTracker() {
                 {consistency > 50 ? "↑ On Track" : "Keep pushing!"}
               </span>
             </div>
+
             <div className={styles.statCard}>
               <span className={styles.statLabel}>Current BMI</span>
               <div className={styles.statValueContainer}>
@@ -293,18 +520,27 @@ function ProgressTracker() {
                 {bmiStatus}
               </span>
             </div>
+
             <div className={styles.statCard}>
               <span className={styles.statLabel}>Exercises Logged</span>
               <div className={styles.statValueContainer}>
-                <span className={styles.statValue}>{compEx}</span>
-                <span className={styles.statUnit}>/{totalEx}</span>
+                {totalEx === 0 ? (
+                  <span className={styles.statValue} style={{ fontSize: '1.2rem', fontWeight: 500, color: 'var(--text-secondary)' }}>No exercises logged yet</span>
+                ) : (
+                  <>
+                    <span className={styles.statValue}>{compEx}</span>
+                    <span className={styles.statUnit}>/{totalEx}</span>
+                  </>
+                )}
               </div>
-              <div className={styles.miniProgressBar}>
-                <div
-                  className={styles.fill}
-                  style={{ width: `${goalPercent}%` }}
-                ></div>
-              </div>
+              {totalEx > 0 && (
+                <div className={styles.miniProgressBar}>
+                  <div
+                    className={styles.fill}
+                    style={{ width: `${goalPercent}%` }}
+                  ></div>
+                </div>
+              )}
             </div>
           </section>
 
@@ -325,78 +561,76 @@ function ProgressTracker() {
                 </div>
               </div>
               <div className={styles.visualChart}>
-                <svg
-                  viewBox="0 0 800 200"
-                  className={styles.chartSvg}
-                  style={{ opacity: chartOpacity }}
-                >
-                  <defs>
-                    <linearGradient
-                      id="chartGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
+                {!chartData ? (
+                  <div className={styles.emptyState}>
+                    <span className={styles.emptyIcon}>📉</span>
+                    <p>
+                      {weightHistory.length === 0
+                        ? "No weight history yet. Update your metrics to start tracking."
+                        : `No data for the last ${chartFilter}.`}
+                    </p>
+                    {weightHistory.length === 0 && (
+                      <button className={styles.primaryBtn} onClick={handleUpdateMetrics}>Update Metrics</button>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <svg
+                      viewBox="0 0 800 200"
+                      className={styles.chartSvg}
+                      style={{ opacity: chartOpacity }}
                     >
-                      <stop
-                        offset="0%"
-                        stopColor="var(--accent-primary)"
-                        stopOpacity="0.3"
+                      <defs>
+                        <linearGradient
+                          id="chartGradient"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="0%"
+                            stopColor="var(--accent-primary)"
+                            stopOpacity="0.3"
+                          />
+                          <stop
+                            offset="100%"
+                            stopColor="var(--accent-primary)"
+                            stopOpacity="0"
+                          />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d={chartData.path}
+                        fill="none"
+                        stroke="var(--accent-primary)"
+                        strokeWidth="3"
                       />
-                      <stop
-                        offset="100%"
-                        stopColor="var(--accent-primary)"
-                        stopOpacity="0"
+                      <path
+                        d={`${chartData.path} V200 H0 Z`}
+                        fill="url(#chartGradient)"
                       />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d={chartPath}
-                    fill="none"
-                    stroke="var(--accent-primary)"
-                    strokeWidth="3"
-                  />
-                  <path
-                    d={`${chartPath} V200 H0 Z`}
-                    fill="url(#chartGradient)"
-                  />
-                  <circle
-                    cx="200"
-                    cy="120"
-                    r="5"
-                    fill="var(--accent-primary)"
-                    className={styles.pulse}
-                  />
-                  <circle
-                    cx="400"
-                    cy="100"
-                    r="5"
-                    fill="var(--accent-primary)"
-                    className={styles.pulse}
-                  />
-                  <circle
-                    cx="600"
-                    cy="80"
-                    r="5"
-                    fill="var(--accent-primary)"
-                    className={styles.pulse}
-                  />
-                  <circle
-                    cx="800"
-                    cy="70"
-                    r="5"
-                    fill="var(--accent-primary)"
-                    className={styles.pulse}
-                  />
-                </svg>
-                <div className={styles.chartLabels}>
-                  <span>Jan</span>
-                  <span>Feb</span>
-                  <span>Mar</span>
-                  <span>Apr</span>
-                  <span>May</span>
-                  <span>Jun</span>
-                </div>
+                      {chartData.points.map((pt, i) => (
+                        <circle
+                          key={i}
+                          cx={pt.x}
+                          cy={pt.y}
+                          r="4"
+                          fill="var(--accent-primary)"
+                          className={styles.pulse}
+                        />
+                      ))}
+                    </svg>
+                    <div className={styles.chartLabels}>
+                      {chartData.points.map((pt, i) => {
+                        // Show max 6 labels evenly distributed
+                        if (chartData.points.length > 6 && i % Math.ceil(chartData.points.length / 5) !== 0 && i !== chartData.points.length - 1) return <span key={i} style={{ opacity: 0 }}></span>;
+                        const d = new Date(pt.date);
+                        return <span key={i} style={{ position: 'absolute', left: `${pt.x / 8}%`, bottom: '-20px' }}>{d.toLocaleString('default', { month: 'short' })} {d.getDate()}</span>
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -405,6 +639,18 @@ function ProgressTracker() {
                 <h3>Body Fat %</h3>
               </div>
               <div className={styles.radialProgressContainer}>
+                {bodyFatValue === undefined || bodyFatValue === "" ? (
+                  <div className={`${styles.emptyState} ${styles.muted}`}>
+                    <span>Not logged</span>
+                    <button className={styles.emptyStateLink} onClick={handleUpdateMetrics}>Add in Update Metrics</button>
+                  </div>
+                ) : (
+                  <div className={styles.radialContent}>
+                    <span className={styles.value}>{bodyFatValue}%</span>
+                    <span className={styles.label}>{bodyFatStatus}</span>
+                  </div>
+                )}
+
                 <svg viewBox="0 0 100 100" className={styles.radialSvg}>
                   <circle cx="50" cy="50" r="45" className={styles.bg} />
                   <circle
@@ -415,83 +661,106 @@ function ProgressTracker() {
                     style={{
                       strokeDasharray: 283,
                       strokeDashoffset: radialOffset,
+                      stroke: bodyFatValue === undefined || bodyFatValue === "" ? "transparent" : "var(--accent-primary)"
                     }}
                   />
                 </svg>
-                <div className={styles.radialContent}>
-                  <span className={styles.value}>{bodyFatValue}%</span>
-                  <span className={styles.label}>Keep going!</span>
-                </div>
               </div>
             </div>
 
-            <div className={styles.chartCard}>
-              <div className={styles.chartHeader}>
-                <h3>Measurement Progress</h3>
+          </section>
+
+          <section className={styles.statsHighlightGrid} style={{ marginTop: '32px' }}>
+            <div className={styles.sectionTitle} style={{ gridColumn: '1 / -1', marginBottom: '0' }}>
+              <h3>Nutrition Overview</h3>
+            </div>
+
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Avg Daily Calories (7d)</span>
+              <div className={styles.statValueContainer}>
+                {avgDailyCalories === null ? (
+                  <span className={styles.statValue} style={{ fontSize: '1.2rem', fontWeight: 500, color: 'var(--text-secondary)' }}>No data yet</span>
+                ) : (
+                  <>
+                    <span className={styles.statValue}>{avgDailyCalories}</span>
+                    <span className={styles.statUnit}>kcal</span>
+                  </>
+                )}
               </div>
-              <div className={styles.measurementList}>
-                <div className={styles.measurementItem}>
-                  <span className={styles.mLabel}>Chest</span>
-                  <div className={styles.mBarContainer}>
-                    <div className={styles.mBar} style={{ width: "85%" }}></div>
-                  </div>
-                  <span className={styles.mValue}>102 cm</span>
-                </div>
-                <div className={styles.measurementItem}>
-                  <span className={styles.mLabel}>Waist</span>
-                  <div className={styles.mBarContainer}>
-                    <div
-                      className={styles.mBar}
-                      style={{ width: `${waistBarWidth}%` }}
-                    ></div>
-                  </div>
-                  <span className={styles.mValue}>{currentWaistSize} cm</span>
-                </div>
-                <div className={styles.measurementItem}>
-                  <span className={styles.mLabel}>Arms</span>
-                  <div className={styles.mBarContainer}>
-                    <div className={styles.mBar} style={{ width: "45%" }}></div>
-                  </div>
-                  <span className={styles.mValue}>38 cm</span>
-                </div>
+            </div>
+
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Protein Goal Hit (7d)</span>
+              <div className={styles.statValueContainer}>
+                {proteinGoalHit === null ? (
+                  <span className={styles.statValue} style={{ fontSize: '1.2rem', fontWeight: 500, color: 'var(--text-secondary)' }}>No data yet</span>
+                ) : (
+                  <>
+                    <span className={styles.statValue}>{proteinGoalHit}</span>
+                    <span className={styles.statUnit}>%</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.statCard}>
+              <span className={styles.statLabel}>Best Calorie Streak</span>
+              <div className={styles.statValueContainer}>
+                {bestCalorieStreak === 0 ? (
+                  <span className={styles.statValue} style={{ fontSize: '1.2rem', fontWeight: 500, color: 'var(--text-secondary)' }}>0 days</span>
+                ) : (
+                  <>
+                    <span className={styles.statValue}>{bestCalorieStreak}</span>
+                    <span className={styles.statUnit}>days</span>
+                  </>
+                )}
               </div>
             </div>
           </section>
 
-          <section className={styles.milestonesSection}>
+          <section className={styles.milestonesSection} style={{ marginTop: '32px' }}>
             <div className={styles.sectionTitle}>
               <h3>Recent Milestones</h3>
+              <span className={styles.subtitle}>{unlockedCount} of 3 unlocked</span>
             </div>
             <div className={styles.milestonesGrid}>
-              <div className={styles.milestoneCard}>
+
+              <div className={`${styles.milestoneCard} ${!isWeightMaster ? styles.locked : ""}`}>
                 <div className={styles.milestoneIcon}>🏆</div>
                 <div className={styles.milestoneText}>
                   <h4>Weight Master</h4>
-                  <p>Reached target weight!</p>
+                  <p>
+                    {isWeightMaster
+                      ? "Reached target weight!"
+                      : onboardingData.goalWeightValue
+                        ? `${Math.abs(parseFloat(onboardingData.weightValue) - parseFloat(onboardingData.goalWeightValue)).toFixed(1)} ${onboardingData.weightUnit === 'imperial' ? 'lbs' : 'kg'} to go`
+                        : "Set a goal to unlock"
+                    }
+                  </p>
                 </div>
               </div>
-              <div
-                className={`${styles.milestoneCard} ${compEx < 7 ? styles.locked : ""}`}
-              >
+
+              <div className={`${styles.milestoneCard} ${!isConsistencyKing ? styles.locked : ""}`}>
                 <div className={styles.milestoneIcon}>🔥</div>
                 <div className={styles.milestoneText}>
                   <h4>Consistency King</h4>
-                  <p>Active for 7+ days</p>
+                  <p>{isConsistencyKing ? "Active for 7+ days" : `Log ${7 - compEx} more workouts to unlock`}</p>
                 </div>
               </div>
-              <div
-                className={`${styles.milestoneCard} ${totalEx < 50 ? styles.locked : ""}`}
-              >
+
+              <div className={`${styles.milestoneCard} ${!isIronGrip ? styles.locked : ""}`}>
                 <div className={styles.milestoneIcon}>💪</div>
                 <div className={styles.milestoneText}>
                   <h4>Iron Grip</h4>
                   <p>
-                    {totalEx < 50
-                      ? "Log 50 exercises (Soon)"
-                      : "Logged over 50 exercises!"}
+                    {isIronGrip
+                      ? "Logged over 50 exercises!"
+                      : `Log ${50 - totalEx} more exercises to unlock`
+                    }
                   </p>
                 </div>
               </div>
+
             </div>
           </section>
         </main>
@@ -522,6 +791,7 @@ function ProgressTracker() {
                 onChange={(e) =>
                   setFormData({ ...formData, currentWeight: e.target.value })
                 }
+                onWheel={(e) => e.target.blur()} 
                 required
               />
             </div>
@@ -534,17 +804,7 @@ function ProgressTracker() {
                 onChange={(e) =>
                   setFormData({ ...formData, bodyFat: e.target.value })
                 }
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Waist Size (cm)</label>
-              <input
-                type="number"
-                step="0.1"
-                value={formData.waistSize}
-                onChange={(e) =>
-                  setFormData({ ...formData, waistSize: e.target.value })
-                }
+                onWheel={(e) => e.target.blur()}
               />
             </div>
             <button type="submit" className={styles.submitBtn}>

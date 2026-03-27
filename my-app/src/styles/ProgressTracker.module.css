@@ -77,9 +77,14 @@
   transition: all var(--transition-fast);
 }
 
-.secondaryBtn:hover {
+.secondaryBtn:hover:not(:disabled) {
   background-color: var(--bg-secondary);
   border-color: var(--text-secondary);
+}
+
+.secondaryBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Stats Grid */
@@ -98,13 +103,14 @@
   );
   backdrop-filter: blur(4px);
   padding: 24px;
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   gap: 12px;
   transition: all var(--transition-smooth);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .statCard:hover {
@@ -172,9 +178,8 @@
 
 /* Charts Grid */
 .chartsGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -187,12 +192,13 @@
   );
   backdrop-filter: blur(4px);
   padding: 24px;
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   gap: 24px;
   transition: border-color var(--transition-smooth);
+  position: relative;
 }
 
 .chartCard:hover {
@@ -200,7 +206,8 @@
 }
 
 .chartCard.fullWidth {
-  grid-column: span 2;
+  flex: 1 1 60%;
+  min-width: 300px;
 }
 
 .chartHeader {
@@ -244,6 +251,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
 .chartSvg {
@@ -267,17 +275,58 @@
 
 @keyframes chartPulse {
   0% {
-    r: 5;
+    r: 4;
     opacity: 1;
   }
   50% {
-    r: 7;
+    r: 6;
     opacity: 0.7;
   }
   100% {
-    r: 5;
+    r: 4;
     opacity: 1;
   }
+}
+
+/* Empty States */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  gap: 12px;
+  padding: 20px;
+}
+
+.emptyState .primaryBtn {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+.emptyState.muted {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.emptyStateLink {
+  color: var(--accent-primary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.emptyStateLink:hover {
+  color: var(--accent-hover);
 }
 
 /* Radial Progress */
@@ -330,45 +379,28 @@
   color: var(--accent-primary);
 }
 
-/* Measurement List */
-.measurementList {
+/* Radial Progress container adjustment */
+.chartCard:not(.fullWidth) {
+  flex: 1 1 30%;
+  min-width: 250px;
+}
+
+/* Section Title */
+.sectionTitle {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
 }
 
-.measurementItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.mLabel {
-  width: 60px;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.mBarContainer {
-  flex: 1;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.mBar {
-  height: 100%;
-  background: var(--accent-cyan);
-  border-radius: 4px;
-  transition: width 1.5s cubic-bezier(0.1, 0.5, 0.2, 1);
-}
-
-.mValue {
-  width: 60px;
-  text-align: right;
-  font-size: 0.9rem;
+.sectionTitle h3 {
+  font-size: 1.1rem;
   font-weight: 600;
+}
+
+.sectionTitle .subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
 }
 
 /* Milestones */
@@ -385,12 +417,14 @@
     rgba(255, 255, 255, 0.02)
   );
   padding: 24px;
-  border-radius: var(--radius-lg);
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   gap: 20px;
   transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
 }
 
 .milestoneCard:hover:not(.locked) {
@@ -415,17 +449,43 @@
 }
 
 .milestoneCard.locked {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.02);
+}
+
+.milestoneCard.locked::after {
+  content: "🔒";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 1rem;
   opacity: 0.5;
-  filter: grayscale(1);
 }
 
 .milestoneCard.locked .milestoneIcon {
   background: rgba(255, 255, 255, 0.05);
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.milestoneCard.locked .milestoneText h4 {
+  color: var(--text-secondary);
+}
+
+.milestoneCard.locked .milestoneText p {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.milestoneText {
+  flex: 1;
 }
 
 .milestoneText h4 {
   font-size: 1rem;
   font-weight: 600;
+  margin-bottom: 2px;
 }
 
 .milestoneText p {
@@ -459,12 +519,14 @@
 .modalContent {
   background: var(--bg-secondary);
   padding: 32px;
-  border-radius: var(--radius-xl);
+  border-radius: 32px;
   width: 100%;
   max-width: 500px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transform: scale(0.9);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal.active .modalContent {
@@ -489,6 +551,11 @@
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 1.5rem;
+  transition: color 0.2s;
+}
+
+.closeModalBtn:hover {
+  color: var(--text-primary);
 }
 
 .formGroup {
@@ -499,6 +566,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .formGroup input {
@@ -509,6 +577,7 @@
   border-radius: var(--radius-md);
   color: var(--text-primary);
   outline: none;
+  transition: border-color 0.2s;
 }
 
 .formGroup input:focus {
@@ -525,6 +594,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  margin-top: 8px;
 }
 
 .submitBtn:hover {
@@ -533,12 +603,8 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .chartsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .chartCard.fullWidth {
-    grid-column: span 1;
+  .chartCard.fullWidth, .chartCard:not(.fullWidth) {
+    flex: 1 1 100%;
   }
 }
 
