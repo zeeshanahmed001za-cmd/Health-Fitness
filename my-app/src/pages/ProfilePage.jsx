@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -8,29 +8,6 @@ import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/Profilepage.module.css";
 import { useUser } from "../context/UserContext";
 
-// --- Static initial data (later this will come from API/auth) ---
-const initialPersonalInfo = {
-  firstName: "Alex",
-  lastName: "Johnson",
-  email: "alex.j@example.com",
-  phone: "+1 (555) 123-4567",
-  dob: "1990-05-15",
-  gender: "female",
-};
-
-const initialPhysicalInfo = {
-  currentWeight: "68",
-  targetWeight: "65",
-  height: "165",
-  activityLevel: "moderate",
-  primaryGoal: "build",
-};
-
-const initialPreferences = {
-  emailNotifications: true,
-  smsReminders: false,
-  publicProfile: true,
-};
 
 // Icons
 const HamburgerIcon = () => (
@@ -95,28 +72,54 @@ function ProfilePage() {
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
 
-  // Form data state - merge context data with defaults
+  // Form data state - initialized from context
   const [personalInfo, setPersonalInfo] = useState({
-    ...initialPersonalInfo,
-    firstName: userData.firstName || initialPersonalInfo.firstName,
-    lastName: userData.lastName || initialPersonalInfo.lastName,
-    dob: userData.dob || initialPersonalInfo.dob,
-    gender: userData.gender || initialPersonalInfo.gender,
+    firstName: userData.firstName || "",
+    lastName: userData.lastName || "",
+    email: userData.email || "",
+    phone: userData.phone || "",
+    dob: userData.dob || "",
+    gender: userData.gender || "male",
   });
+
   const [physicalInfo, setPhysicalInfo] = useState({
-    ...initialPhysicalInfo,
-    currentWeight: userData.weightValue || initialPhysicalInfo.currentWeight,
-    targetWeight: userData.goalWeightValue || initialPhysicalInfo.targetWeight,
-    height:
-      userData.heightCm || userData.heightFeet || initialPhysicalInfo.height,
-    activityLevel: userData.activityLevel || initialPhysicalInfo.activityLevel,
-    primaryGoal: userData.primaryGoal?.[0] || initialPhysicalInfo.primaryGoal,
+    currentWeight: userData.weightValue || "",
+    targetWeight: userData.goalWeightValue || "",
+    height: userData.heightCm || (userData.heightFeet ? `${userData.heightFeet}'${userData.heightInches || 0}"` : ""),
+    activityLevel: userData.activityLevel || "moderate",
+    primaryGoal: Array.isArray(userData.primaryGoal) ? userData.primaryGoal[0] : userData.primaryGoal || "maintain",
   });
-  const [preferences, setPreferences] = useState(initialPreferences);
+
+  const [preferences, setPreferences] = useState({
+    emailNotifications: userData.emailNotifications ?? true,
+    smsReminders: userData.smsReminders ?? false,
+    publicProfile: userData.publicProfile ?? true,
+  });
 
   // Snapshot to restore on cancel
   const [personalSnapshot, setPersonalSnapshot] = useState(null);
   const [physicalSnapshot, setPhysicalSnapshot] = useState(null);
+
+  // Sync state if userData changes externally (e.g. from context updates)
+  useEffect(() => {
+    if (!isEditing) {
+      setPersonalInfo({
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        dob: userData.dob || "",
+        gender: userData.gender || "male",
+      });
+      setPhysicalInfo({
+        currentWeight: userData.weightValue || "",
+        targetWeight: userData.goalWeightValue || "",
+        height: userData.heightCm || (userData.heightFeet ? `${userData.heightFeet}'${userData.heightInches || 0}"` : ""),
+        activityLevel: userData.activityLevel || "moderate",
+        primaryGoal: Array.isArray(userData.primaryGoal) ? userData.primaryGoal[0] : userData.primaryGoal || "maintain",
+      });
+    }
+  }, [userData, isEditing]);
 
   // --- Handlers ---
   const handleSidebarToggle = () => {
@@ -128,28 +131,40 @@ function ProfilePage() {
   };
 
   const handleEdit = () => {
-    // Save snapshots before editing
     setPersonalSnapshot({ ...personalInfo });
     setPhysicalSnapshot({ ...physicalInfo });
     setIsEditing(true);
   };
 
   const handleCancel = () => {
-    // Restore snapshots
     setPersonalInfo(personalSnapshot);
     setPhysicalInfo(physicalSnapshot);
     setIsEditing(false);
   };
 
   const handleSave = () => {
-    // Sync back to context
-    updateUserData({
+    // Sync back to global context
+    const updatedData = {
+      ...userData,
       ...personalInfo,
-      ...physicalInfo,
       weightValue: physicalInfo.currentWeight,
       goalWeightValue: physicalInfo.targetWeight,
-    });
-    console.log("Saving profile...", { personalInfo, physicalInfo });
+      activityLevel: physicalInfo.activityLevel,
+      primaryGoal: [physicalInfo.primaryGoal], // Maintain array structure if needed
+    };
+    
+    // Handle height parsing if it was edited as a string (keep it simple for now)
+    if (physicalInfo.height.includes("'")) {
+       const [ft, inc] = physicalInfo.height.replace(/"/g, '').split("'");
+       updatedData.heightFeet = ft;
+       updatedData.heightInches = inc;
+       updatedData.heightUnit = 'imperial';
+    } else if (physicalInfo.height) {
+       updatedData.heightCm = physicalInfo.height;
+       updatedData.heightUnit = 'metric';
+    }
+
+    updateUserData(updatedData);
     setIsEditing(false);
   };
 
@@ -161,8 +176,53 @@ function ProfilePage() {
     setPhysicalInfo((prev) => ({ ...prev, [field]: value }));
   };
 
+  const toggleWeightUnit = (e) => {
+    e.preventDefault();
+    setPhysicalInfo(prev => {
+      const val = parseFloat(prev.currentWeight);
+      const targetVal = parseFloat(prev.targetWeight);
+      if (userData.weightUnit === 'metric') {
+        return {
+          ...prev,
+          currentWeight: isNaN(val) ? "" : (val * 2.20462).toFixed(1),
+          targetWeight: isNaN(targetVal) ? "" : (targetVal * 2.20462).toFixed(1)
+        };
+      } else {
+        return {
+          ...prev,
+          currentWeight: isNaN(val) ? "" : (val / 2.20462).toFixed(1),
+          targetWeight: isNaN(targetVal) ? "" : (targetVal / 2.20462).toFixed(1)
+        };
+      }
+    });
+    updateUserData({ weightUnit: userData.weightUnit === 'metric' ? 'imperial' : 'metric' });
+  };
+
+  const toggleHeightUnit = (e) => {
+    e.preventDefault();
+    setPhysicalInfo(prev => {
+      if (userData.heightUnit === 'metric') {
+        const cm = parseFloat(prev.height);
+        if (isNaN(cm)) return { ...prev, height: "5'9\"" };
+        const totalInches = cm / 2.54;
+        const ft = Math.floor(totalInches / 12);
+        const inc = Math.round(totalInches % 12);
+        return { ...prev, height: `${ft}'${inc}"` };
+      } else {
+        const match = prev.height.match(/(\d+)'(\d+)"?/);
+        if (!match) return { ...prev, height: "175" };
+        const cm = (parseInt(match[1]) * 12 + parseInt(match[2])) * 2.54;
+        return { ...prev, height: Math.round(cm).toString() };
+      }
+    });
+    updateUserData({ heightUnit: userData.heightUnit === 'metric' ? 'imperial' : 'metric' });
+  };
+
   const handlePreferenceToggle = (key) => {
-    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
+    const newVal = !preferences[key];
+    setPreferences((prev) => ({ ...prev, [key]: newVal }));
+    // Update context immediately for preferences
+    updateUserData({ [key]: newVal });
   };
 
   const avatarFallback =
@@ -354,7 +414,14 @@ function ProfilePage() {
                 <div className={styles.profileForm}>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label>Current Weight (kg)</label>
+                      <label>
+                        Current Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})
+                        {isEditing && (
+                          <button onClick={toggleWeightUnit} className={styles.inlineToggleBtn}>
+                            Switch to {userData.weightUnit === "imperial" ? "kg" : "lbs"}
+                          </button>
+                        )}
+                      </label>
                       <input
                         type="number"
                         value={physicalInfo.currentWeight}
@@ -363,9 +430,16 @@ function ProfilePage() {
                           handlePhysicalChange("currentWeight", e.target.value)
                         }
                       />
+                      {!isEditing && physicalInfo.currentWeight && (
+                        <span className={styles.unitHint}>
+                          {userData.weightUnit === 'metric' 
+                            ? `${(parseFloat(physicalInfo.currentWeight) * 2.20462).toFixed(1)} lbs`
+                            : `${(parseFloat(physicalInfo.currentWeight) / 2.20462).toFixed(1)} kg`}
+                        </span>
+                      )}
                     </div>
                     <div className={styles.formGroup}>
-                      <label>Target Weight (kg)</label>
+                      <label>Target Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})</label>
                       <input
                         type="number"
                         value={physicalInfo.targetWeight}
@@ -378,15 +452,38 @@ function ProfilePage() {
                   </div>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
-                      <label>Height (cm)</label>
+                      <label>
+                        Height ({userData.heightUnit === "imperial" ? "ft'in\"" : "cm"})
+                        {isEditing && (
+                          <button onClick={toggleHeightUnit} className={styles.inlineToggleBtn}>
+                            Switch to {userData.heightUnit === "imperial" ? "cm" : "ft'in\""}
+                          </button>
+                        )}
+                      </label>
                       <input
-                        type="number"
+                        type="text"
                         value={physicalInfo.height}
                         disabled={!isEditing}
                         onChange={(e) =>
                           handlePhysicalChange("height", e.target.value)
                         }
+                        placeholder={userData.heightUnit === "imperial" ? "5'9\"" : "175"}
                       />
+                      {!isEditing && physicalInfo.height && (
+                        <span className={styles.unitHint}>
+                          {userData.heightUnit === 'metric' 
+                            ? (() => {
+                                const totalInches = parseFloat(physicalInfo.height) / 2.54;
+                                return `${Math.floor(totalInches / 12)}'${Math.round(totalInches % 12)}"`;
+                              })()
+                            : (() => {
+                                const match = physicalInfo.height.match(/(\d+)'(\d+)"?/);
+                                if (!match) return "";
+                                return `${Math.round((parseInt(match[1]) * 12 + parseInt(match[2])) * 2.54)} cm`;
+                              })()
+                          }
+                        </span>
+                      )}
                     </div>
                     <div className={styles.formGroup}>
                       <label>Activity Level</label>

@@ -141,6 +141,7 @@ function ProgressTracker() {
   const [formData, setFormData] = useState({
     currentWeight: onboardingData.weightValue || "",
     bodyFat: onboardingData.bodyFat || "",
+    displayUnit: userData.weightUnit || 'metric'
   });
 
   // Global Esc key listener for modal
@@ -365,13 +366,27 @@ function ProgressTracker() {
     setFormData({
       currentWeight: onboardingData.weightValue || "",
       bodyFat: onboardingData.bodyFat || "",
+      displayUnit: userData.weightUnit || 'metric'
     });
     setIsModalActive(true);
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    const newWeight = parseFloat(formData.currentWeight);
+    let newWeight = parseFloat(formData.currentWeight);
+    
+    // If user logged in a unit different from system base, convert it
+    if (formData.displayUnit !== userData.weightUnit) {
+      if (userData.weightUnit === 'metric') {
+        // Logged in lbs, convert to kg for system
+        newWeight = newWeight / 2.20462;
+      } else {
+        // Logged in kg, convert to lbs for system
+        newWeight = newWeight * 2.20462;
+      }
+      newWeight = parseFloat(newWeight.toFixed(1));
+    }
+
     const updatedData = {
       ...onboardingData,
       weightValue: newWeight,
@@ -781,8 +796,24 @@ function ProgressTracker() {
           <form onSubmit={handleFormSubmit}>
             <div className={styles.formGroup}>
               <label>
-                Current Weight (
-                {onboardingData.weightUnit === "imperial" ? "lbs" : "kg"})
+                Current Weight ({formData.displayUnit === "imperial" ? "lbs" : "kg"})
+                <button 
+                  type="button"
+                  className={styles.inlineToggleBtn}
+                  onClick={() => {
+                    const isNowImperial = formData.displayUnit === 'metric';
+                    const currentVal = parseFloat(formData.currentWeight);
+                    setFormData({
+                      ...formData,
+                      displayUnit: isNowImperial ? 'imperial' : 'metric',
+                      currentWeight: isNaN(currentVal) 
+                        ? "" 
+                        : (isNowImperial ? currentVal * 2.20462 : currentVal / 2.20462).toFixed(1)
+                    });
+                  }}
+                >
+                  Switch to {formData.displayUnit === 'metric' ? 'lbs' : 'kg'}
+                </button>
               </label>
               <input
                 type="number"
