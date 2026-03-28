@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { useUser } from "../context/UserContext";
-import { 
-  DashboardIcon, 
-  NutritionIcon, 
-  WorkoutsIcon, 
-  ProgressIcon, 
-  LogoutIcon, 
-  CloseIcon 
+import {
+  DashboardIcon,
+  NutritionIcon,
+  WorkoutsIcon,
+  ProgressIcon,
+  LogoutIcon,
+  CloseIcon
 } from "./Icons";
 
 // navItems data array
