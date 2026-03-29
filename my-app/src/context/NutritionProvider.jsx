@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-
-const NutritionContext = createContext();
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { NutritionContext } from './NutritionContext';
 
 /**
  * NutritionProvider: Manages the single source of truth for food logs, water, and goals.
@@ -12,7 +11,7 @@ export const NutritionProvider = ({ children }) => {
     const saved = localStorage.getItem('journal_food_logs');
     try {
       return saved ? JSON.parse(saved) || [] : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   });
@@ -21,7 +20,7 @@ export const NutritionProvider = ({ children }) => {
     const saved = localStorage.getItem('journal_water_logs');
     try {
       return saved ? JSON.parse(saved) || [] : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   });
@@ -45,7 +44,9 @@ export const NutritionProvider = ({ children }) => {
       try {
         const data = JSON.parse(onboarding);
         if (data.calorieGoal) return { ...defaultGoals, calories: data.calorieGoal };
-      } catch (e) {}
+      } catch {
+        // Fallback to defaults if parsing fails
+      }
     }
     
     return defaultGoals;
@@ -163,10 +164,4 @@ export const NutritionProvider = ({ children }) => {
       {children}
     </NutritionContext.Provider>
   );
-};
-
-export const useNutrition = () => {
-  const context = useContext(NutritionContext);
-  if (!context) throw new Error('useNutrition must be used within a NutritionProvider');
-  return context;
 };
