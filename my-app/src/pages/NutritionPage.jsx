@@ -123,7 +123,7 @@ const FoodItem = ({ food, onRemove }) => (
 );
 
 function NutritionPage() {
-  const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
+  const { updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
   const {
     foodLogs,
     addFoodLog,

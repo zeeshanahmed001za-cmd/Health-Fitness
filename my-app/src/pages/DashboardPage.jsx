@@ -10,6 +10,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import * as Icons from "../components/Icons";
 
+// A Data URL SVG is an image encoded as text and embedded directly inside JavaScript or HTML.
 const AVATAR_FALLBACK =
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
@@ -72,26 +73,26 @@ function DashboardPage() {
         macros: {
             title: "Macros",
             items: [
-                { 
-                    label: "Protein", 
-                    consumed: `${Math.round(totals.protein)}g`, 
-                    left: `${Math.max(nutritionGoals.protein - totals.protein, 0).toFixed(0)}g left`, 
-                    color: "#2dd4bf", 
-                    pct: Math.min((totals.protein / nutritionGoals.protein) * 100, 100) 
+                {
+                    label: "Protein",
+                    consumed: `${Math.round(totals.protein)}g`,
+                    left: `${Math.max(nutritionGoals.protein - totals.protein, 0).toFixed(0)}g left`,
+                    color: "#2dd4bf",
+                    pct: Math.min((totals.protein / nutritionGoals.protein) * 100, 100)
                 },
-                { 
-                    label: "Carbohydrates", 
-                    consumed: `${Math.round(totals.carbs)}g`, 
-                    left: `${Math.max(nutritionGoals.carbs - totals.carbs, 0).toFixed(0)}g left`, 
-                    color: "#f59e0b", 
-                    pct: Math.min((totals.carbs / nutritionGoals.carbs) * 100, 100) 
+                {
+                    label: "Carbohydrates",
+                    consumed: `${Math.round(totals.carbs)}g`,
+                    left: `${Math.max(nutritionGoals.carbs - totals.carbs, 0).toFixed(0)}g left`,
+                    color: "#f59e0b",
+                    pct: Math.min((totals.carbs / nutritionGoals.carbs) * 100, 100)
                 },
-                { 
-                    label: "Fats", 
-                    consumed: `${Math.round(totals.fat)}g`, 
-                    left: `${Math.max(nutritionGoals.fat - totals.fat, 0).toFixed(0)}g left`, 
-                    color: "#818cf8", 
-                    pct: Math.min((totals.fat / nutritionGoals.fat) * 100, 100) 
+                {
+                    label: "Fats",
+                    consumed: `${Math.round(totals.fat)}g`,
+                    left: `${Math.max(nutritionGoals.fat - totals.fat, 0).toFixed(0)}g left`,
+                    color: "#818cf8",
+                    pct: Math.min((totals.fat / nutritionGoals.fat) * 100, 100)
                 }
             ]
         },
@@ -305,7 +306,7 @@ function DashboardPage() {
                                                         strokeDashoffset={offset}
                                                         strokeLinecap="round"
                                                         transform="rotate(-90 50 50)"
-                                                        style={{ 
+                                                        style={{
                                                             transition: "stroke-dashoffset 1s ease-in-out",
                                                             filter: `drop-shadow(0 0 4px ${m.color}80)`
                                                         }}
@@ -334,8 +335,8 @@ function DashboardPage() {
                             </div>
                             <div className={pageStyles.mealList}>
                                 {nutritionMetrics.foodLog.meals.map((meal, idx) => (
-                                    <div 
-                                        key={idx} 
+                                    <div
+                                        key={idx}
                                         className={pageStyles.mealRow}
                                         onClick={() => navigate("/nutrition")}
                                     >
@@ -356,7 +357,7 @@ function DashboardPage() {
                             {nutritionMetrics.foodLog.meals.every(m => m.kcal === 0) && (
                                 <div className={pageStyles.emptyLogState}>
                                     <p>No meals logged today.</p>
-                                    <button 
+                                    <button
                                         className={pageStyles.logMealBtn}
                                         onClick={() => navigate("/nutrition")}
                                     >
@@ -402,7 +403,7 @@ function DashboardPage() {
                             <div className={pageStyles.panelHeader}>
                                 <h3>Recent Logs</h3>
                                 <div className={pageStyles.panelHeaderRight}>
-                                    <button 
+                                    <button
                                         className={pageStyles.viewAllLink}
                                         onClick={() => navigate("/nutrition")}
                                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
@@ -410,7 +411,7 @@ function DashboardPage() {
                                         Nutrition
                                     </button>
                                     <span style={{ opacity: 0.3 }}>•</span>
-                                    <button 
+                                    <button
                                         className={pageStyles.viewAllLink}
                                         onClick={() => navigate("/workouts")}
                                         style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
