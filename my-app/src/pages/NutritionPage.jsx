@@ -131,7 +131,8 @@ function NutritionPage() {
     waterTotal,
     addWaterLog,
     removeWaterLog,
-    totals
+    totals,
+    nutritionGoals
   } = useNutrition();
 
   useDocumentTitle("Nutrition Tracking");
@@ -266,13 +267,13 @@ function NutritionPage() {
             <div className={pageStyles.metaCard}>
               <span className={pageStyles.metaLabel}>Daily Calorie Target</span>
               <span className={pageStyles.metaValue}>
-                {userData.calorieGoal || 2500} kcal
+                {nutritionGoals.calories} kcal
               </span>
             </div>
             <div className={pageStyles.metaCard}>
               <span className={pageStyles.metaLabel}>Consumed Today</span>
               <span className={pageStyles.metaValue} style={{ color: "var(--accent-primary)" }}>
-                {totals.calories} / {userData.calorieGoal || 2500} kcal
+                {totals.calories} / {nutritionGoals.calories} kcal
               </span>
             </div>
           </section>
@@ -501,7 +502,7 @@ function NutritionPage() {
                 <option value="breakfast">Breakfast</option>
                 <option value="lunch">Lunch</option>
                 <option value="dinner">Dinner</option>
-                <option value="snack">Snack</option>
+                <option value="snacks">Snacks</option>
               </select>
             </div>
             <div className={pageStyles.macroGrid}>

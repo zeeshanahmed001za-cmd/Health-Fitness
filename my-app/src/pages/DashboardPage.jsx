@@ -99,10 +99,10 @@ function DashboardPage() {
         foodLog: {
             title: "Today's Food Log",
             meals: [
-                { category: "Breakfast", kcal: groupedLogs.breakfast.reduce((s, x) => s + x.calories, 0), items: groupedLogs.breakfast.length },
-                { category: "Lunch", kcal: groupedLogs.lunch.reduce((s, x) => s + x.calories, 0), items: groupedLogs.lunch.length },
-                { category: "Dinner", kcal: groupedLogs.dinner.reduce((s, x) => s + x.calories, 0), items: groupedLogs.dinner.length },
-                { category: "Snacks", kcal: groupedLogs.snacks.reduce((s, x) => s + x.calories, 0), items: groupedLogs.snacks.length }
+                { category: "Breakfast", kcal: groupedLogs.breakfast.reduce((s, x) => s + (Number(x.calories) || 0), 0), items: groupedLogs.breakfast.length },
+                { category: "Lunch", kcal: groupedLogs.lunch.reduce((s, x) => s + (Number(x.calories) || 0), 0), items: groupedLogs.lunch.length },
+                { category: "Dinner", kcal: groupedLogs.dinner.reduce((s, x) => s + (Number(x.calories) || 0), 0), items: groupedLogs.dinner.length },
+                { category: "Snacks", kcal: groupedLogs.snacks.reduce((s, x) => s + (Number(x.calories) || 0), 0), items: groupedLogs.snacks.length }
             ]
         },
         summary: {

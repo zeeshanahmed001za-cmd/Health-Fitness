@@ -10,26 +10,45 @@ export const NutritionProvider = ({ children }) => {
   // 1. Initial State from localStorage
   const [foodLogs, setFoodLogs] = useState(() => {
     const saved = localStorage.getItem('journal_food_logs');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      return saved ? JSON.parse(saved) || [] : [];
+    } catch (e) {
+      return [];
+    }
   });
 
   const [waterLogs, setWaterLogs] = useState(() => {
     const saved = localStorage.getItem('journal_water_logs');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      return saved ? JSON.parse(saved) || [] : [];
+    } catch (e) {
+      return [];
+    }
   });
 
   const [nutritionGoals, setNutritionGoals] = useState(() => {
+    const defaultGoals = { calories: 2100, protein: 150, carbs: 200, fat: 70 };
     const saved = localStorage.getItem('journal_nutrition_goals');
-    if (saved) return JSON.parse(saved);
+    
+    try {
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
+    } catch (e) {
+      console.error("Error parsing nutrition goals", e);
+    }
     
     // Fallback to onboarding data if available
     const onboarding = sessionStorage.getItem('onboardingData');
     if (onboarding) {
-      const data = JSON.parse(onboarding);
-      if (data.calorieGoal) return { calories: data.calorieGoal, protein: 150, carbs: 250, fat: 70 };
+      try {
+        const data = JSON.parse(onboarding);
+        if (data.calorieGoal) return { ...defaultGoals, calories: data.calorieGoal };
+      } catch (e) {}
     }
     
-    return { calories: 2100, protein: 150, carbs: 200, fat: 70 };
+    return defaultGoals;
   });
 
   // 2. Persistence Layer
