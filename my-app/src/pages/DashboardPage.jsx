@@ -37,7 +37,7 @@ function DashboardPage() {
     );
 
     const progress = useMemo(() => {
-        if (loggedExercises.length === 0) return 70;
+        if (loggedExercises.length === 0) return 0;
         return Math.round(
             (completedExercises.length / loggedExercises.length) * 100,
         );
