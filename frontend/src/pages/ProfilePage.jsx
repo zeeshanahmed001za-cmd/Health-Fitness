@@ -7,6 +7,7 @@ import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/Profilepage.module.css";
 import { useUser } from "../context/UserContext";
+import { updateUserProfileAPI } from "../api";
 
 
 // Icons
@@ -142,7 +143,7 @@ function ProfilePage() {
     setIsEditing(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Sync back to global context
     const updatedData = {
       ...userData,
@@ -164,8 +165,16 @@ function ProfilePage() {
        updatedData.heightUnit = 'metric';
     }
 
-    updateUserData(updatedData);
-    setIsEditing(false);
+    try {
+      await updateUserProfileAPI(updatedData);
+      updateUserData(updatedData);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to update profile", err);
+      // fallback just update context
+      updateUserData(updatedData);
+      setIsEditing(false);
+    }
   };
 
   const handlePersonalChange = (field, value) => {

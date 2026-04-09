@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/LoginPage.module.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { useUser } from "../context/UserContext";
+import { loginUserAPI } from "../api";
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
 import { EyeOpen, EyeClose } from "../components/Icons";
@@ -29,6 +30,8 @@ function LoginPage() {
   const [emailStatus, setEmailStatus] = useState(null);
   const [passwordStatus, setPasswordStatus] = useState(null);
   const [termsError, setTermsError] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getGroupClass = (status) => {
     if (status === true) return `${styles.inputGroup} ${styles.success}`;
@@ -64,7 +67,7 @@ function LoginPage() {
       setPasswordStatus(passwordPolicy(val) || null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const isEmailValid = emailPolicy(email.trim());
@@ -74,11 +77,22 @@ function LoginPage() {
     setEmailStatus(isEmailValid);
     setPasswordStatus(isPasswordValid);
     setTermsError(!isTermsValid);
+    setApiError("");
 
     if (isEmailValid && isPasswordValid && isTermsValid) {
-      updateUserData({ email });
-      console.log("Validation passed. Redirecting to dashboard...");
-      navigate("/dashboard");
+      setIsSubmitting(true);
+      try {
+        const data = await loginUserAPI(email.trim(), password);
+        localStorage.setItem("userToken", data.token);
+        localStorage.setItem("userSession", JSON.stringify(data));
+        updateUserData(data);
+        console.log("Validation passed. Redirecting to dashboard...");
+        navigate("/dashboard");
+      } catch (error) {
+        setApiError(error.message || "Failed to log in. Please check your credentials.");
+      } finally {
+        setIsSubmitting(false);
+      }
     } else {
       console.log("Validation failed. Please correct the errors.");
     }
@@ -197,9 +211,15 @@ function LoginPage() {
                 </span>
               </div>
 
+              {apiError && (
+                <div style={{ color: "red", fontSize: "0.875rem", marginBottom: "1rem" }}>
+                  {apiError}
+                </div>
+              )}
+
               {/* Submit Button */}
-              <button type="submit" className={styles.primaryBtn}>
-                Log in
+              <button type="submit" className={styles.primaryBtn} disabled={isSubmitting}>
+                {isSubmitting ? "Logging in..." : "Log in"}
               </button>
 
               {/* Divider */}

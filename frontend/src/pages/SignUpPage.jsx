@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/SignUpPage.module.css";
 import { useUser } from "../context/UserContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { registerUserAPI, updateUserProfileAPI } from "../api";
 
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
@@ -18,7 +19,7 @@ function SignUpPage() {
   useDocumentTitle("Create Account");
   const navigate = useNavigate();
 
-  const { updateUserData } = useUser();
+  const { userData, updateUserData } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [termsChecked, setTermsChecked] = useState(false);
@@ -32,9 +33,10 @@ function SignUpPage() {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [termsError, setTermsError] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // FIX 2: handleSubmit is now synchronous and clean — no orphaned isSubmitting
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const isEmailValid = emailPolicy(email.trim());
@@ -44,10 +46,33 @@ function SignUpPage() {
     setEmailError(!isEmailValid);
     setPasswordError(!isPasswordValid);
     setTermsError(!isTermsValid);
+    setApiError("");
 
     if (isEmailValid && isPasswordValid && isTermsValid) {
-      updateUserData({ email });
-      navigate("/dashboard");
+      setIsSubmitting(true);
+      try {
+        const name = userData.firstName ? `${userData.firstName} ${userData.lastName || ''}`.trim() : 'User';
+        const data = await registerUserAPI(email.trim(), password, name);
+        localStorage.setItem("userToken", data.token);
+        localStorage.setItem("userSession", JSON.stringify(data));
+        
+        // Sync any onboarding data immediately using the new token
+        try {
+           const fullData = { ...userData, email: email.trim() };
+           await updateUserProfileAPI(fullData);
+           updateUserData(fullData);
+        } catch(updateErr) {
+           console.error("Failed to sync onboarding data", updateErr);
+           updateUserData({ email: email.trim() });
+        }
+
+        console.log("Validation passed. Redirecting to dashboard...");
+        navigate("/dashboard");
+      } catch (error) {
+        setApiError(error.message || "Failed to create account. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -188,9 +213,15 @@ function SignUpPage() {
               </span>
             </div>
 
-            {/* Submit — FIX 2: no isSubmitting, button never locks */}
-            <button type="submit" className={styles.primaryBtn}>
-              Sign Up
+            {apiError && (
+              <div style={{ color: "red", fontSize: "0.875rem", marginBottom: "1rem" }}>
+                {apiError}
+              </div>
+            )}
+
+            {/* Submit — FIX 2: handle isSubmitting properly */}
+            <button type="submit" className={styles.primaryBtn} disabled={isSubmitting}>
+              {isSubmitting ? "Signing Up..." : "Sign Up"}
             </button>
 
             <div className={styles.divider}>

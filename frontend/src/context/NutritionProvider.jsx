@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { NutritionContext } from './NutritionContext';
+import { getNutritionLogsAPI, addNutritionLogAPI, deleteNutritionLogAPI } from '../api';
 
 /**
  * NutritionProvider: Manages the single source of truth for food logs, water, and goals.
@@ -52,7 +53,24 @@ export const NutritionProvider = ({ children }) => {
     return defaultGoals;
   });
 
-  // 2. Persistence Layer
+  // Fetch from backend
+  useEffect(() => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+
+    getNutritionLogsAPI()
+      .then(logs => {
+        if (logs && logs.length > 0) {
+          const food = logs.filter(l => l.activityType === 'food').map(l => ({...l, id: l._id}));
+          const water = logs.filter(l => l.activityType === 'water').map(l => ({...l, id: l._id}));
+          setFoodLogs(food);
+          setWaterLogs(water);
+        }
+      })
+      .catch(err => console.error("Failed to load nutrition from cloud", err));
+  }, []);
+
+  // 2. Persistence Layer (Local fallback)
   useEffect(() => {
     localStorage.setItem('journal_food_logs', JSON.stringify(foodLogs));
   }, [foodLogs]);
@@ -66,48 +84,66 @@ export const NutritionProvider = ({ children }) => {
   }, [nutritionGoals]);
 
   // 3. Actions (Business Logic)
-  const addFoodLog = useCallback((foodItem) => {
+  const addFoodLog = useCallback(async (foodItem) => {
     const newEntry = {
       ...foodItem,
-      id: Date.now().toString(),
       timestamp: new Date().toISOString(),
       activityType: 'food'
     };
-    setFoodLogs((prev) => [...prev, newEntry]);
+    try {
+      const saved = await addNutritionLogAPI(newEntry);
+      setFoodLogs((prev) => [...prev, { ...saved, id: saved._id }]);
+    } catch (err) {
+      console.error(err);
+      setFoodLogs((prev) => [...prev, { ...newEntry, id: Date.now().toString() }]);
+    }
   }, []);
 
-  const removeFoodLog = useCallback((id) => {
+  const removeFoodLog = useCallback(async (id) => {
+    try {
+      await deleteNutritionLogAPI(id);
+    } catch(err) {
+      console.error(err);
+    }
     setFoodLogs((prev) => prev.filter(item => item.id !== id));
   }, []);
 
-  const addWaterLog = useCallback(() => {
-    setWaterLogs((prev) => {
-      const today = new Date().toISOString().split('T')[0];
-      const todaysWater = prev.filter(log => log.timestamp.startsWith(today));
-      if (todaysWater.length >= 8) return prev; // max 8 glasses
+  const addWaterLog = useCallback(async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const todaysWater = waterLogs.filter(log => log.timestamp.startsWith(today));
+    if (todaysWater.length >= 8) return; // max 8 glasses
 
-      const newEntry = {
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        amount: 250, // per glass
-        activityType: 'water'
-      };
-      return [...prev, newEntry];
-    });
-  }, []);
+    const newEntry = {
+      timestamp: new Date().toISOString(),
+      amount: 250, // per glass
+      activityType: 'water'
+    };
 
-  const removeWaterLog = useCallback(() => {
-    setWaterLogs((prev) => {
-      const today = new Date().toISOString().split('T')[0];
-      // Find the last index of today's log to remove it specifically
-      for (let i = prev.length - 1; i >= 0; i--) {
-        if (prev[i].timestamp.startsWith(today)) {
-          return [...prev.slice(0, i), ...prev.slice(i + 1)];
+    try {
+      const saved = await addNutritionLogAPI(newEntry);
+      setWaterLogs((prev) => [...prev, { ...saved, id: saved._id }]);
+    } catch(err) {
+      console.error(err);
+      setWaterLogs((prev) => [...prev, { ...newEntry, id: Date.now().toString() }]);
+    }
+  }, [waterLogs]);
+
+  const removeWaterLog = useCallback(async () => {
+    const today = new Date().toISOString().split('T')[0];
+    // Find the last index of today's log
+    const lastLogIdx = waterLogs.map(l => l.timestamp.startsWith(today)).lastIndexOf(true);
+    if (lastLogIdx !== -1) {
+      const logToRemove = waterLogs[lastLogIdx];
+      try {
+        if (logToRemove._id || !logToRemove.id.includes(today)) { // basic check
+          await deleteNutritionLogAPI(logToRemove.id || logToRemove._id);
         }
+      } catch(err) {
+        console.error(err);
       }
-      return prev;
-    });
-  }, []);
+      setWaterLogs((prev) => [...prev.slice(0, lastLogIdx), ...prev.slice(lastLogIdx + 1)]);
+    }
+  }, [waterLogs]);
 
   const updateGoal = useCallback((newGoals) => {
     setNutritionGoals((prev) => ({ ...prev, ...newGoals }));

@@ -5,6 +5,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
+import { getProgressHistoryAPI, addProgressAPI, updateUserProfileAPI } from "../api";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/ProgressTracker.module.css";
@@ -76,27 +77,35 @@ function ProgressTracker() {
   const [loggedExercises] = useState(() => {
     return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];
   });
-  const [weightHistory, setWeightHistory] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem("weightHistory"));
-    if (saved && saved.length > 0) return saved;
-
-    // Fallback: Use initial weight from onboarding if available
-    if (onboardingData.weightValue) {
-      const todayStr = new Date().toISOString().split('T')[0];
-      return [{ date: todayStr, weight: parseFloat(onboardingData.weightValue) }];
-    }
-    return [];
-  });
-
-  // Keep weight history in sync if onboarding data exists but history doesn't
+  const [weightHistory, setWeightHistory] = useState([]);
+  
+  // Fetch weight history from backend
   useEffect(() => {
-    if (weightHistory.length === 0 && onboardingData.weightValue) {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const initialEntry = [{ date: todayStr, weight: parseFloat(onboardingData.weightValue) }];
-      setWeightHistory(initialEntry);
-      localStorage.setItem("weightHistory", JSON.stringify(initialEntry));
-    }
-  }, [onboardingData.weightValue, weightHistory.length]);
+    const token = localStorage.getItem("userToken");
+    if (!token) return;
+
+    getProgressHistoryAPI()
+      .then(data => {
+        if (data && data.length > 0) {
+          const mapToWH = data.map(entry => ({
+            date: new Date(entry.createdAt || entry.date).toISOString().split('T')[0],
+            weight: entry.weight
+          }));
+          setWeightHistory(mapToWH);
+        } else if (onboardingData.weightValue) {
+          const todayStr = new Date().toISOString().split('T')[0];
+          setWeightHistory([{ date: todayStr, weight: parseFloat(onboardingData.weightValue) }]);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to fetch progress history", err);
+        // fallback
+        if (onboardingData.weightValue && weightHistory.length === 0) {
+          const todayStr = new Date().toISOString().split('T')[0];
+          setWeightHistory([{ date: todayStr, weight: parseFloat(onboardingData.weightValue) }]);
+        }
+      });
+  }, [onboardingData.weightValue]);
 
   const [dailyCalorieLogs, setDailyCalorieLogs] = useState([]);
   const [dailyMacroLogs, setDailyMacroLogs] = useState([]);
@@ -371,17 +380,18 @@ function ProgressTracker() {
     setIsModalActive(true);
   };
 
-  const handleFormSubmit = (e) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setIsUpdating(true);
     let newWeight = parseFloat(formData.currentWeight);
     
     // If user logged in a unit different from system base, convert it
     if (formData.displayUnit !== userData.weightUnit) {
       if (userData.weightUnit === 'metric') {
-        // Logged in lbs, convert to kg for system
         newWeight = newWeight / 2.20462;
       } else {
-        // Logged in kg, convert to lbs for system
         newWeight = newWeight * 2.20462;
       }
       newWeight = parseFloat(newWeight.toFixed(1));
@@ -392,26 +402,37 @@ function ProgressTracker() {
       weightValue: newWeight,
       bodyFat: formData.bodyFat ? parseFloat(formData.bodyFat) : "",
     };
-    setOnboardingData(updatedData);
-    sessionStorage.setItem("onboardingData", JSON.stringify(updatedData));
-    localStorage.setItem("userSession", JSON.stringify(updatedData));
 
-    if (!isNaN(newWeight)) {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const newWH = [...weightHistory];
-
-      // check if today already exists
-      const todayIdx = newWH.findIndex(w => w.date === todayStr);
-      if (todayIdx >= 0) {
-        newWH[todayIdx].weight = newWeight;
-      } else {
-        newWH.push({ date: todayStr, weight: newWeight });
+    try {
+      if (!isNaN(newWeight)) {
+        await addProgressAPI({
+          weight: newWeight,
+          bodyFatPercentage: updatedData.bodyFat,
+          notes: "Updated from Progress Tracker"
+        });
+        
+        const todayStr = new Date().toISOString().split('T')[0];
+        setWeightHistory(prev => {
+          const newWH = [...prev];
+          const todayIdx = newWH.findIndex(w => w.date === todayStr);
+          if (todayIdx >= 0) {
+            newWH[todayIdx].weight = newWeight;
+          } else {
+            newWH.push({ date: todayStr, weight: newWeight });
+          }
+          return newWH;
+        });
       }
-      setWeightHistory(newWH);
-      localStorage.setItem('weightHistory', JSON.stringify(newWH));
+      await updateUserProfileAPI(updatedData);
+      
+      setOnboardingData(updatedData);
+      setIsModalActive(false);
+    } catch(err) {
+      console.error("Failed to save progress", err);
+      alert("Failed to save metrics to cloud!");
+    } finally {
+      setIsUpdating(false);
     }
-
-    setIsModalActive(false);
   };
 
   // Milestone Conditions

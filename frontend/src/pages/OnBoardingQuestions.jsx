@@ -296,10 +296,35 @@ function OnboardingQuestions() {
       if (maxSelections === 1) {
         return { ...prev, [dataKey]: value };
       }
+
       const current = prev[dataKey];
+
       if (current.includes(value)) {
+        // Toggle off
         return { ...prev, [dataKey]: current.filter((v) => v !== value) };
-      } else if (current.length < maxSelections) {
+      }
+
+      // Handle special logic for primary goals to avoid conflicting major goals
+      if (dataKey === "primaryGoal") {
+        const MAJOR_GOALS = ["weight_loss", "muscle_gain", "general_fitness", "maintain_weight"];
+        let newCurrent = [...current];
+
+        if (MAJOR_GOALS.includes(value)) {
+          // If picking a NEW major goal, remove any existing major goal to prevent conflict
+          newCurrent = newCurrent.filter(g => !MAJOR_GOALS.includes(g));
+        }
+
+        if (newCurrent.length < maxSelections) {
+          newCurrent.push(value);
+        } else {
+          // Replace the oldest selection if max reached
+          newCurrent = [...newCurrent.slice(1), value];
+        }
+        return { ...prev, [dataKey]: newCurrent };
+      }
+
+      // Default behavior for other multi-selects
+      if (current.length < maxSelections) {
         return { ...prev, [dataKey]: [...current, value] };
       } else {
         return { ...prev, [dataKey]: [...current.slice(1), value] };
@@ -547,6 +572,17 @@ function OnboardingQuestions() {
               <h2>How active are you daily?</h2>
               <p className={styles.subtitle}>
                 This helps us calculate your energy needs.
+              </p>
+              <p
+                className={styles.subtitle}
+                style={{
+                  fontSize: "0.85rem",
+                  opacity: 0.8,
+                  marginTop: "8px",
+                  fontWeight: 500
+                }}
+              >
+                Select your general baseline activity, excluding intentional workouts.
               </p>
             </div>
             <div className={styles.optionsList}>

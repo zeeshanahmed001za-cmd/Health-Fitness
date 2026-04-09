@@ -1,0 +1,165 @@
+import asyncHandler from 'express-async-handler';
+import User from '../models/User.js';
+import generateToken from '../utils/generateToken.js';
+
+// @desc    Register a new user
+// @route   POST /api/users
+// @access  Public
+const registerUser = asyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+        res.status(400);
+        throw new Error('User already exists');
+    }
+
+    const user = await User.create({
+        name,
+        email,
+        password,
+    });
+
+    if (user) {
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user._id),
+        });
+    } else {
+        res.status(400);
+        throw new Error('Invalid user data');
+    }
+});
+
+// @desc    Auth user & get token
+// @route   POST /api/users/login
+// @access  Public
+const loginUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (user && (await user.matchPassword(password))) {
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user._id),
+        });
+    } else {
+        res.status(401);
+        throw new Error('Invalid email or password');
+    }
+});
+
+// @desc    Get user profile
+// @route   GET /api/users/profile
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            dob: user.dob,
+            age: user.age,
+            gender: user.gender,
+            location: user.location,
+            primaryGoal: user.primaryGoal,
+            fitnessLevel: user.fitnessLevel,
+            activityLevel: user.activityLevel,
+            heightUnit: user.heightUnit,
+            heightFeet: user.heightFeet,
+            heightInches: user.heightInches,
+            heightCm: user.heightCm,
+            height: user.height,
+            weightUnit: user.weightUnit,
+            weightValue: user.weightValue,
+            goalWeightValue: user.goalWeightValue,
+            emailNotifications: user.emailNotifications,
+            smsReminders: user.smsReminders,
+            publicProfile: user.publicProfile,
+        });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+// @access  Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.firstName = req.body.firstName !== undefined ? req.body.firstName : user.firstName;
+        user.lastName = req.body.lastName !== undefined ? req.body.lastName : user.lastName;
+        user.dob = req.body.dob !== undefined ? req.body.dob : user.dob;
+        user.age = req.body.age !== undefined ? req.body.age : user.age;
+        user.gender = req.body.gender !== undefined ? req.body.gender : user.gender;
+        user.location = req.body.location !== undefined ? req.body.location : user.location;
+        user.primaryGoal = req.body.primaryGoal !== undefined ? req.body.primaryGoal : user.primaryGoal;
+        user.fitnessLevel = req.body.fitnessLevel !== undefined ? req.body.fitnessLevel : user.fitnessLevel;
+        user.activityLevel = req.body.activityLevel !== undefined ? req.body.activityLevel : user.activityLevel;
+        user.heightUnit = req.body.heightUnit !== undefined ? req.body.heightUnit : user.heightUnit;
+        user.heightFeet = req.body.heightFeet !== undefined ? req.body.heightFeet : user.heightFeet;
+        user.heightInches = req.body.heightInches !== undefined ? req.body.heightInches : user.heightInches;
+        user.heightCm = req.body.heightCm !== undefined ? req.body.heightCm : user.heightCm;
+        user.height = req.body.height !== undefined ? req.body.height : user.height;
+        user.weightUnit = req.body.weightUnit !== undefined ? req.body.weightUnit : user.weightUnit;
+        user.weightValue = req.body.weightValue !== undefined ? req.body.weightValue : user.weightValue;
+        user.goalWeightValue = req.body.goalWeightValue !== undefined ? req.body.goalWeightValue : user.goalWeightValue;
+        user.emailNotifications = req.body.emailNotifications !== undefined ? req.body.emailNotifications : user.emailNotifications;
+        user.smsReminders = req.body.smsReminders !== undefined ? req.body.smsReminders : user.smsReminders;
+        user.publicProfile = req.body.publicProfile !== undefined ? req.body.publicProfile : user.publicProfile;
+
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
+        const updatedUser = await user.save();
+
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            token: generateToken(updatedUser._id),
+            // include updated fields back
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            dob: updatedUser.dob,
+            age: updatedUser.age,
+            gender: updatedUser.gender,
+            location: updatedUser.location,
+            primaryGoal: updatedUser.primaryGoal,
+            fitnessLevel: updatedUser.fitnessLevel,
+            activityLevel: updatedUser.activityLevel,
+            heightUnit: updatedUser.heightUnit,
+            heightFeet: updatedUser.heightFeet,
+            heightInches: updatedUser.heightInches,
+            heightCm: updatedUser.heightCm,
+            height: updatedUser.height,
+            weightUnit: updatedUser.weightUnit,
+            weightValue: updatedUser.weightValue,
+            goalWeightValue: updatedUser.goalWeightValue,
+            emailNotifications: updatedUser.emailNotifications,
+            smsReminders: updatedUser.smsReminders,
+            publicProfile: updatedUser.publicProfile,
+        });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
+export { registerUser, loginUser, getUserProfile, updateUserProfile };

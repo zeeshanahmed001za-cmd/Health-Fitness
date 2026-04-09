@@ -5,6 +5,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 
 import { useUser } from "../context/UserContext";
+import { logWorkoutAPI } from "../api";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/WorkoutPlansPage.module.css";
@@ -204,6 +205,7 @@ function WorkoutPlansPage() {
     reps: "",
     calories: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   // Persist data
   useEffect(() => {
@@ -289,6 +291,41 @@ function WorkoutPlansPage() {
       reps: "",
       calories: "",
     });
+  };
+
+  const handleFinishWorkout = async () => {
+    setIsSaving(true);
+    try {
+      const completedExs = exercises.filter((e) => e.completed);
+      if (completedExs.length === 0) {
+        alert("Please complete at least one exercise to save the workout!");
+        setIsSaving(false);
+        return;
+      }
+      
+      const payload = {
+        type: "Routine",
+        duration: 45, // Placeholder if no duration is tracked
+        caloriesBurned: completedExs.reduce((acc, curr) => acc + (parseInt(curr.calories) || 0), 0),
+        exercises: completedExs.map(ex => ({
+          name: ex.name,
+          sets: parseInt(ex.sets) || 1,
+          reps: isNaN(parseInt(ex.reps)) ? 1 : parseInt(ex.reps),
+          targetMuscle: ex.muscleGroup || ""
+        })),
+        notes: "Logged from Workout Plans Page"
+      };
+
+      await logWorkoutAPI(payload);
+      alert("Workout saved successfully to cloud!");
+      // Optionally reset completion:
+      // setExercises(exercises.map(ex => ({ ...ex, completed: false })));
+    } catch (error) {
+      console.error("Failed to sync workout to backend", error);
+      alert("Failed to save workout to cloud.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -469,6 +506,15 @@ function WorkoutPlansPage() {
                 className={pageStyles.progressFill}
                 style={{ width: `${completionPercent}%` }}
               ></div>
+            </div>
+            <div style={{ marginTop: "24px", display: "flex", justifyContent: "flex-end" }}>
+              <button 
+                className={pageStyles.primaryBtn} 
+                onClick={handleFinishWorkout}
+                disabled={isSaving}
+              >
+                {isSaving ? "Saving..." : "Finish & Save Workout"}
+              </button>
             </div>
           </section>
         </main>

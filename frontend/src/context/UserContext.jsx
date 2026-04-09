@@ -6,6 +6,7 @@ import {
   useMemo,
   useCallback,
 } from "react";
+import { getUserProfileAPI } from "../api";
 
 const UserContext = createContext();
 
@@ -22,6 +23,20 @@ export const UserProvider = ({ children }) => {
     }
     return {};
   });
+
+  // Fetch updated profile on mount if token exists
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      getUserProfileAPI()
+        .then((data) => {
+          setUserData((prev) => ({ ...prev, ...data }));
+        })
+        .catch((err) => {
+          console.error("Failed to fetch user profile", err);
+        });
+    }
+  }, []);
 
   // Sync state changes to storage automatically
   useEffect(() => {
@@ -60,6 +75,7 @@ export const UserProvider = ({ children }) => {
     setUserData({});
     sessionStorage.removeItem("onboardingData");
     localStorage.removeItem("userSession");
+    localStorage.removeItem("userToken");
     localStorage.removeItem("sidebar_collapsed"); // Reset on logout
   }, []);
 
