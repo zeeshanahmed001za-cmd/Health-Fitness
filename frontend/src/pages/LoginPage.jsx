@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/LoginPage.module.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { useUser } from "../context/UserContext";
-import { loginUserAPI } from "../api";
+import { loginUserAPI, forgotPasswordAPI } from "../api";
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
 import { EyeOpen, EyeClose } from "../components/Icons";
@@ -32,6 +32,10 @@ function LoginPage() {
   const [termsError, setTermsError] = useState(false);
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [forgotMessage, setForgotMessage] = useState("");
+  const [forgotError, setForgotError] = useState("");
+  const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
 
   const getGroupClass = (status) => {
     if (status === true) return `${styles.inputGroup} ${styles.success}`;
@@ -65,6 +69,28 @@ function LoginPage() {
     setPassword(val);
     if (passwordStatus === false)
       setPasswordStatus(passwordPolicy(val) || null);
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setForgotMessage("");
+    setForgotError("");
+    
+    if (!email.trim() || !emailPolicy(email.trim())) {
+      setForgotError("Please enter a valid email address to reset password.");
+      setEmailStatus(false);
+      return;
+    }
+
+    setIsForgotSubmitting(true);
+    try {
+      const data = await forgotPasswordAPI(email.trim());
+      setForgotMessage(data.message || "Password reset link sent to your email.");
+    } catch (error) {
+      setForgotError(error.message || "Failed to send reset link.");
+    } finally {
+      setIsForgotSubmitting(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -181,9 +207,27 @@ function LoginPage() {
                 <span className={styles.errorText}>
                   Must be 10+ chars with symbols & numbers.
                 </span>
-                <a href="#" className={styles.forgotPassword}>
-                  Forgot Password?
-                </a>
+                
+                {forgotMessage && (
+                  <div style={{ color: "green", fontSize: "0.875rem", marginTop: "0.5rem" }}>
+                    {forgotMessage}
+                  </div>
+                )}
+                {forgotError && (
+                  <div style={{ color: "red", fontSize: "0.875rem", marginTop: "0.5rem" }}>
+                    {forgotError}
+                  </div>
+                )}
+                
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className={styles.forgotPassword}
+                  style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", color: "inherit", marginTop: "0.5rem" }}
+                  disabled={isForgotSubmitting}
+                >
+                  {isForgotSubmitting ? "Sending..." : "Forgot Password?"}
+                </button>
               </div>
 
               {/* Terms & Conditions */}

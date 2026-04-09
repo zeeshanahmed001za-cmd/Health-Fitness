@@ -19,6 +19,17 @@ export const loginUserAPI = async (email, password) => {
     return data;
 };
 
+export const forgotPasswordAPI = async (email) => {
+    const res = await fetch(`${API_BASE_URL}/users/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to send reset link');
+    return data;
+};
+
 export const registerUserAPI = async (email, password, name = 'User') => {
     const res = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',

@@ -162,4 +162,23 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     }
 });
 
-export { registerUser, loginUser, getUserProfile, updateUserProfile };
+// @desc    Forgot Password
+// @route   POST /api/users/forgot-password
+// @access  Public
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    // Mock sending email
+    console.log(`Mock: Password reset link sent to ${email}`);
+
+    res.status(200).json({ message: 'Password reset link sent to your email' });
+});
+
+export { registerUser, loginUser, getUserProfile, updateUserProfile, forgotPassword };
