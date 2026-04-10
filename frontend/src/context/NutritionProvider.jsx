@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { NutritionContext } from './NutritionContext';
+import { useUser } from './UserContext';
 import { getNutritionLogsAPI, addNutritionLogAPI, deleteNutritionLogAPI } from '../api';
 
 /**
@@ -7,6 +8,7 @@ import { getNutritionLogsAPI, addNutritionLogAPI, deleteNutritionLogAPI } from '
  * Business logic for totals and persistence is handled here.
  */
 export const NutritionProvider = ({ children }) => {
+  const { userData } = useUser();
   // 1. Initial State from localStorage
   const [foodLogs, setFoodLogs] = useState(() => {
     const saved = localStorage.getItem('journal_food_logs');
@@ -52,6 +54,90 @@ export const NutritionProvider = ({ children }) => {
     
     return defaultGoals;
   });
+
+  // Calculate dynamic goals based on userData
+  useEffect(() => {
+    if (userData && Object.keys(userData).length > 0) {
+       const calculateDynamicGoals = (data) => {
+          let defaultGoals = { calories: 2100, protein: 150, carbs: 200, fat: 70 };
+          if (data.calorieGoal) {
+             const cal = parseInt(data.calorieGoal);
+             return {
+                ...defaultGoals,
+                calories: cal,
+                protein: Math.round(cal * 0.3 / 4),
+                carbs: Math.round(cal * 0.4 / 4),
+                fat: Math.round(cal * 0.3 / 9)
+             };
+          }
+
+          let weight = parseFloat(data.weightValue);
+          if (!weight) return null;
+
+          if (data.weightUnit === "imperial" || data.weightUnit === "lbs") {
+             weight = weight * 0.453592;
+          }
+          
+          let height = 0;
+          if (data.heightUnit === "imperial" && data.heightFeet) {
+             const ft = parseFloat(data.heightFeet) || 0;
+             const inc = parseFloat(data.heightInches) || 0;
+             height = (ft * 12 + inc) * 2.54; 
+          } else if (data.heightCm) {
+             height = parseFloat(data.heightCm);
+          }
+
+          if (!height) return null;
+
+          let age = 30;
+          if (data.dob) {
+            const today = new Date();
+            const birthDate = new Date(data.dob);
+            age = today.getFullYear() - birthDate.getFullYear();
+          }
+
+          const isMale = data.gender === "male";
+          
+          let bmr = (10 * weight) + (6.25 * height) - (5 * age) + (isMale ? 5 : -161);
+          
+          let tdee = bmr * 1.55; 
+          if (data.activityLevel === "sedentary") tdee = bmr * 1.2;
+          else if (data.activityLevel === "lightly_active") tdee = bmr * 1.375;
+          else if (data.activityLevel === "active") tdee = bmr * 1.55;
+          else if (data.activityLevel === "very_active") tdee = bmr * 1.725;
+
+          let calorieModifier = 0;
+          if (Array.isArray(data.primaryGoal)) {
+              if (data.primaryGoal.includes("weight_loss")) calorieModifier = -500;
+              else if (data.primaryGoal.includes("muscle_gain")) calorieModifier = 300;
+          } else if (typeof data.primaryGoal === "string") {
+              if (data.primaryGoal === "weight_loss") calorieModifier = -500;
+              else if (data.primaryGoal === "muscle_gain") calorieModifier = 300;
+          }
+
+          const finalCalories = Math.round(tdee + calorieModifier);
+          
+          const protein = Math.round(weight * 2.2); 
+          const fat = Math.round((finalCalories * 0.25) / 9); 
+          const carbs = Math.round((finalCalories - (protein * 4) - (fat * 9)) / 4);
+
+          return {
+             calories: finalCalories,
+             protein: protein > 0 ? protein : defaultGoals.protein,
+             carbs: carbs > 0 ? carbs : defaultGoals.carbs,
+             fat: fat > 0 ? fat : defaultGoals.fat
+          };
+       };
+
+       const dynamicGoals = calculateDynamicGoals(userData);
+       if (dynamicGoals) {
+         setNutritionGoals(prev => {
+           if (prev.calories === dynamicGoals.calories && prev.protein === dynamicGoals.protein) return prev;
+           return dynamicGoals;
+         });
+       }
+    }
+  }, [userData]);
 
   // Fetch from backend
   useEffect(() => {

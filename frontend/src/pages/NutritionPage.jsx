@@ -188,9 +188,10 @@ function NutritionPage() {
     let height = parseFloat(calcHeight);
     if (!weight || !height) return;
 
-    if (calcUnit === "imperial") {
+    if (calcUnit === "metric") {
+      height = height * 30.48;
+    } else if (calcUnit === "imperial") {
       weight = weight * 0.453592;
-      height = height * 2.54;
     }
 
     let bmr = 10 * weight + 6.25 * height - 5 * 30 + 5;
@@ -208,14 +209,13 @@ function NutritionPage() {
     let height = parseFloat(bmiHeight);
     if (!weight || !height) return;
 
-    if (bmiUnit === "imperial") {
-      // Imperial Formula: 703 × weight (lbs) / [height (in)]^2
-      const bmi = (703 * weight) / (height * height);
-      setBmiResult(bmi.toFixed(1));
-    } else {
-      // Metric Formula: weight (kg) / [height (m)]^2
-      const heightInMeters = height / 100;
+    if (bmiUnit === "metric") {
+      const heightInMeters = height * 0.3048;
       const bmi = weight / (heightInMeters * heightInMeters);
+      setBmiResult(bmi.toFixed(1));
+    } else if (bmiUnit === "imperial") {
+      const heightInInches = height / 2.54;
+      const bmi = (703 * weight) / (heightInInches * heightInInches);
       setBmiResult(bmi.toFixed(1));
     }
   };
@@ -384,12 +384,13 @@ function NutritionPage() {
                     />
                   </div>
                   <div className={pageStyles.formGroup}>
-                    <label>Height ({calcUnit === "metric" ? "cm" : "in"})</label>
+                    <label>Height ({calcUnit === "metric" ? "ft" : "cm"})</label>
                     <input
                       type="number"
+                      step="0.01"
                       value={calcHeight}
                       onChange={(e) => setCalcHeight(e.target.value)}
-                      placeholder="e.g. 175"
+                      placeholder={calcUnit === "metric" ? "e.g. 5.9" : "e.g. 175"}
                     />
                   </div>
                   <div className={pageStyles.formGroup}>
@@ -456,12 +457,13 @@ function NutritionPage() {
                     />
                   </div>
                   <div className={pageStyles.formGroup}>
-                    <label>Height ({bmiUnit === "metric" ? "cm" : "in"})</label>
+                    <label>Height ({bmiUnit === "metric" ? "ft" : "cm"})</label>
                     <input
                       type="number"
+                      step="0.01"
                       value={bmiHeight}
                       onChange={(e) => setBmiHeight(e.target.value)}
-                      placeholder={bmiUnit === "metric" ? "e.g. 175" : "e.g. 69"}
+                      placeholder={bmiUnit === "metric" ? "e.g. 5.9" : "e.g. 175"}
                     />
                   </div>
                   <button

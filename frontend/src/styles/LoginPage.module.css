@@ -147,10 +147,10 @@ body {
 
 .floatInput {
   width: 100%;
-  background: var(--bg-secondary);
+  background-color: transparent;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: 20px 16px 10px 16px;
+  padding: 15px 20px;
   font-size: 1rem;
   color: var(--text-primary);
   font-family: var(--font-main);
@@ -164,28 +164,30 @@ body {
 .floatInput:focus,
 .floatInput:not(:placeholder-shown) {
   border-color: var(--accent-cyan);
-  background: rgba(15, 23, 42, 0.8);
   box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
 }
 
 .floatLabel {
   position: absolute;
-  left: 16px;
-  top: 24px; /* Center based on padding: 20px top + 10px bottom */
+  left: 15px;
+  top: 50%;
   transform: translateY(-50%);
   color: var(--text-secondary);
   font-size: 1rem;
   pointer-events: none;
   transition: all var(--transition-fast);
+  background-color: var(--bg-primary);
+  padding: 0 5px;
 }
 
 .floatInput:focus ~ .floatLabel,
-.floatInput:not(:placeholder-shown) ~ .floatLabel {
-  top: 14px;
-  font-size: 0.75rem;
+.floatInput:not(:placeholder-shown) ~ .floatLabel,
+.floatInput:-webkit-autofill ~ .floatLabel {
+  top: 0;
+  font-size: 0.85rem;
   color: var(--accent-cyan);
   font-weight: 600;
-  transform: translateY(-20%);
+  transform: translateY(-50%);
 }
 
 .inputGroup.error .floatInput {
@@ -194,7 +196,8 @@ body {
 }
 
 .inputGroup.error .floatInput:focus ~ .floatLabel,
-.inputGroup.error .floatInput:not(:placeholder-shown) ~ .floatLabel {
+.inputGroup.error .floatInput:not(:placeholder-shown) ~ .floatLabel,
+.inputGroup.error .floatInput:-webkit-autofill ~ .floatLabel {
   color: #ef4444;
 }
 
