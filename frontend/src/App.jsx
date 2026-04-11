@@ -15,6 +15,7 @@ import WorkoutPlansPage from "./pages/WorkoutPlansPage";
 import WorkoutGuidancePage from "./pages/WorkoutGuidancePage";
 import ProgressTracker from "./pages/ProgressTracker";
 import ProfilePage from "./pages/ProfilePage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -24,13 +25,17 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/onboarding" element={<OnBoardingQuestions />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/nutrition" element={<NutritionPage />} />
-        <Route path="/nutrition-guidance" element={<NutritionGuidancePage />} />
-        <Route path="/workouts" element={<WorkoutPlansPage />} />
-        <Route path="/workout-guidance" element={<WorkoutGuidancePage />} />
-        <Route path="/progress" element={<ProgressTracker />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/nutrition" element={<NutritionPage />} />
+          <Route path="/nutrition-guidance" element={<NutritionGuidancePage />} />
+          <Route path="/workouts" element={<WorkoutPlansPage />} />
+          <Route path="/workout-guidance" element={<WorkoutGuidancePage />} />
+          <Route path="/progress" element={<ProgressTracker />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
+        
         {/* Default route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

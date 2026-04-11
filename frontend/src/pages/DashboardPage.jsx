@@ -30,7 +30,7 @@ function DashboardPage() {
     }, []);
 
     // Use context values
-    const firstName = userData.firstName || "Alex";
+    const firstName = userData.firstName || userData.name || "User";
     const completedExercises = useMemo(
         () => loggedExercises.filter((ex) => ex.completed),
         [loggedExercises],

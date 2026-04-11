@@ -48,6 +48,26 @@ const loginUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             token: generateToken(user._id),
+            firstName: user.firstName,
+            lastName: user.lastName,
+            dob: user.dob,
+            age: user.age,
+            gender: user.gender,
+            location: user.location,
+            primaryGoal: user.primaryGoal,
+            fitnessLevel: user.fitnessLevel,
+            activityLevel: user.activityLevel,
+            heightUnit: user.heightUnit,
+            heightFeet: user.heightFeet,
+            heightInches: user.heightInches,
+            heightCm: user.heightCm,
+            height: user.height,
+            weightUnit: user.weightUnit,
+            weightValue: user.weightValue,
+            goalWeightValue: user.goalWeightValue,
+            emailNotifications: user.emailNotifications,
+            smsReminders: user.smsReminders,
+            publicProfile: user.publicProfile,
         });
     } else {
         res.status(401);
@@ -104,9 +124,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.email = req.body.email || user.email;
         user.firstName = req.body.firstName !== undefined ? req.body.firstName : user.firstName;
         user.lastName = req.body.lastName !== undefined ? req.body.lastName : user.lastName;
-        user.dob = req.body.dob !== undefined ? req.body.dob : user.dob;
-        user.age = req.body.age !== undefined ? req.body.age : user.age;
         user.gender = req.body.gender !== undefined ? req.body.gender : user.gender;
+        
+        if (req.body.dob !== undefined && req.body.dob !== "") user.dob = new Date(req.body.dob);
         user.location = req.body.location !== undefined ? req.body.location : user.location;
         user.primaryGoal = req.body.primaryGoal !== undefined ? req.body.primaryGoal : user.primaryGoal;
         user.fitnessLevel = req.body.fitnessLevel !== undefined ? req.body.fitnessLevel : user.fitnessLevel;
@@ -115,10 +135,14 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.heightFeet = req.body.heightFeet !== undefined ? req.body.heightFeet : user.heightFeet;
         user.heightInches = req.body.heightInches !== undefined ? req.body.heightInches : user.heightInches;
         user.heightCm = req.body.heightCm !== undefined ? req.body.heightCm : user.heightCm;
-        user.height = req.body.height !== undefined ? req.body.height : user.height;
         user.weightUnit = req.body.weightUnit !== undefined ? req.body.weightUnit : user.weightUnit;
-        user.weightValue = req.body.weightValue !== undefined ? req.body.weightValue : user.weightValue;
-        user.goalWeightValue = req.body.goalWeightValue !== undefined ? req.body.goalWeightValue : user.goalWeightValue;
+        
+        // Handle numeric fields that might come in as empty strings
+        if (req.body.height !== undefined && req.body.height !== "") user.height = Number(req.body.height);
+        if (req.body.weightValue !== undefined && req.body.weightValue !== "") user.weightValue = Number(req.body.weightValue);
+        if (req.body.goalWeightValue !== undefined && req.body.goalWeightValue !== "") user.goalWeightValue = Number(req.body.goalWeightValue);
+        if (req.body.age !== undefined && req.body.age !== "") user.age = Number(req.body.age);
+
         user.emailNotifications = req.body.emailNotifications !== undefined ? req.body.emailNotifications : user.emailNotifications;
         user.smsReminders = req.body.smsReminders !== undefined ? req.body.smsReminders : user.smsReminders;
         user.publicProfile = req.body.publicProfile !== undefined ? req.body.publicProfile : user.publicProfile;

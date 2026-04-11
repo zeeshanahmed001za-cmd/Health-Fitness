@@ -8,15 +8,37 @@ const getAuthHeaders = () => {
     };
 };
 
+const handleResponse = async (res) => {
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userSession');
+        sessionStorage.removeItem('onboardingData');
+        window.location.href = '/login';
+        throw new Error('Session expired. Please login again.');
+    }
+    if (!res.ok) throw new Error(data.message || 'Request failed');
+    return data;
+};
+
+const fetchWithAuth = async (endpoint, options = {}) => {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            ...getAuthHeaders(),
+            ...options.headers
+        }
+    });
+    return handleResponse(res);
+};
+
 export const loginUserAPI = async (email, password) => {
     const res = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to login');
-    return data;
+    return handleResponse(res);
 };
 
 export const forgotPasswordAPI = async (email) => {
@@ -25,9 +47,7 @@ export const forgotPasswordAPI = async (email) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to send reset link');
-    return data;
+    return handleResponse(res);
 };
 
 export const registerUserAPI = async (email, password, name = 'User') => {
@@ -36,108 +56,62 @@ export const registerUserAPI = async (email, password, name = 'User') => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to register');
-    return data;
+    return handleResponse(res);
 };
 
 export const getUserProfileAPI = async () => {
-    const res = await fetch(`${API_BASE_URL}/users/profile`, {
-        headers: getAuthHeaders()
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to fetch profile');
-    return data;
+    return fetchWithAuth('/users/profile');
 };
 
 export const updateUserProfileAPI = async (profileData) => {
-    const res = await fetch(`${API_BASE_URL}/users/profile`, {
+    return fetchWithAuth('/users/profile', {
         method: 'PUT',
-        headers: getAuthHeaders(),
         body: JSON.stringify(profileData)
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to update profile');
-    return data;
 };
 
 export const logWorkoutAPI = async (workoutData) => {
-    const res = await fetch(`${API_BASE_URL}/workouts`, {
+    return fetchWithAuth('/workouts', {
         method: 'POST',
-        headers: getAuthHeaders(),
         body: JSON.stringify(workoutData)
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to log workout');
-    return data;
 };
 
 export const getWorkoutsAPI = async () => {
-    const res = await fetch(`${API_BASE_URL}/workouts`, {
-        headers: getAuthHeaders()
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to fetch workouts');
-    return data;
+    return fetchWithAuth('/workouts');
 };
 
 export const deleteWorkoutAPI = async (id) => {
-    const res = await fetch(`${API_BASE_URL}/workouts/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
+    return fetchWithAuth(`/workouts/${id}`, {
+        method: 'DELETE'
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to delete workout');
-    return data;
 };
 
 export const addProgressAPI = async (progressData) => {
-    const res = await fetch(`${API_BASE_URL}/progress`, {
+    return fetchWithAuth('/progress', {
         method: 'POST',
-        headers: getAuthHeaders(),
         body: JSON.stringify(progressData)
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to add progress');
-    return data;
 };
 
 export const getProgressHistoryAPI = async () => {
-    const res = await fetch(`${API_BASE_URL}/progress`, {
-        headers: getAuthHeaders()
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to fetch progress');
-    return data;
+    return fetchWithAuth('/progress');
 };
 
 // --- NUTRITION ---
 export const addNutritionLogAPI = async (logData) => {
-    const res = await fetch(`${API_BASE_URL}/nutrition`, {
+    return fetchWithAuth('/nutrition', {
         method: 'POST',
-        headers: getAuthHeaders(),
         body: JSON.stringify(logData)
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to log nutrition');
-    return data;
 };
 
 export const getNutritionLogsAPI = async () => {
-    const res = await fetch(`${API_BASE_URL}/nutrition`, {
-        headers: getAuthHeaders()
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to fetch nutrition logs');
-    return data;
+    return fetchWithAuth('/nutrition');
 };
 
 export const deleteNutritionLogAPI = async (id) => {
-    const res = await fetch(`${API_BASE_URL}/nutrition/${id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
+    return fetchWithAuth(`/nutrition/${id}`, {
+        method: 'DELETE'
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to delete nutrition log');
-    return data;
 };

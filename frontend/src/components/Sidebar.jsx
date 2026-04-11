@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { useUser } from "../context/UserContext";
 import {
@@ -40,15 +40,18 @@ const navItems = [
 
 function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
   const { logout } = useUser();
+  const navigate = useNavigate();
+  
   const sidebarClass = [
     styles.sidebar,
     isCollapsed ? styles.collapsed : "",
     isMobileOpen ? styles.mobileOpen : "",
   ].join(" ");
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    e.preventDefault();
     logout();
-    // Link will handle the navigation
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -88,14 +91,14 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
         </nav>
 
         <div className={styles.sidebarFooter}>
-          <Link
-            to="/login"
+          <button
             className={`${styles.navItem} ${styles.logoutBtn}`}
             onClick={handleLogout}
+            style={{ width: '100%', background: 'none', border: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center' }}
           >
             <LogoutIcon />
             <span className={styles.navText}>Log Out</span>
-          </Link>
+          </button>
         </div>
       </aside>
     </>

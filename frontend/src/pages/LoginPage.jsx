@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/LoginPage.module.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -19,8 +19,14 @@ const passwordPolicy = (password) =>
 function LoginPage() {
   useDocumentTitle("Login");
   const navigate = useNavigate();
-
   const { updateUserData } = useUser();
+
+  useEffect(() => {
+    if (localStorage.getItem("userToken")) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [termsChecked, setTermsChecked] = useState(false);
