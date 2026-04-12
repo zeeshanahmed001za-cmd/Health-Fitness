@@ -239,19 +239,47 @@ function ProgressTracker() {
                   default: return 'Fitness Goal';
                 }
               })()}</span>
-              <div className={styles.heroDetails}>
-                <div className={styles.heroDetailItem}>
-                  <span className={styles.detailLabel}>Target Weight</span>
-                  <span className={styles.detailValue}>{goalWeight || "Not Set"} {goalWeight ? unit : ""}</span>
+              
+              <div className={styles.mainProgressContainer}>
+                <div className={styles.heroDetails}>
+                  <div className={styles.heroDetailItem}>
+                    <span className={styles.detailLabel}>Plan Details</span>
+                    <span className={styles.detailValue}>{goalWeight || "Not Set"} {goalWeight ? unit : ""} Target</span>
+                    <span className={styles.subDetail}>{userData?.activityLevel?.charAt(0).toUpperCase() + userData?.activityLevel?.slice(1)} Activity</span>
+                  </div>
                 </div>
-                <div className={styles.heroDetailSeparator}></div>
-                <div className={styles.heroDetailItem}>
-                  <span className={styles.detailLabel}>Activity Level</span>
-                  <span className={styles.detailValue}>{userData?.activityLevel?.charAt(0).toUpperCase() + userData?.activityLevel?.slice(1) || "Moderate"}</span>
+
+                <div className={styles.goalProgressVisual}>
+                   <div className={styles.progressHeader}>
+                      <span>Progress towards target</span>
+                      <span className={styles.pctValue}>{
+                        goalWeight 
+                        ? `${Math.min(Math.round((Math.abs(initialWeight - currentWeight) / Math.abs(initialWeight - goalWeight)) * 100), 100)}%` 
+                        : '0%'
+                      }</span>
+                   </div>
+                   <div className={styles.progressBarWrapper}>
+                      <div className={styles.progressBarFill} style={{ 
+                        width: goalWeight 
+                        ? `${Math.min((Math.abs(initialWeight - currentWeight) / Math.abs(initialWeight - goalWeight)) * 100, 100)}%` 
+                        : '5%' 
+                      }}></div>
+                   </div>
+                   <div className={styles.progressMarkers}>
+                      <span>{initialWeight} {unit}</span>
+                      <span>{goalWeight} {unit}</span>
+                   </div>
                 </div>
               </div>
             </div>
-            <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
+
+            <div className={styles.heroQuickActions}>
+               <div className={styles.quickInsight}>
+                 <span className={styles.insightLabel}>Today</span>
+                 <span className={styles.insightValue}>{currentWorkoutProgress}% Done</span>
+               </div>
+               <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
+            </div>
           </div>
 
           <div className={styles.statsHighlightGrid}>
