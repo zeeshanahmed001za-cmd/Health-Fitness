@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/DashboardPage.module.css";
+import { getWorkoutsAPI } from "../api";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -49,9 +50,8 @@ function DashboardPage() {
     useEffect(() => {
         const fetchWorkouts = async () => {
             try {
-                const { getWorkoutsAPI } = await import("../api");
                 const data = await getWorkoutsAPI();
-                if (data) setDbWorkouts(data);
+                if (data && Array.isArray(data)) setDbWorkouts(data);
             } catch (err) {
                 console.error("Failed to fetch workouts", err);
             }
@@ -186,19 +186,24 @@ function DashboardPage() {
 
         // Add Backend Workout Logs
         (dbWorkouts || []).forEach(ex => {
-            activities.push({
-                id: ex._id,
-                title: ex.exercises?.[0]?.name || 'Workout',
-                subtitle: ex.type || 'Exercise',
-                timestamp: ex.date,
-                type: 'workout',
-                value: `${ex.caloriesBurned || 0} kcal`,
-                icon: <Icons.RunIcon />,
-                colorClass: pageStyles['bg-purple']
-            });
+            if (ex && ex._id) {
+                activities.push({
+                    id: ex._id,
+                    title: ex.exercises?.[0]?.name || 'Workout',
+                    subtitle: ex.type || 'Exercise',
+                    timestamp: ex.date || ex.createdAt,
+                    type: 'workout',
+                    value: `${ex.caloriesBurned || 0} kcal`,
+                    icon: <Icons.RunIcon />,
+                    colorClass: pageStyles['bg-purple']
+                });
+            }
         });
 
-        return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
+        return activities
+            .filter(act => act.timestamp)
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 5);
     }, [foodLogs, waterLogs, loggedExercises, dbWorkouts]);
 
     // Handlers
