@@ -212,46 +212,43 @@ function ProgressTracker() {
             <div className={styles.mainVisualArea}>
               <ResponsiveContainer width="100%" height={350}>
                 {activeTab === 'weight' ? (
-                  <AreaChart data={weightChartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
-                    <defs><linearGradient id="colorW" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/><stop offset="95%" stopColor="#10b981" stopOpacity={0}/></linearGradient></defs>
+                  <ComposedChart data={weightChartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                    <defs>
+                      <filter id="shadow" height="200%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                        <feOffset dx="0" dy="4" result="offsetblur" />
+                        <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+                        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                     <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} padding={{ left: 20, right: 20 }} />
                     <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={['auto', 'auto']} padding={{ top: 20, bottom: 20 }} />
                     <Tooltip content={<CustomTooltip />} />
-                    {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeDasharray="5 5" label={{ value: 'Goal', fill: '#f59e0b', fontSize: 12, position: 'insideTopLeft' }} />}
-                    <Area type="monotone" dataKey="weight" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorW)" animationDuration={1500} />
-                  </AreaChart>
+                    {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" label={{ value: 'Target', fill: '#f59e0b', fontSize: 12, position: 'insideTopLeft' }} />}
+                    <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={4} dot={{ r: 4, fill: "var(--accent-primary)", strokeWidth: 2, stroke: "#1e293b" }} activeDot={{ r: 8, strokeWidth: 0 }} animationDuration={1000} filter="url(#shadow)" />
+                  </ComposedChart>
                 ) : (
                   <ComposedChart data={weeklyActivityData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                     <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
                     <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="workout" fill="#818cf8" radius={[6, 6, 0, 0]} name="Workouts (%)" barSize={30} animationDuration={1500} />
-                    <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={4} name="Nutrition (%)" dot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1500} />
+                    <Bar dataKey="workout" fill="#818cf8" radius={[6, 6, 0, 0]} name="Workouts (%)" barSize={30} animationDuration={1000} />
+                    <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={4} name="Nutrition (%)" dot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1000} />
                   </ComposedChart>
                 )}
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className={styles.secondaryGrid}>
-            <div className={styles.insightCard}>
-              <div className={styles.insightIcon}>💡</div>
-              <div className={styles.insightContent}>
-                <h3>Daily Insight</h3>
-                <p>{currentWorkoutProgress >= 100 ? "You've fully completed your routine! Excellence is a habit." : currentWorkoutProgress > 0 ? `You're ${currentWorkoutProgress}% through today's plan. Finish strong!` : "No activity logged yet today. Small steps lead to big results."}</p>
-              </div>
-            </div>
-
-            <div className={styles.milestonesSection}>
-               <h3>Achievements</h3>
-               <div className={styles.milestoneScroll}>
-                  <div className={`${styles.milestoneItem} ${!unlockedFirstWorkout ? styles.locked : ''}`}><div className={styles.mIcon}>🎉</div><span>First Workout</span></div>
-                  <div className={`${styles.milestoneItem} ${!unlocked7DayStreak ? styles.locked : ''}`}><div className={styles.mIcon}>🔥</div><span>7-Day Streak</span></div>
-                  <div className={`${styles.milestoneItem} ${!unlockedGoalAchieved ? styles.locked : ''}`}><div className={styles.mIcon}>🏆</div><span>Goal Reach</span></div>
-               </div>
-            </div>
+          <div className={styles.milestonesSection} style={{ marginTop: '0' }}>
+             <h3>Achievements</h3>
+             <div className={styles.milestoneScroll}>
+                <div className={`${styles.milestoneItem} ${!unlockedFirstWorkout ? styles.locked : ''}`}><div className={styles.mIcon}>🎉</div><span>First Workout</span></div>
+                <div className={`${styles.milestoneItem} ${!unlocked7DayStreak ? styles.locked : ''}`}><div className={styles.mIcon}>🔥</div><span>7-Day Streak</span></div>
+                <div className={`${styles.milestoneItem} ${!unlockedGoalAchieved ? styles.locked : ''}`}><div className={styles.mIcon}>🏆</div><span>Goal Reach</span></div>
+             </div>
           </div>
         </main>
       </div>
