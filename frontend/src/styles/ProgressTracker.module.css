@@ -75,24 +75,17 @@
   border-radius: 28px;
   border: 1px solid var(--glass-border);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   gap: 16px;
   transition: all 0.4s ease;
-  min-height: 180px;
+  min-height: 160px;
 }
 
-.statCardLeft {
+.statCardContent {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  flex: 1;
-}
-
-.statCardRight {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
+  width: 100%;
 }
 
 .statCard:hover {
@@ -101,30 +94,13 @@
   background: var(--glass-hover);
 }
 
-.statIcon {
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-primary);
-  margin-bottom: 4px;
-}
-
-.statHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .statLabel {
   font-size: 0.85rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .statMain {
@@ -140,12 +116,6 @@
   line-height: 1;
 }
 
-.statValue small {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
 .statUnit {
   font-size: 1rem;
   color: var(--text-secondary);
@@ -159,6 +129,7 @@
   font-size: 0.8rem;
   font-weight: 700;
   width: fit-content;
+  margin-top: 4px;
 }
 
 .statBadge.positive {
