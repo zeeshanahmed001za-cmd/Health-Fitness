@@ -245,48 +245,37 @@ function ProgressTracker() {
           </div>
 
           <div className={styles.statsHighlightGrid}>
-            {/* Dynamic Card 1: Main Metric */}
+            {/* Card 1: Weight Overview */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>{goalKey === 'build' ? 'Muscle Fuel' : 'Current Weight'}</span>
-                {goalKey === 'build' ? (
-                  <>
-                    <div className={styles.statMain}>
-                      <span className={styles.statValue}>Surplus</span>
-                    </div>
-                    <span className={styles.statBadge}>High Protein Focus</span>
-                  </>
-                ) : (
-                  <>
-                    <div className={styles.statMain}>
-                      <span className={styles.statValue}>{currentWeight}</span>
-                      <span className={styles.statUnit}>{unit}</span>
-                    </div>
-                    {weightDelta && (
-                      <span className={`${styles.statBadge} ${parseFloat(weightDelta) <= 0 ? styles.positive : styles.negative}`}>
-                        {weightDelta} {unit} since last log
-                      </span>
-                    )}
-                  </>
-                )}
+                <span className={styles.statLabel}>Current Weight</span>
+                <div className={styles.statMain}>
+                  <span className={styles.statValue}>{currentWeight}</span>
+                  <span className={styles.statUnit}>{unit}</span>
+                </div>
+                <span className={styles.statBadge}>
+                  {goalWeight ? `Target: ${goalWeight} ${unit}` : 'No target set'}
+                </span>
               </div>
             </div>
 
-            {/* Dynamic Card 2: Health/Context Metric */}
+            {/* Card 2: Strategic Progress Tracking */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>{goalKey === 'endurance' ? 'Performance' : 'Body Mass Index'}</span>
-                {goalKey === 'endurance' ? (
+                <span className={styles.statLabel}>
+                  {(goalKey === 'build' || goalKey === 'endurance') ? 'Workout Adherence' : 'Body Mass Index'}
+                </span>
+                {(goalKey === 'build' || goalKey === 'endurance') ? (
                   <>
-                    <span className={styles.statValue}>Active</span>
+                    <span className={styles.statValue}>{currentWorkoutProgress}%</span>
                     <div className={styles.bmiScale}>
-                      <div className={styles.scaleTrack} style={{ background: 'linear-gradient(90deg, #3b82f6, #10b981)' }}>
-                        <div className={styles.scaleMarker} style={{ left: `${currentWorkoutProgress}%` }}></div>
+                      <div className={styles.scaleTrack} style={{ background: 'rgba(255,255,255,0.05)' }}>
+                        <div className={styles.scaleMarker} style={{ left: `${currentWorkoutProgress}%`, background: 'var(--accent-primary)' }}></div>
                       </div>
                       <div className={styles.scaleLabels}>
-                        <span>Rest</span>
-                        <span className={styles.activeLabel}>Moving</span>
-                        <span>Peak</span>
+                        <span>Start</span>
+                        <span className={styles.activeLabel}>Current</span>
+                        <span>Goal</span>
                       </div>
                     </div>
                   </>
@@ -298,9 +287,9 @@ function ProgressTracker() {
                         <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
                       </div>
                       <div className={styles.scaleLabels}>
-                        <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Underweight</span>
+                        <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
                         <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
-                        <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Overweight</span>
+                        <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
                       </div>
                     </div>
                   </>
