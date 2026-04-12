@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine
+  AreaChart, Area, ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine
 } from "recharts";
 
 import Sidebar from "../components/Sidebar";
@@ -31,14 +31,14 @@ const BellIcon = () => (
 const AVATAR_FALLBACK =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-const activityDataMock = [
-  { name: "Mon", burn: 300, intake: 2100 },
-  { name: "Tue", burn: 450, intake: 1900 },
-  { name: "Wed", burn: 200, intake: 2200 },
-  { name: "Thu", burn: 500, intake: 1800 },
-  { name: "Fri", burn: 350, intake: 2000 },
-  { name: "Sat", burn: 600, intake: 2400 },
-  { name: "Sun", burn: 150, intake: 2100 },
+const weeklyActivityData = [
+  { name: "Mon", workout: 100, nutrition: 90 },
+  { name: "Tue", workout: 80, nutrition: 85 },
+  { name: "Wed", workout: 0, nutrition: 70 },
+  { name: "Thu", workout: 100, nutrition: 95 },
+  { name: "Fri", workout: 50, nutrition: 80 },
+  { name: "Sat", workout: 120, nutrition: 60 },
+  { name: "Sun", workout: 0, nutrition: 100 },
 ];
 
 function ProgressTracker() {
@@ -315,18 +315,18 @@ function ProgressTracker() {
 
             <div className={styles.chartCard} style={{ flex: '1 1 35%' }}>
               <div className={styles.chartHeader}>
-                <h3>Energy Balance</h3>
+                <h3>Weekly Activity Progress</h3>
               </div>
               <div className={styles.visualChart}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={activityDataMock} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                  <ComposedChart data={weeklyActivityData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                     <XAxis dataKey="name" stroke="#cbd5e1" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#cbd5e1" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#cbd5e1" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
                     <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.02)'}} />
-                    <Bar dataKey="intake" fill="#f59e0b" radius={[4, 4, 0, 0]} name="Intake (kcal)" />
-                    <Bar dataKey="burn" fill="#818cf8" radius={[4, 4, 0, 0]} name="Burn (kcal)" />
-                  </BarChart>
+                    <Bar dataKey="workout" fill="#818cf8" radius={[4, 4, 0, 0]} name="Workout Routine (%)" barSize={20} />
+                    <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={3} name="Nutrition Logged (%)" dot={{ r: 4, fill: '#f59e0b' }} />
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
             </div>
