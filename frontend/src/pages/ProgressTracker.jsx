@@ -211,7 +211,16 @@ function ProgressTracker() {
         <main className={styles.dashboardContent}>
           <div className={styles.heroSummary}>
             <div className={styles.heroText}>
-              <h2>Goal: {userData?.primaryGoal === 'muscle_gain' ? 'Gain Muscle' : 'Lose Weight'}</h2>
+              <h2>Goal: {(() => {
+                const goal = Array.isArray(userData?.primaryGoal) ? userData.primaryGoal[0] : userData?.primaryGoal;
+                switch(goal) {
+                  case 'lose': return 'Lose Weight';
+                  case 'build': return 'Build Muscle';
+                  case 'maintain': return 'Maintain Weight';
+                  case 'endurance': return 'Improve Endurance';
+                  default: return 'Fitness Progress';
+                }
+              })()}</h2>
               <p>You are <strong>{distanceToGoal} {unit}</strong> away from your target. Keep pushing!</p>
             </div>
             <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
