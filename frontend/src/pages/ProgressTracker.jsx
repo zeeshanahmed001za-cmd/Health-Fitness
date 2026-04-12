@@ -94,13 +94,17 @@ function ProgressTracker() {
 
   // BMI Calculation
   const bmi = useMemo(() => {
-    const height = parseFloat(userData?.heightValue);
-    if (!height || !currentWeight) return null;
-    
+    let height;
     if (userData?.heightUnit === 'metric') {
+      height = parseFloat(userData?.heightCm);
+      if (!height || !currentWeight) return null;
       // Metric: weight (kg) / height (m)^2
       return (currentWeight / Math.pow(height / 100, 2)).toFixed(1);
     } else {
+      const feet = parseFloat(userData?.heightFeet);
+      const inches = parseFloat(userData?.heightInches || 0);
+      if (!feet || !currentWeight) return null;
+      height = (feet * 12) + inches;
       // Imperial: 703 * weight (lbs) / height (in)^2
       return (703 * currentWeight / Math.pow(height, 2)).toFixed(1);
     }
