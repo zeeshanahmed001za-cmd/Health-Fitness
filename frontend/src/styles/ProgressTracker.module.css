@@ -189,14 +189,16 @@
 .scaleLabels {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--text-secondary);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .activeLabel {
-  color: #fff;
-  font-weight: 800;
+  color: #fff !important;
+  font-weight: 800 !important;
 }
 
 .streakGoalInfo {

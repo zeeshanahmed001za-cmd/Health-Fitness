@@ -227,9 +227,10 @@ function ProgressTracker() {
                     <div className={styles.scaleMarker} style={{ left: `${Math.min(Math.max((parseFloat(bmi || 0) - 15) / 20 * 100, 0), 100)}%` }}></div>
                   </div>
                   <div className={styles.scaleLabels}>
-                    <span>Under</span>
-                    <span className={styles.activeLabel}>{bmiStatus}</span>
-                    <span>Obese</span>
+                    <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
+                    <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
+                    <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
+                    <span className={bmiStatus === 'Obese' ? styles.activeLabel : ''}>Obese</span>
                   </div>
                 </div>
               </div>
