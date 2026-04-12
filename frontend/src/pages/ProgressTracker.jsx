@@ -154,6 +154,25 @@ function ProgressTracker() {
     }
   }, [goalKey, goalWeight, unit]);
 
+  const weeklyActivityData = useMemo(() => {
+    const days = [];
+    const todayObj = new Date();
+    todayObj.setHours(23, 59, 59, 999);
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(todayObj);
+      date.setDate(date.getDate() - i);
+      const dayStr = date.toISOString().split('T')[0];
+      const name = date.toLocaleDateString([], { weekday: 'short' });
+      let workoutAdherence = i === 0 ? currentWorkoutProgress : (workoutLogs.some(l => new Date(l.date || l.createdAt).toISOString().split('T')[0] === dayStr) ? 100 : 0);
+      const dayCalories = foodLogs.filter(l => l.timestamp.startsWith(dayStr)).reduce((s, l) => s + (Number(l.calories) || 0), 0);
+      const dayWater = waterLogs.filter(l => l.timestamp.startsWith(dayStr)).length;
+      const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
+      const watPct = Math.min((dayWater / 8) * 100, 100);
+      days.push({ name, workout: workoutAdherence, nutrition: Math.round((calPct + watPct) / 2) });
+    }
+    return days;
+  }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress]);
+
   const weeklyAverages = useMemo(() => {
     const workoutSum = weeklyActivityData.reduce((s, d) => s + (d.workout || 0), 0) / 7;
     const nutritionSum = weeklyActivityData.reduce((s, d) => s + (d.nutrition || 0), 0) / 7;
@@ -177,24 +196,7 @@ function ProgressTracker() {
     return dataFiltered.filter(d => d.timestamp >= cutoff);
   }, [progressHistory, timeRange, currentWeight]);
 
-  const weeklyActivityData = useMemo(() => {
-    const days = [];
-    const todayObj = new Date();
-    todayObj.setHours(23, 59, 59, 999);
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(todayObj);
-      date.setDate(date.getDate() - i);
-      const dayStr = date.toISOString().split('T')[0];
-      const name = date.toLocaleDateString([], { weekday: 'short' });
-      let workoutAdherence = i === 0 ? currentWorkoutProgress : (workoutLogs.some(l => new Date(l.date || l.createdAt).toISOString().split('T')[0] === dayStr) ? 100 : 0);
-      const dayCalories = foodLogs.filter(l => l.timestamp.startsWith(dayStr)).reduce((s, l) => s + (Number(l.calories) || 0), 0);
-      const dayWater = waterLogs.filter(l => l.timestamp.startsWith(dayStr)).length;
-      const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
-      const watPct = Math.min((dayWater / 8) * 100, 100);
-      days.push({ name, workout: workoutAdherence, nutrition: Math.round((calPct + watPct) / 2) });
-    }
-    return days;
-  }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress]);
+
 
 
 
