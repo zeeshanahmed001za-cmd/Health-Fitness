@@ -94,20 +94,24 @@ function ProgressTracker() {
 
   // BMI Calculation
   const bmi = useMemo(() => {
-    let height;
-    if (userData?.heightUnit === 'metric') {
-      height = parseFloat(userData?.heightCm);
-      if (!height || !currentWeight) return null;
-      // Metric: weight (kg) / height (m)^2
-      return (currentWeight / Math.pow(height / 100, 2)).toFixed(1);
-    } else {
-      const feet = parseFloat(userData?.heightFeet);
-      const inches = parseFloat(userData?.heightInches || 0);
-      if (!feet || !currentWeight) return null;
-      height = (feet * 12) + inches;
-      // Imperial: 703 * weight (lbs) / height (in)^2
-      return (703 * currentWeight / Math.pow(height, 2)).toFixed(1);
+    const w = parseFloat(currentWeight);
+    if (!w || isNaN(w)) return null;
+
+    let totalInches = 0;
+    let cm = parseFloat(userData?.heightCm);
+    const feet = parseFloat(userData?.heightFeet);
+    const inches = parseFloat(userData?.heightInches || 0);
+
+    // Dynamic unit detection based on what fields are available
+    if (userData?.heightUnit === 'metric' && cm) {
+      return (w / Math.pow(cm / 100, 2)).toFixed(1);
+    } else if (feet) {
+      totalInches = (feet * 12) + inches;
+      return (703 * w / Math.pow(totalInches, 2)).toFixed(1);
+    } else if (cm) { // Fallback if unit is wrong but cm exists
+      return (w / Math.pow(cm / 100, 2)).toFixed(1);
     }
+    return null;
   }, [userData, currentWeight]);
 
   const bmiStatus = useMemo(() => {
@@ -115,8 +119,16 @@ function ProgressTracker() {
     const val = parseFloat(bmi);
     if (val < 18.5) return "Underweight";
     if (val < 25) return "Healthy";
-    return "Overweight"; // Grouping Overweight & Obesity for simplicity
+    return "Overweight"; 
   }, [bmi]);
+
+  const bmiMarkerPos = useMemo(() => {
+    if (!bmi) return 0;
+    const val = parseFloat(bmi);
+    // Scale: 10 to 45 (total range 35)
+    return Math.min(Math.max(((val - 10) / 35) * 100, 0), 100);
+  }, [bmi]);
+
 
   const weightChartData = useMemo(() => {
     if (progressHistory.length === 0) return [{ name: "Start", weight: Number(currentWeight), timestamp: Date.now() - 86400000 * 7 }];
@@ -223,7 +235,7 @@ function ProgressTracker() {
                 <span className={styles.statValue}>{bmi || "N/A"}</span>
                 <div className={styles.bmiScale}>
                   <div className={styles.scaleTrack}>
-                    <div className={styles.scaleMarker} style={{ left: `${Math.min(Math.max((parseFloat(bmi || 0) - 15) / 20 * 100, 0), 100)}%` }}></div>
+                    <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
                   </div>
                   <div className={styles.scaleLabels}>
                     <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Underweight</span>
