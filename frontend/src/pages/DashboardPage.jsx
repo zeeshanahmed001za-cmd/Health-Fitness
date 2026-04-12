@@ -8,7 +8,7 @@ import { getWorkoutsAPI } from "../api";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import useSidebarShortcut from "../hooks/useSidebarShortcut";
+import useKeyboardShortcuts from "../hooks/useKeyboardShortcuts";
 import * as Icons from "../components/Icons";
 import QuickLogModal from "../components/QuickLogModal";
 
@@ -19,14 +19,14 @@ const AVATAR_FALLBACK =
 function DashboardPage() {
     const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
-    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs, toggleQuickLog } = useNutrition();
+    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs, toggleQuickLog, isQuickLogOpen } = useNutrition();
     const [dbWorkouts, setDbWorkouts] = useState([]);
     useDocumentTitle("Dashboard");
 
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [notificationsClean, setNotificationsClean] = useState(false);
 
-    useSidebarShortcut(toggleSidebar);
+    useKeyboardShortcuts({ toggleSidebar, toggleQuickLog, isQuickLogOpen });
 
     const loggedExercises = useMemo(() => {
         return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];

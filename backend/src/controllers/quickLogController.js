@@ -75,16 +75,19 @@ export const quickLog = asyncHandler(async (req, res) => {
         });
     }
 
-    // --- 3. FOOD DETECTION (FALLBACK) ---
-    // If it mentions "ate", "had", "food", "calorie" or is just a string
-    const calorieMatch = input.match(/(\d+)\s*(?:cal|calories|kcal)/);
-    const calories = calorieMatch ? parseInt(calorieMatch[1]) : 300; // Default to 300 if just item named
+    // --- 3. FOOD DETECTION (CATCH-ALL) ---
+    // Extract calories if present, otherwise default to 250
+    const calorieMatch = input.match(/(\d+)\s*(?:cal|calories|kcal|cals)/);
+    const calories = calorieMatch ? parseInt(calorieMatch[1]) : 250;
     
+    // Clean the string of noisy keywords and numbers to get the food name
     let foodName = input
-        .replace(/(\d+)\s*(?:cal|calories|kcal|cals)/g, '')
-        .replace(/ate|had|finished|some|a|one|for|lunch|dinner|breakfast|snack/g, '')
+        .replace(/(\d+)\s*(?:cal|calories|kcal|cals)/g, '') // Remove calories
+        .replace(/(\d+)/g, '') // Remove any other numbers like '1' in '1 burger'
+        .replace(/ate|had|finished|some|a|one|two|three|for|lunch|dinner|breakfast|snack|at|the/g, '')
         .trim();
 
+    // If we have any text left, log it as food
     if (foodName.length > 2) {
         result = await Nutrition.create({
             user: req.user._id,
@@ -92,9 +95,9 @@ export const quickLog = asyncHandler(async (req, res) => {
             name: foodName.charAt(0).toUpperCase() + foodName.slice(1),
             category: 'snacks',
             calories: calories,
-            protein: Math.round(calories * 0.05),
-            carbs: Math.round(calories * 0.12),
-            fat: Math.round(calories * 0.03),
+            protein: Math.round(calories * 0.04),
+            carbs: Math.round(calories * 0.1),
+            fat: Math.round(calories * 0.05),
             timestamp: Date.now()
         });
 
@@ -105,6 +108,6 @@ export const quickLog = asyncHandler(async (req, res) => {
     }
 
     return res.status(400).json({ 
-        message: "I couldn't quite catch that. Try 'ate a burger' or 'ran 30 mins'." 
+        message: "I'm not sure what to log. Try 'ate a burger' or '2 cups of water'." 
     });
 });

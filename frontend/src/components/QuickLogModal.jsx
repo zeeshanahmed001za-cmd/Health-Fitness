@@ -76,6 +76,11 @@ const QuickLogModal = () => {
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                         disabled={loading}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && status?.type === 'success') {
+                                toggleQuickLog(false);
+                            }
+                        }}
                     />
                     <div className={styles.cardFooter}>
                         <span className={styles.enterHint}>Press Enter to save</span>
