@@ -285,6 +285,12 @@ export const NutritionProvider = ({ children }) => {
   }, [foodLogs]);
 
 
+  const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
+
+  const toggleQuickLog = useCallback((val) => {
+    setIsQuickLogOpen(prev => typeof val === 'boolean' ? val : !prev);
+  }, []);
+
   const value = useMemo(() => ({
     foodLogs,
     waterLogs,
@@ -297,8 +303,10 @@ export const NutritionProvider = ({ children }) => {
     addWaterLog,
     removeWaterLog,
     updateGoal,
-    refreshLogs
-  }), [foodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal, refreshLogs]);
+    refreshLogs,
+    isQuickLogOpen,
+    toggleQuickLog
+  }), [foodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal, refreshLogs, isQuickLogOpen, toggleQuickLog]);
 
   return (
     <NutritionContext.Provider value={value}>

@@ -9,7 +9,7 @@ import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import * as Icons from "../components/Icons";
-import QuickLogInput from "../components/QuickLogInput";
+import QuickLogModal from "../components/QuickLogModal";
 
 // A Data URL SVG is an image encoded as text and embedded directly inside JavaScript or HTML.
 const AVATAR_FALLBACK =
@@ -18,7 +18,7 @@ const AVATAR_FALLBACK =
 function DashboardPage() {
     const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
-    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs } = useNutrition();
+    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs, toggleQuickLog } = useNutrition();
     useDocumentTitle("Dashboard");
 
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -221,6 +221,14 @@ function DashboardPage() {
                     <div className={dashStyles.navRight}>
                         <button
                             className={dashStyles.iconBtn}
+                            onClick={() => toggleQuickLog(true)}
+                            aria-label="Quick Log"
+                            style={{ color: 'var(--accent-primary)' }}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </button>
+                        <button
+                            className={dashStyles.iconBtn}
                             onClick={handleNotificationClick}
                             aria-label="Notifications"
                         >
@@ -250,7 +258,9 @@ function DashboardPage() {
                             <p>{getWelcomeMessage()}</p>
                         </div>
                         <div className={pageStyles.welcomeAction}>
-                            <QuickLogInput onLogSuccess={refreshLogs} />
+                            <button className={pageStyles.primaryBtn} onClick={() => toggleQuickLog(true)}>
+                               Fast Log
+                            </button>
                         </div>
                     </section>
 
@@ -451,6 +461,7 @@ function DashboardPage() {
                     </section>
                 </main>
             </div>
+            <QuickLogModal />
         </div>
     );
 }
