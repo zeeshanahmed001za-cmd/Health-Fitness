@@ -92,26 +92,32 @@ function ProgressTracker() {
     return diff > 0 ? `+${diff}` : diff;
   }, [progressHistory]);
 
-  // BMI Calculation
+  // BMI Calculation - Normalized to Metric for maximum accuracy
   const bmi = useMemo(() => {
-    const w = parseFloat(currentWeight);
-    if (!w || isNaN(w)) return null;
+    const rawW = parseFloat(currentWeight);
+    if (!rawW || isNaN(rawW)) return null;
 
-    let totalInches = 0;
-    let cm = parseFloat(userData?.heightCm);
-    const feet = parseFloat(userData?.heightFeet);
-    const inches = parseFloat(userData?.heightInches || 0);
-
-    // Dynamic unit detection based on what fields are available
-    if (userData?.heightUnit === 'metric' && cm) {
-      return (w / Math.pow(cm / 100, 2)).toFixed(1);
-    } else if (feet) {
-      totalInches = (feet * 12) + inches;
-      return (703 * w / Math.pow(totalInches, 2)).toFixed(1);
-    } else if (cm) { // Fallback if unit is wrong but cm exists
-      return (w / Math.pow(cm / 100, 2)).toFixed(1);
+    // 1. Normalize Weight to KG
+    let kg = rawW;
+    if (userData?.weightUnit === 'imperial') {
+      kg = rawW / 2.20462;
     }
-    return null;
+
+    // 2. Normalize Height to CM
+    let cm = parseFloat(userData?.heightCm);
+    if (!cm) {
+      const feet = parseFloat(userData?.heightFeet);
+      const inches = parseFloat(userData?.heightInches || 0);
+      if (feet) {
+        cm = ((feet * 12) + inches) * 2.54;
+      }
+    }
+
+    if (!kg || !cm) return null;
+    
+    // 3. Calculate BMI using Metric Formula: kg / m^2
+    const bmiVal = (kg / Math.pow(cm / 100, 2)).toFixed(1);
+    return bmiVal;
   }, [userData, currentWeight]);
 
   const bmiStatus = useMemo(() => {
