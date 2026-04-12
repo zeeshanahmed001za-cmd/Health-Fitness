@@ -335,16 +335,7 @@ function WorkoutPlansPage() {
 
         <main className={pageStyles.dashboardContent}>
           {/* Meta Header */}
-          <section className={pageStyles.workoutMetaHeader}>
-            <div className={pageStyles.metaCard}>
-              <span className={pageStyles.metaLabel}>Workout Split</span>
-              <span className={pageStyles.metaValue}>Push / Chest Focus</span>
-            </div>
-            <div className={pageStyles.metaCard}>
-              <span className={pageStyles.metaLabel}>Intensity Level</span>
-              <span className={pageStyles.metaValue}>Intermediate</span>
-            </div>
-          </section>
+
 
           {/* Pre-Workout */}
           <section className={pageStyles.logSection}>
