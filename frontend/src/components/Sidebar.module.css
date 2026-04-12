@@ -140,7 +140,7 @@
 }
 
 .quickActionBtn {
-  margin: 16px 16px 8px 16px;
+  margin: 12px 16px;
   background: var(--accent-primary) !important;
   color: #000 !important;
   border-radius: 12px;
