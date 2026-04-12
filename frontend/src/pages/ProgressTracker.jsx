@@ -116,9 +116,7 @@ function ProgressTracker() {
     return days;
   }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress]);
 
-  const unlockedFirstWorkout = completedToday.length >= 1;
-  const unlocked7DayStreak = activeStreak >= 7;
-  const unlockedGoalAchieved = goalWeight && distanceToGoal <= 0.5;
+
 
   const handleWeightSubmit = async () => {
     if (!newWeightInput || isNaN(newWeightInput)) return;
@@ -210,7 +208,7 @@ function ProgressTracker() {
             </div>
 
             <div className={styles.mainVisualArea}>
-              <ResponsiveContainer width="100%" height={350}>
+              <ResponsiveContainer width="100%" height={420}>
                 {activeTab === 'weight' ? (
                   <ComposedChart data={weightChartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                     <defs>
@@ -242,14 +240,6 @@ function ProgressTracker() {
             </div>
           </div>
 
-          <div className={styles.milestonesSection} style={{ marginTop: '0' }}>
-             <h3>Achievements</h3>
-             <div className={styles.milestoneScroll}>
-                <div className={`${styles.milestoneItem} ${!unlockedFirstWorkout ? styles.locked : ''}`}><div className={styles.mIcon}>🎉</div><span>First Workout</span></div>
-                <div className={`${styles.milestoneItem} ${!unlocked7DayStreak ? styles.locked : ''}`}><div className={styles.mIcon}>🔥</div><span>7-Day Streak</span></div>
-                <div className={`${styles.milestoneItem} ${!unlockedGoalAchieved ? styles.locked : ''}`}><div className={styles.mIcon}>🏆</div><span>Goal Reach</span></div>
-             </div>
-          </div>
         </main>
       </div>
 
