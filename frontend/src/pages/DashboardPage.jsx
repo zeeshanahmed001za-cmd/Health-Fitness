@@ -249,7 +249,7 @@ function DashboardPage() {
                             <h2>Hello, {firstName}!</h2>
                             <p>{getWelcomeMessage()}</p>
                         </div>
-                        <div className={pageStyles.welcomeAction} style={{ width: '100%', maxWidth: '600px' }}>
+                        <div className={pageStyles.welcomeAction}>
                             <QuickLogInput onLogSuccess={refreshLogs} />
                         </div>
                     </section>
