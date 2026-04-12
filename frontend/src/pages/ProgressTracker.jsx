@@ -8,7 +8,8 @@ import Sidebar from "../components/Sidebar";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import { useUser } from "../context/UserContext";
-import { getProgressHistoryAPI, addProgressAPI } from "../api";
+import { useNutrition } from "../context/NutritionContext";
+import { getProgressHistoryAPI, addProgressAPI, getWorkoutsAPI } from "../api";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/ProgressTracker.module.css";
@@ -31,18 +32,9 @@ const BellIcon = () => (
 const AVATAR_FALLBACK =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-const weeklyActivityData = [
-  { name: "Mon", workout: 100, nutrition: 90 },
-  { name: "Tue", workout: 80, nutrition: 85 },
-  { name: "Wed", workout: 0, nutrition: 70 },
-  { name: "Thu", workout: 100, nutrition: 95 },
-  { name: "Fri", workout: 50, nutrition: 80 },
-  { name: "Sat", workout: 120, nutrition: 60 },
-  { name: "Sun", workout: 0, nutrition: 100 },
-];
-
 function ProgressTracker() {
   const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
+  const { foodLogs, nutritionGoals } = useNutrition();
   useDocumentTitle("Progress Tracker");
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -50,6 +42,7 @@ function ProgressTracker() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   
   const [progressHistory, setProgressHistory] = useState([]);
+  const [workoutLogs, setWorkoutLogs] = useState([]);
   const [newWeightInput, setNewWeightInput] = useState("");
   const [timeRange, setTimeRange] = useState("1M");
 
@@ -61,10 +54,14 @@ function ProgressTracker() {
 
   const fetchProgress = async () => {
     try {
-      const data = await getProgressHistoryAPI();
-      setProgressHistory(data);
+      const [weightData, workoutData] = await Promise.all([
+        getProgressHistoryAPI(),
+        getWorkoutsAPI()
+      ]);
+      setProgressHistory(weightData);
+      setWorkoutLogs(workoutData);
     } catch (err) {
-      console.error("Failed to fetch progress history:", err);
+      console.error("Failed to fetch history:", err);
     }
   };
 
@@ -166,6 +163,42 @@ function ProgressTracker() {
                   
     return data.filter(d => d.timestamp >= cutoff);
   }, [progressHistory, timeRange, currentWeight]);
+
+  // Weekly Activity Logic
+  const weeklyActivityData = useMemo(() => {
+    const days = [];
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dayStr = date.toISOString().split('T')[0];
+      const name = date.toLocaleDateString([], { weekday: 'short' });
+
+      // Calculate Workout Adherence (Binary for now, 100% if any workout logged)
+      const hasWorkout = workoutLogs.some(log => {
+        const logDate = new Date(log.date || log.createdAt).toISOString().split('T')[0];
+        return logDate === dayStr;
+      });
+
+      // Calculate Nutrition Adherence
+      const dayCalories = foodLogs
+        .filter(log => log.timestamp.startsWith(dayStr))
+        .reduce((sum, log) => sum + (Number(log.calories) || 0), 0);
+      
+      const calorieGoal = nutritionGoals.calories || 2100;
+      // Close to goal (within 90-110%) is 100% adherence
+      const nutritionAdherence = dayCalories === 0 ? 0 : Math.min(Math.round((dayCalories / calorieGoal) * 100), 100);
+
+      days.push({
+        name,
+        workout: hasWorkout ? 100 : 0,
+        nutrition: nutritionAdherence
+      });
+    }
+    return days;
+  }, [workoutLogs, foodLogs, nutritionGoals]);
 
   // Milestones Logic
   const unlockedFirstWorkout = completedExercises.length >= 1;
