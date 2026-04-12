@@ -184,6 +184,18 @@ function DashboardPage() {
         setNotificationsClean(true);
     };
 
+    const getWelcomeMessage = () => {
+        if (loggedExercises.length === 0 || progress === 0) {
+            return "Ready to conquer the day? Let's get started on your fitness goals!";
+        } else if (progress < 50) {
+            return `Great start! You've crushed ${progress}% of your routine today. Keep it up!`;
+        } else if (progress < 100) {
+            return `You're doing great! ${progress}% of your routine is complete. Keep going strong!`;
+        } else {
+            return "Amazing job! You have completed today's goal.";
+        }
+    };
+
     return (
         <div className={dashStyles.pageWrapper}>
             <Sidebar
@@ -234,13 +246,7 @@ function DashboardPage() {
                     <section className={pageStyles.welcomeSection}>
                         <div className={pageStyles.welcomeText}>
                             <h2>Hello, {firstName}!</h2>
-                            <p>
-                                You've crushed {progress}% of your{" "}
-                                {loggedExercises.length > 0
-                                    ? "routine today"
-                                    : "weekly fitness goals"}
-                                . Keep it up!
-                            </p>
+                            <p>{getWelcomeMessage()}</p>
                         </div>
                         <div className={pageStyles.welcomeAction}>
                             <button
