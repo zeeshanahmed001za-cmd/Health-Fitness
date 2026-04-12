@@ -248,52 +248,32 @@ function ProgressTracker() {
             {/* Card 1: Weight Overview */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>Current Weight</span>
+                <span className={styles.statLabel}>Performance Weight</span>
                 <div className={styles.statMain}>
                   <span className={styles.statValue}>{currentWeight}</span>
                   <span className={styles.statUnit}>{unit}</span>
                 </div>
                 <span className={styles.statBadge}>
-                  {goalWeight ? `Target: ${goalWeight} ${unit}` : 'No target set'}
+                  {weightDelta ? `${weightDelta} ${unit} since last log` : (goalWeight ? `Target: ${goalWeight} ${unit}` : 'Tracking active')}
                 </span>
               </div>
             </div>
 
-            {/* Card 2: Strategic Progress Tracking */}
+            {/* Card 2: Body Mass Index */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>
-                  {(goalKey === 'build' || goalKey === 'endurance') ? 'Workout Adherence' : 'Body Mass Index'}
-                </span>
-                {(goalKey === 'build' || goalKey === 'endurance') ? (
-                  <>
-                    <span className={styles.statValue}>{currentWorkoutProgress}%</span>
-                    <div className={styles.bmiScale}>
-                      <div className={styles.scaleTrack} style={{ background: 'rgba(255,255,255,0.05)' }}>
-                        <div className={styles.scaleMarker} style={{ left: `${currentWorkoutProgress}%`, background: 'var(--accent-primary)' }}></div>
-                      </div>
-                      <div className={styles.scaleLabels}>
-                        <span>Start</span>
-                        <span className={styles.activeLabel}>Current</span>
-                        <span>Goal</span>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className={styles.statValue}>{bmi || "N/A"}</span>
-                    <div className={styles.bmiScale}>
-                      <div className={styles.scaleTrack}>
-                        <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
-                      </div>
-                      <div className={styles.scaleLabels}>
-                        <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
-                        <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
-                        <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
-                      </div>
-                    </div>
-                  </>
-                )}
+                <span className={styles.statLabel}>Body Mass Index</span>
+                <span className={styles.statValue}>{bmi || "N/A"}</span>
+                <div className={styles.bmiScale}>
+                  <div className={styles.scaleTrack}>
+                    <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
+                  </div>
+                  <div className={styles.scaleLabels}>
+                    <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
+                    <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
+                    <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
+                  </div>
+                </div>
               </div>
             </div>
 
