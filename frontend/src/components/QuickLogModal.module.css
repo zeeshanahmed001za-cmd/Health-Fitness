@@ -86,10 +86,57 @@
     padding: 4px;
 }
 
-.hint {
-    font-size: 0.85rem;
+.modalInfo {
+    margin-bottom: 24px;
+}
+
+.description {
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.examples {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.examples span {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+}
+
+.examples ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.examples li {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+    padding-left: 12px;
+    position: relative;
+}
+
+.examples li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent-primary);
+}
+
+.examples li:last-child {
+    margin-bottom: 0;
 }
 
 .cardInput {

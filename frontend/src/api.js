@@ -117,7 +117,7 @@ export const deleteNutritionLogAPI = async (id) => {
 };
 
 export const quickLogAPI = async (text) => {
-    return fetchWithAuth('/users/quick-log', {
+    return fetchWithAuth('/nutrition/quick-log', {
         method: 'POST',
         body: JSON.stringify({ text })
     });

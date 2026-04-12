@@ -53,10 +53,20 @@ const QuickLogModal = () => {
             <div className={styles.overlay} onClick={() => toggleQuickLog(false)} />
             <div className={styles.logCard}>
                 <div className={styles.cardHeader}>
-                    <h3>Fast Entry</h3>
+                    <h3>Quick Log</h3>
                     <button className={styles.closeBtn} onClick={() => toggleQuickLog(false)}>&times;</button>
                 </div>
-                <p className={styles.hint}>Tell me what you did or ate...</p>
+                <div className={styles.modalInfo}>
+                    <p className={styles.description}>Log your day in seconds using natural language.</p>
+                    <div className={styles.examples}>
+                        <span>Examples:</span>
+                        <ul>
+                            <li>"2 cups of water"</li>
+                            <li>"500 calorie pizza"</li>
+                            <li>"ran for 30 minutes"</li>
+                        </ul>
+                    </div>
+                </div>
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <input
                         ref={inputRef}
