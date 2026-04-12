@@ -81,8 +81,30 @@ function ProgressTracker() {
   const unit = userData?.weightUnit === "metric" ? "kg" : "lbs";
   const goalWeight = parseFloat(userData?.goalWeightValue);
   const initialWeight = progressHistory.length > 0 ? progressHistory[0].weight : currentWeight;
-  const isDown = currentWeight <= initialWeight;
   const distanceToGoal = goalWeight ? Math.abs(currentWeight - goalWeight).toFixed(1) : null;
+
+  // BMI Calculation
+  const bmi = useMemo(() => {
+    const height = parseFloat(userData?.heightValue);
+    if (!height || !currentWeight) return null;
+    
+    if (userData?.heightUnit === 'metric') {
+      // Metric: weight (kg) / height (m)^2
+      return (currentWeight / Math.pow(height / 100, 2)).toFixed(1);
+    } else {
+      // Imperial: 703 * weight (lbs) / height (in)^2
+      return (703 * currentWeight / Math.pow(height, 2)).toFixed(1);
+    }
+  }, [userData, currentWeight]);
+
+  const bmiStatus = useMemo(() => {
+    if (!bmi) return "N/A";
+    const val = parseFloat(bmi);
+    if (val < 18.5) return "Underweight";
+    if (val < 25) return "Healthy";
+    if (val < 30) return "Overweight";
+    return "Obese";
+  }, [bmi]);
 
   const weightChartData = useMemo(() => {
     if (progressHistory.length === 0) return [{ name: "Start", weight: Number(currentWeight), timestamp: Date.now() - 86400000 * 7 }];
@@ -176,12 +198,16 @@ function ProgressTracker() {
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon}><BurnIcon /></div>
-              <div className={styles.statHeader}>
-                <span className={styles.statLabel}>Workouts Done</span>
-                <span className={styles.statValue}>{completedToday.length}</span>
+              <div className={styles.statIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.42 4.58a5 5 0 0 1 0 7.07l-7.07 7.07a1 1 0 0 1-1.41 0L4.88 11.65a5 5 0 1 1 7.07-7.07l.35.35.35-.35a5 5 0 0 1 7.77 0z"/></svg>
               </div>
-              <span className={styles.statTrend}>Adherence: {currentWorkoutProgress}%</span>
+              <div className={styles.statHeader}>
+                <span className={styles.statLabel}>Current BMI</span>
+                <span className={styles.statValue}>{bmi || "N/A"}</span>
+              </div>
+              <span className={`${styles.statTrend} ${bmiStatus === 'Healthy' ? styles.positive : styles.neutral}`}>
+                Status: {bmiStatus}
+              </span>
             </div>
 
             <div className={styles.statCard}>
