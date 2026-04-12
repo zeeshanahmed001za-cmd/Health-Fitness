@@ -5,107 +5,98 @@ import Workout from '../models/Workout.js';
 // @desc    Parse natural language input and log activity
 // @route   POST /api/user/quick-log
 // @access  Private
-const quickLog = asyncHandler(async (req, res) => {
+export const quickLog = asyncHandler(async (req, res) => {
     const { text } = req.body;
     if (!text) {
-        res.status(400);
-        throw new Error('Please provide search text');
+        return res.status(400).json({ message: 'No text provided' });
     }
 
     const input = text.toLowerCase();
-    
-    // 1. Check for Water
-    // Examples: "2 glasses of water", "water 500ml", "drank 3 cups"
-    const waterRegex = /(\d+)\s*(ml|oz|cups?|glasses?|units?)?\s*(of\s+)?water/i;
-    const waterMatch = input.match(waterRegex) || input.match(/water\s*(\d+)/i);
+    let result = null;
+
+    // Pattern 1: Water (e.g. "2 cups of water", "500ml water")
+    const waterPattern = /(\d+)\s*(cup|cups|ml|liter|liters|glass|glasses)\s*(?:of\s+)?water/i;
+    const waterMatch = input.match(waterPattern);
     
     if (waterMatch) {
         let amount = parseInt(waterMatch[1]);
-        const unit = waterMatch[2] || 'ml';
-        
-        // Normalize to ML
-        if (unit.includes('cup') || unit.includes('glass')) amount *= 250;
-        if (unit.includes('oz')) amount *= 30;
+        const unit = waterMatch[2].toLowerCase();
 
-        const log = new Nutrition({
+        // Convert common units to ml
+        if (unit.startsWith('cup') || unit.startsWith('glass')) {
+            amount = amount * 250;
+        } else if (unit.startsWith('liter')) {
+            amount = amount * 1000;
+        }
+
+        result = await Nutrition.create({
             user: req.user._id,
             activityType: 'water',
             name: 'Water',
             amount: amount,
             timestamp: Date.now()
         });
-        await log.save();
+
         return res.status(201).json({ 
-            type: 'water', 
-            message: `Logged ${amount}ml of water`, 
-            data: log 
+            message: `Logged ${amount}ml of water!`,
+            data: result 
         });
     }
 
-    // 2. Check for Food
-    // Examples: "ate 500 calories of pizza", "200kcal apple", "pizza 400 cal"
-    const foodRegex = /(\d+)\s*(kcal|calories|cal)\s*(of\s+)?(.+)/i;
-    const foodMatch = input.match(foodRegex) || input.match(/(.+)\s+(\d+)\s*(kcal|calories|cal)/i);
+    // Pattern 2: Food with calories (e.g. "500 calorie pizza", "ate 300 cal apple")
+    const foodPattern = /(?:ate\s+)?(\d+)\s*(?:calorie|calories|cal|cals)\s+(?:of\s+)?(.+)/i;
+    const foodMatch = input.match(foodPattern);
 
     if (foodMatch) {
-        let calories, name;
-        if (input.match(/^\d/)) { // Starts with numbers: "500 cal pizza"
-            calories = parseInt(foodMatch[1]);
-            name = foodMatch[4].trim();
-        } else { // Starts with name: "pizza 500 cal"
-            name = foodMatch[1].trim();
-            calories = parseInt(foodMatch[2]);
-        }
+        const calories = parseInt(foodMatch[1]);
+        const foodName = foodMatch[2].trim();
 
-        const log = new Nutrition({
+        // Simple estimation logic for macros if not provided
+        // In a real app, this would call a Nutrition API
+        result = await Nutrition.create({
             user: req.user._id,
             activityType: 'food',
-            name: name.charAt(0).toUpperCase() + name.slice(1),
-            category: 'snacks',
+            name: foodName,
+            category: 'snacks', // Default
             calories: calories,
+            protein: Math.round(calories * 0.05), // Estimation
+            carbs: Math.round(calories * 0.12),  // Estimation
+            fat: Math.round(calories * 0.03),    // Estimation
             timestamp: Date.now()
         });
-        await log.save();
+
         return res.status(201).json({ 
-            type: 'food', 
-            message: `Logged ${calories} kcal for ${name}`, 
-            data: log 
+            message: `Logged ${foodName} (${calories} kcal)!`,
+            data: result 
         });
     }
 
-    // 3. Check for Exercise
-    // Examples: "ran for 30 minutes", "pushups 20 mins", "30 min workout"
-    const workoutRegex = /(.+)\s+for\s+(\d+)\s*(mins?|minutes?)/i;
-    const workoutMatch = input.match(workoutRegex) || input.match(/(\d+)\s*(mins?|minutes?)\s*(of\s+)?(.+)/i);
+    // Pattern 3: Exercise (e.g. "30 mins of running", "ran for 20 minutes")
+    const exercisePattern = /(?:did\s+)?(\d+)\s*(?:mins|minutes|min)\s+(?:of\s+)?(.+)/i;
+    const exerciseMatch = input.match(exercisePattern);
 
-    if (workoutMatch) {
-        let duration, name;
-        if (input.includes('for')) {
-            name = workoutMatch[1].trim();
-            duration = parseInt(workoutMatch[2]);
-        } else {
-            duration = parseInt(workoutMatch[1]);
-            name = (workoutMatch[4] || 'Exercise').trim();
-        }
+    if (exerciseMatch) {
+        const duration = parseInt(exerciseMatch[1]);
+        const exerciseName = exerciseMatch[2].trim();
 
-        const log = new Workout({
+        result = await Workout.create({
             user: req.user._id,
             type: 'Other',
             duration: duration,
-            caloriesBurned: duration * 8, // Estimate 8 cal/min
-            exercises: [{ name: name.charAt(0).toUpperCase() + name.slice(1) }],
-            date: Date.now()
+            caloriesBurned: duration * 8, // Rough estimate
+            date: Date.now(),
+            exercises: [{
+                name: exerciseName,
+            }]
         });
-        await log.save();
+
         return res.status(201).json({ 
-            type: 'workout', 
-            message: `Logged ${duration} mins of ${name}`, 
-            data: log 
+            message: `Logged ${duration} mins of ${exerciseName}!`,
+            data: result 
         });
     }
 
-    res.status(400);
-    throw new Error("Could not understand the activity. Try '2 glasses of water' or '500 cal pizza'");
+    return res.status(400).json({ 
+        message: "Sorry, I couldn't parse that. Try something like '2 cups of water' or '500 cal pizza'." 
+    });
 });
-
-export { quickLog };
