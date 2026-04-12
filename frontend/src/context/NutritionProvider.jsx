@@ -235,6 +235,23 @@ export const NutritionProvider = ({ children }) => {
     setNutritionGoals((prev) => ({ ...prev, ...newGoals }));
   }, []);
 
+  const refreshLogs = useCallback(async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+
+    try {
+      const logs = await getNutritionLogsAPI();
+      if (logs) {
+        const food = logs.filter(l => l.activityType === 'food').map(l => ({...l, id: l._id}));
+        const water = logs.filter(l => l.activityType === 'water').map(l => ({...l, id: l._id}));
+        setFoodLogs(food);
+        setWaterLogs(water);
+      }
+    } catch (err) {
+      console.error("Failed to refresh logs", err);
+    }
+  }, []);
+
   // 4. Derived State (Calculations)
   const totals = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
@@ -267,6 +284,7 @@ export const NutritionProvider = ({ children }) => {
     }, { breakfast: [], lunch: [], dinner: [], snacks: [] });
   }, [foodLogs]);
 
+
   const value = useMemo(() => ({
     foodLogs,
     waterLogs,
@@ -278,8 +296,9 @@ export const NutritionProvider = ({ children }) => {
     removeFoodLog,
     addWaterLog,
     removeWaterLog,
-    updateGoal
-  }), [foodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal]);
+    updateGoal,
+    refreshLogs
+  }), [foodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal, refreshLogs]);
 
   return (
     <NutritionContext.Provider value={value}>

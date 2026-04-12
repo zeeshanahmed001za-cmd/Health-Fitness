@@ -9,6 +9,7 @@ import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import * as Icons from "../components/Icons";
+import QuickLogInput from "../components/QuickLogInput";
 
 // A Data URL SVG is an image encoded as text and embedded directly inside JavaScript or HTML.
 const AVATAR_FALLBACK =
@@ -17,7 +18,7 @@ const AVATAR_FALLBACK =
 function DashboardPage() {
     const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
-    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs } = useNutrition();
+    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs } = useNutrition();
     useDocumentTitle("Dashboard");
 
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -248,13 +249,8 @@ function DashboardPage() {
                             <h2>Hello, {firstName}!</h2>
                             <p>{getWelcomeMessage()}</p>
                         </div>
-                        <div className={pageStyles.welcomeAction}>
-                            <button
-                                className={pageStyles.primaryBtn}
-                                onClick={() => navigate("/workouts")}
-                            >
-                                Log Activity
-                            </button>
+                        <div className={pageStyles.welcomeAction} style={{ width: '100%', maxWidth: '600px' }}>
+                            <QuickLogInput onLogSuccess={refreshLogs} />
                         </div>
                     </section>
 
