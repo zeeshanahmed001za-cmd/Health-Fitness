@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { quickLogAPI } from '../api';
 import styles from './QuickLogInput.module.css';
 
 const QuickLogInput = ({ onLogSuccess }) => {
@@ -15,15 +15,7 @@ const QuickLogInput = ({ onLogSuccess }) => {
         setStatus(null);
 
         try {
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                }
-            };
-
-            const { data } = await axios.post('/api/user/quick-log', { text }, config);
+            const data = await quickLogAPI(text);
             
             setStatus({ type: 'success', message: data.message });
             setText('');
@@ -34,7 +26,7 @@ const QuickLogInput = ({ onLogSuccess }) => {
         } catch (err) {
             setStatus({ 
                 type: 'error', 
-                message: err.response?.data?.message || 'Could not parse input. Try "2 cups of water"' 
+                message: err.message || 'Could not parse input. Try "2 cups of water"' 
             });
             setTimeout(() => setStatus(null), 5000);
         } finally {
