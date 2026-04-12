@@ -115,8 +115,7 @@ function ProgressTracker() {
     const val = parseFloat(bmi);
     if (val < 18.5) return "Underweight";
     if (val < 25) return "Healthy";
-    if (val < 30) return "Overweight";
-    return "Obese";
+    return "Overweight"; // Grouping Overweight & Obesity for simplicity
   }, [bmi]);
 
   const weightChartData = useMemo(() => {
@@ -227,10 +226,9 @@ function ProgressTracker() {
                     <div className={styles.scaleMarker} style={{ left: `${Math.min(Math.max((parseFloat(bmi || 0) - 15) / 20 * 100, 0), 100)}%` }}></div>
                   </div>
                   <div className={styles.scaleLabels}>
-                    <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
+                    <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Underweight</span>
                     <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
-                    <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
-                    <span className={bmiStatus === 'Obese' ? styles.activeLabel : ''}>Obese</span>
+                    <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Overweight</span>
                   </div>
                 </div>
               </div>
