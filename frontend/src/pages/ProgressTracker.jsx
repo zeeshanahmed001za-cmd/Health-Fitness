@@ -142,17 +142,17 @@ function ProgressTracker() {
   const goalSummaryMsg = useMemo(() => {
     switch(goalKey) {
       case 'lose':
-        return distanceToGoal ? `You are ${distanceToGoal} ${unit} away from your target. Consistency is winning!` : "Track your weight daily to see your trend!";
+        return `Targeting ${goalWeight} ${unit}. You're on the right path.`;
       case 'build':
-        return `Workout execution at ${currentWorkoutProgress}%. Keep feeding the muscle growth!`;
+        return `Focusing on strength. Consistency is your best fuel.`;
       case 'maintain':
-        return `Holding steady. Your stability reflects your discipline.`;
+        return `Balance achieved. Let's keep this momentum steady.`;
       case 'endurance':
-        return `Total activity rising. You're building an unstoppable engine!`;
+        return `Building stamina. Every session counts toward your peak.`;
       default:
-        return `You're making great progress toward your vision!`;
+        return `Tracking your evolution. One step at a time.`;
     }
-  }, [goalKey, distanceToGoal, unit, currentWorkoutProgress]);
+  }, [goalKey, goalWeight, unit]);
 
 
   const weightChartData = useMemo(() => {
@@ -232,11 +232,11 @@ function ProgressTracker() {
             <div className={styles.heroText}>
               <span className={styles.goalBadge}>{(() => {
                 switch(goalKey) {
-                  case 'lose': return 'Fat Loss Phase';
-                  case 'build': return 'Hardcore Bulking';
-                  case 'maintain': return 'Optimal Maintenance';
-                  case 'endurance': return 'Endurance Elite';
-                  default: return 'Fitness Goal';
+                  case 'lose': return 'Weight Control';
+                  case 'build': return 'Strength & Scale';
+                  case 'maintain': return 'Stability';
+                  case 'endurance': return 'Endurance Focus';
+                  default: return 'Active Goal';
                 }
               })()}</span>
               <h2>{goalSummaryMsg}</h2>
