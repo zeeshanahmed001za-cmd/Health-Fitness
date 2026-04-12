@@ -19,6 +19,7 @@ function DashboardPage() {
     const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
     const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs, toggleQuickLog } = useNutrition();
+    const [dbWorkouts, setDbWorkouts] = useState([]);
     useDocumentTitle("Dashboard");
 
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -43,6 +44,20 @@ function DashboardPage() {
             (completedExercises.length / loggedExercises.length) * 100,
         );
     }, [loggedExercises, completedExercises]);
+
+    // Fetch Workouts from backend
+    useEffect(() => {
+        const fetchWorkouts = async () => {
+            try {
+                const { getWorkoutsAPI } = await import("../api");
+                const data = await getWorkoutsAPI();
+                if (data) setDbWorkouts(data);
+            } catch (err) {
+                console.error("Failed to fetch workouts", err);
+            }
+        };
+        fetchWorkouts();
+    }, []);
 
     const totalBurned = useMemo(() => {
         return completedExercises.reduce(
@@ -146,14 +161,14 @@ function DashboardPage() {
                     subtitle: 'Water intake',
                     timestamp: log.timestamp,
                     type: 'water',
-                    value: '250 ml',
+                    value: `${log.amount || 250} ml`,
                     icon: <Icons.WaterIcon />,
                     colorClass: pageStyles['bg-blue']
                 });
             }
         });
 
-        // Add Workout Logs
+        // Add Local Workout Logs
         (loggedExercises || []).forEach(ex => {
             if (ex && ex.completed && ex.completedAt) {
                 activities.push({
@@ -169,8 +184,22 @@ function DashboardPage() {
             }
         });
 
+        // Add Backend Workout Logs
+        (dbWorkouts || []).forEach(ex => {
+            activities.push({
+                id: ex._id,
+                title: ex.exercises?.[0]?.name || 'Workout',
+                subtitle: ex.type || 'Exercise',
+                timestamp: ex.date,
+                type: 'workout',
+                value: `${ex.caloriesBurned || 0} kcal`,
+                icon: <Icons.RunIcon />,
+                colorClass: pageStyles['bg-purple']
+            });
+        });
+
         return activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
-    }, [foodLogs, waterLogs, loggedExercises]);
+    }, [foodLogs, waterLogs, loggedExercises, dbWorkouts]);
 
     // Handlers
     const handleSidebarToggle = () => {
