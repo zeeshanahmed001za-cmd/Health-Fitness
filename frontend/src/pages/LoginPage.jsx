@@ -19,13 +19,13 @@ const passwordPolicy = (password) =>
 function LoginPage() {
   useDocumentTitle("Login");
   const navigate = useNavigate();
-  const { updateUserData } = useUser();
+  const { updateUserData, logout } = useUser();
 
   useEffect(() => {
     if (localStorage.getItem("userToken")) {
-      navigate("/dashboard", { replace: true });
+      logout();
     }
-  }, [navigate]);
+  }, [logout]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
