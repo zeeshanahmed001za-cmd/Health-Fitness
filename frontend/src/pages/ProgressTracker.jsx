@@ -241,36 +241,9 @@ function ProgressTracker() {
         <main className={styles.dashboardContent}>
           <div className={styles.heroSummary}>
             <div className={styles.heroText}>
-              <span className={styles.goalBadge}>{(() => {
-                switch(goalKey) {
-                  case 'lose': return 'Weight Loss';
-                  case 'build': return 'Muscle Building';
-                  case 'maintain': return 'Maintenance';
-                  case 'endurance': return 'Endurance Training';
-                  default: return 'Fitness Goal';
-                }
-              })()}</span>
-              
-              <div className={styles.weeklyHeroSummary}>
-                <div className={styles.heroDetailItem}>
-                  <span className={styles.detailLabel}>Weekly Goal</span>
-                  <span className={styles.detailValue}>{goalWeight || "Not Set"} {goalWeight ? unit : ""} Target</span>
-                  <span className={styles.subDetail}>Daily {userData?.activityLevel?.charAt(0).toUpperCase() + userData?.activityLevel?.slice(1)} Effort</span>
-                </div>
-                
-                <div className={styles.weeklyStatsGrid}>
-                   <div className={styles.weeklyStatMini}>
-                     <span className={styles.miniLabel}>Weekly Workout</span>
-                     <span className={styles.miniValue}>{weeklyAverages.workout}%</span>
-                   </div>
-                   <div className={styles.weeklyStatMini}>
-                     <span className={styles.miniLabel}>Weekly Nutrition</span>
-                     <span className={styles.miniValue}>{weeklyAverages.nutrition}%</span>
-                   </div>
-                </div>
-              </div>
+              <h2>{goalKey === 'build' ? 'Strength & Muscle Building' : goalKey === 'lose' ? 'Weight Management Plan' : goalKey === 'maintain' ? 'Optimal Maintenance Plan' : 'Endurance Training Plan'}</h2>
+              <p>Weekly Progress: <strong>{weeklyAverages.workout}% Workout</strong> Consistency & <strong>{weeklyAverages.nutrition}% Nutrition</strong> Adherence</p>
             </div>
-
             <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
           </div>
 
