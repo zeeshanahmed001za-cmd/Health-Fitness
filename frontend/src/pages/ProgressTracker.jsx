@@ -154,6 +154,15 @@ function ProgressTracker() {
     }
   }, [goalKey, goalWeight, unit]);
 
+  const weeklyAverages = useMemo(() => {
+    const workoutSum = weeklyActivityData.reduce((s, d) => s + (d.workout || 0), 0) / 7;
+    const nutritionSum = weeklyActivityData.reduce((s, d) => s + (d.nutrition || 0), 0) / 7;
+    return {
+      workout: Math.round(workoutSum),
+      nutrition: Math.round(nutritionSum)
+    };
+  }, [weeklyActivityData]);
+
 
   const weightChartData = useMemo(() => {
     if (progressHistory.length === 0) return [{ name: "Start", weight: Number(currentWeight), timestamp: Date.now() - 86400000 * 7 }];
@@ -240,46 +249,27 @@ function ProgressTracker() {
                 }
               })()}</span>
               
-              <div className={styles.mainProgressContainer}>
-                <div className={styles.heroDetails}>
-                  <div className={styles.heroDetailItem}>
-                    <span className={styles.detailLabel}>Plan Details</span>
-                    <span className={styles.detailValue}>{goalWeight || "Not Set"} {goalWeight ? unit : ""} Target</span>
-                    <span className={styles.subDetail}>{userData?.activityLevel?.charAt(0).toUpperCase() + userData?.activityLevel?.slice(1)} Activity</span>
-                  </div>
+              <div className={styles.weeklyHeroSummary}>
+                <div className={styles.heroDetailItem}>
+                  <span className={styles.detailLabel}>Weekly Goal</span>
+                  <span className={styles.detailValue}>{goalWeight || "Not Set"} {goalWeight ? unit : ""} Target</span>
+                  <span className={styles.subDetail}>Daily {userData?.activityLevel?.charAt(0).toUpperCase() + userData?.activityLevel?.slice(1)} Effort</span>
                 </div>
-
-                <div className={styles.goalProgressVisual}>
-                   <div className={styles.progressHeader}>
-                      <span>Progress towards target</span>
-                      <span className={styles.pctValue}>{
-                        goalWeight 
-                        ? `${Math.min(Math.round((Math.abs(initialWeight - currentWeight) / Math.abs(initialWeight - goalWeight)) * 100), 100)}%` 
-                        : '0%'
-                      }</span>
+                
+                <div className={styles.weeklyStatsGrid}>
+                   <div className={styles.weeklyStatMini}>
+                     <span className={styles.miniLabel}>Weekly Workout</span>
+                     <span className={styles.miniValue}>{weeklyAverages.workout}%</span>
                    </div>
-                   <div className={styles.progressBarWrapper}>
-                      <div className={styles.progressBarFill} style={{ 
-                        width: goalWeight 
-                        ? `${Math.min((Math.abs(initialWeight - currentWeight) / Math.abs(initialWeight - goalWeight)) * 100, 100)}%` 
-                        : '5%' 
-                      }}></div>
-                   </div>
-                   <div className={styles.progressMarkers}>
-                      <span>{initialWeight} {unit}</span>
-                      <span>{goalWeight} {unit}</span>
+                   <div className={styles.weeklyStatMini}>
+                     <span className={styles.miniLabel}>Weekly Nutrition</span>
+                     <span className={styles.miniValue}>{weeklyAverages.nutrition}%</span>
                    </div>
                 </div>
               </div>
             </div>
 
-            <div className={styles.heroQuickActions}>
-               <div className={styles.quickInsight}>
-                 <span className={styles.insightLabel}>Today</span>
-                 <span className={styles.insightValue}>{currentWorkoutProgress}% Done</span>
-               </div>
-               <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
-            </div>
+            <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
           </div>
 
           <div className={styles.statsHighlightGrid}>
