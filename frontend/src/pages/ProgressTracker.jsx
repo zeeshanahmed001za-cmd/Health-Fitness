@@ -34,7 +34,7 @@ const AVATAR_FALLBACK =
 
 function ProgressTracker() {
   const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
-  const { foodLogs, nutritionGoals } = useNutrition();
+  const { foodLogs, waterLogs, nutritionGoals } = useNutrition();
   useDocumentTitle("Progress Tracker");
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -87,12 +87,16 @@ function ProgressTracker() {
   }, []);
 
   const completedExercises = useMemo(() => loggedExercises.filter((ex) => ex.completed), [loggedExercises]);
+  const currentWorkoutProgress = useMemo(() => {
+    if (loggedExercises.length === 0) return 0;
+    return Math.round((completedExercises.length / loggedExercises.length) * 100);
+  }, [loggedExercises, completedExercises]);
 
   // Streak Calculation
   const activeStreak = useMemo(() => {
     if (completedExercises.length === 0) return 0;
     const sortedDates = [...completedExercises]
-       .map(ex => new Date(ex.completedAt).setHours(0,0,0,0))
+       .map(ex => new Date(ex.completedAt || ex.date).setHours(0,0,0,0))
        .sort((a,b) => b - a); // Descending
     
     // Remove duplicates
@@ -167,38 +171,54 @@ function ProgressTracker() {
   // Weekly Activity Logic
   const weeklyActivityData = useMemo(() => {
     const days = [];
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    const todayObj = new Date();
+    todayObj.setHours(23, 59, 59, 999);
 
     for (let i = 6; i >= 0; i--) {
-      const date = new Date(today);
+      const date = new Date(todayObj);
       date.setDate(date.getDate() - i);
       const dayStr = date.toISOString().split('T')[0];
       const name = date.toLocaleDateString([], { weekday: 'short' });
 
-      // Calculate Workout Adherence (Binary for now, 100% if any workout logged)
-      const hasWorkout = workoutLogs.some(log => {
-        const logDate = new Date(log.date || log.createdAt).toISOString().split('T')[0];
-        return logDate === dayStr;
-      });
+      // Calculate Workout Adherence
+      let workoutAdherence = 0;
+      if (i === 0) {
+        // Today's data from live state
+        workoutAdherence = currentWorkoutProgress;
+      } else {
+        // Historical from workoutLogs (binary or check completion if available)
+        const dayWorkouts = workoutLogs.filter(log => {
+          const logDate = new Date(log.date || log.createdAt).toISOString().split('T')[0];
+          return logDate === dayStr;
+        });
+        workoutAdherence = dayWorkouts.length > 0 ? 100 : 0;
+      }
 
-      // Calculate Nutrition Adherence
+      // Calculate Nutrition Adherence (Calories + Water)
       const dayCalories = foodLogs
         .filter(log => log.timestamp.startsWith(dayStr))
         .reduce((sum, log) => sum + (Number(log.calories) || 0), 0);
       
+      const dayWater = waterLogs
+        .filter(log => log.timestamp.startsWith(dayStr))
+        .length;
+
       const calorieGoal = nutritionGoals.calories || 2100;
-      // Close to goal (within 90-110%) is 100% adherence
-      const nutritionAdherence = dayCalories === 0 ? 0 : Math.min(Math.round((dayCalories / calorieGoal) * 100), 100);
+      const waterGoal = 8; // 8 glasses
+
+      const calorieAdherence = dayCalories === 0 ? 0 : Math.min((dayCalories / calorieGoal) * 100, 100);
+      const waterAdherence = dayWater === 0 ? 0 : Math.min((dayWater / waterGoal) * 100, 100);
+
+      const nutritionOverall = Math.round((calorieAdherence + waterAdherence) / 2);
 
       days.push({
         name,
-        workout: hasWorkout ? 100 : 0,
-        nutrition: nutritionAdherence
+        workout: workoutAdherence,
+        nutrition: nutritionOverall
       });
     }
     return days;
-  }, [workoutLogs, foodLogs, nutritionGoals]);
+  }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress]);
 
   // Milestones Logic
   const unlockedFirstWorkout = completedExercises.length >= 1;
