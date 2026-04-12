@@ -232,14 +232,24 @@ function ProgressTracker() {
             <div className={styles.heroText}>
               <span className={styles.goalBadge}>{(() => {
                 switch(goalKey) {
-                  case 'lose': return 'Weight Control';
-                  case 'build': return 'Strength & Scale';
-                  case 'maintain': return 'Stability';
-                  case 'endurance': return 'Endurance Focus';
-                  default: return 'Active Goal';
+                  case 'lose': return 'Weight Loss';
+                  case 'build': return 'Muscle Building';
+                  case 'maintain': return 'Maintenance';
+                  case 'endurance': return 'Endurance Training';
+                  default: return 'Fitness Goal';
                 }
               })()}</span>
-              <h2>{goalSummaryMsg}</h2>
+              <div className={styles.heroDetails}>
+                <div className={styles.heroDetailItem}>
+                  <span className={styles.detailLabel}>Target Weight</span>
+                  <span className={styles.detailValue}>{goalWeight || "Not Set"} {goalWeight ? unit : ""}</span>
+                </div>
+                <div className={styles.heroDetailSeparator}></div>
+                <div className={styles.heroDetailItem}>
+                  <span className={styles.detailLabel}>Activity Level</span>
+                  <span className={styles.detailValue}>{userData?.activityLevel?.charAt(0).toUpperCase() + userData?.activityLevel?.slice(1) || "Moderate"}</span>
+                </div>
+              </div>
             </div>
             <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
           </div>

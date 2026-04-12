@@ -40,22 +40,37 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-.heroText h2 {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin: 0;
-  color: #fff;
-  line-height: 1.2;
+.heroDetails {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 4px;
 }
 
-.heroText p {
+.heroDetailItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin-bottom: 2px;
 }
 
-.heroText strong {
-  color: var(--accent-primary);
-  font-weight: 700;
+.detailValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.heroDetailSeparator {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .primaryBtn {
