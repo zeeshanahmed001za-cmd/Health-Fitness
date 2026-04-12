@@ -143,23 +143,29 @@ function ProgressTracker() {
 
   // Chart Formatting
   const weightChartData = useMemo(() => {
-    let data = progressHistory.map((log, index) => {
-      const date = new Date(log.date || log.createdAt);
-      return {
-        name: date.toLocaleDateString([], { month: 'short', day: 'numeric' }),
-        weight: log.weight,
-        timestamp: date.getTime()
-      }
-    });
-
-    if (data.length === 0) {
-      // Mock data so UI isn't empty on new accounts
-      data = [
+    if (progressHistory.length === 0) {
+      return [
         { name: "Start", weight: currentWeight ? Number(currentWeight) : 175, timestamp: Date.now() - 86400000 * 7 }
       ];
     }
+
+    // 1. Group by Date to avoid duplicates on X-Axis
+    const grouped = progressHistory.reduce((acc, log) => {
+      const dateObj = new Date(log.date || log.createdAt);
+      const dayKey = dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      
+      // If multiple logs on same day, take the latest one
+      acc[dayKey] = {
+        name: dayKey,
+        weight: log.weight,
+        timestamp: dateObj.getTime()
+      };
+      return acc;
+    }, {});
+
+    let data = Object.values(grouped).sort((a,b) => a.timestamp - b.timestamp);
     
-    // Simple filter logic
+    // 2. Filter by Time Range
     const now = Date.now();
     const cutoff = timeRange === '1M' ? now - 30*86400000 
                   : timeRange === '3M' ? now - 90*86400000
@@ -352,8 +358,23 @@ function ProgressTracker() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="name" stroke="#cbd5e1" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#cbd5e1" fontSize={12} tickLine={false} axisLine={false} domain={['dataMin - 5', 'dataMax + 5']} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="#cbd5e1" 
+                      fontSize={11} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      padding={{ left: 20, right: 20 }}
+                      allowDuplicatedCategory={false}
+                    />
+                    <YAxis 
+                      stroke="#cbd5e1" 
+                      fontSize={11} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      domain={['auto', 'auto']}
+                      padding={{ top: 20, bottom: 20 }}
+                    />
                     <Tooltip content={<CustomTooltip />} />
                     
                     {goalWeight && !isNaN(goalWeight) && (
