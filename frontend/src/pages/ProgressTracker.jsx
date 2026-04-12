@@ -83,6 +83,15 @@ function ProgressTracker() {
   const initialWeight = progressHistory.length > 0 ? progressHistory[0].weight : currentWeight;
   const distanceToGoal = goalWeight ? Math.abs(currentWeight - goalWeight).toFixed(1) : null;
 
+  // Weight Change from last entry
+  const weightDelta = useMemo(() => {
+    if (progressHistory.length < 2) return null;
+    const last = progressHistory[progressHistory.length - 1].weight;
+    const prev = progressHistory[progressHistory.length - 2].weight;
+    const diff = (last - prev).toFixed(1);
+    return diff > 0 ? `+${diff}` : diff;
+  }, [progressHistory]);
+
   // BMI Calculation
   const bmi = useMemo(() => {
     const height = parseFloat(userData?.heightValue);
@@ -188,35 +197,73 @@ function ProgressTracker() {
           </div>
 
           <div className={styles.statsHighlightGrid}>
+            {/* Weight Card */}
             <div className={styles.statCard}>
-              <div className={styles.statIcon}><WeightIcon /></div>
-              <div className={styles.statHeader}>
-                <span className={styles.statLabel}>Current Weight</span>
-                <span className={styles.statValue}>{currentWeight}<small>{unit}</small></span>
+              <div className={styles.statCardLeft}>
+                <div className={styles.statIcon}><WeightIcon /></div>
+                <div className={styles.statHeader}>
+                  <span className={styles.statLabel}>Current Weight</span>
+                  <div className={styles.statMain}>
+                    <span className={styles.statValue}>{currentWeight}</span>
+                    <span className={styles.statUnit}>{unit}</span>
+                  </div>
+                </div>
+                {weightDelta && (
+                  <span className={`${styles.statBadge} ${parseFloat(weightDelta) <= 0 ? styles.positive : styles.negative}`}>
+                    {weightDelta} {unit}
+                  </span>
+                )}
               </div>
-              <div className={`${styles.miniProgressBar}`}><div className={styles.fill} style={{ width: `${Math.min(100, Math.abs((initialWeight-currentWeight)/(initialWeight-goalWeight)*100))}%` }}></div></div>
+              <div className={styles.statCardRight}>
+                <div className={styles.miniSparkline}>
+                  <ResponsiveContainer width="100%" height={50}>
+                    <AreaChart data={weightChartData.slice(-7)}>
+                      <Area type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={2} fill="rgba(16, 185, 129, 0.1)" dot={false} isAnimationActive={true} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  <span className={styles.sparkLabel}>Last 7 Days</span>
+                </div>
+              </div>
             </div>
 
+            {/* BMI Card */}
             <div className={styles.statCard}>
               <div className={styles.statIcon}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.42 4.58a5 5 0 0 1 0 7.07l-7.07 7.07a1 1 0 0 1-1.41 0L4.88 11.65a5 5 0 1 1 7.07-7.07l.35.35.35-.35a5 5 0 0 1 7.77 0z"/></svg>
               </div>
               <div className={styles.statHeader}>
-                <span className={styles.statLabel}>Current BMI</span>
+                <span className={styles.statLabel}>Body Mass Index</span>
                 <span className={styles.statValue}>{bmi || "N/A"}</span>
               </div>
-              <span className={`${styles.statTrend} ${bmiStatus === 'Healthy' ? styles.positive : styles.neutral}`}>
-                Status: {bmiStatus}
-              </span>
+              <div className={styles.bmiScale}>
+                <div className={styles.scaleTrack}>
+                  <div className={styles.scaleMarker} style={{ left: `${Math.min(Math.max((parseFloat(bmi || 0) - 15) / 20 * 100, 0), 100)}%` }}></div>
+                </div>
+                <div className={styles.scaleLabels}>
+                  <span>Under</span>
+                  <span className={styles.activeLabel}>{bmiStatus}</span>
+                  <span>Obese</span>
+                </div>
+              </div>
             </div>
 
+            {/* Streak Card */}
             <div className={styles.statCard}>
               <div className={styles.statIcon}><StreakIcon /></div>
               <div className={styles.statHeader}>
-                <span className={styles.statLabel}>Activity Streak</span>
-                <span className={styles.statValue}>{activeStreak}<small>Days</small></span>
+                <span className={styles.statLabel}>Active Streak</span>
+                <span className={styles.statValue}>{activeStreak}<small> Days</small></span>
               </div>
-              <span className={styles.statTrend}>{activeStreak > 0 ? '🔥 On Fire' : '⚡ Get Started'}</span>
+              <div className={styles.streakGoalInfo}>
+                <div className={styles.streakDots}>
+                  {[...Array(7)].map((_, i) => (
+                    <div key={i} className={`${styles.streakDot} ${activeStreak > i ? styles.active : ''}`}></div>
+                  ))}
+                </div>
+                <span className={styles.streakStatus}>
+                  {activeStreak >= 7 ? "Elite Consistency!" : `${7 - (activeStreak % 7)} days to next badge`}
+                </span>
+              </div>
             </div>
           </div>
 
