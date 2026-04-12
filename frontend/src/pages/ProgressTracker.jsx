@@ -135,6 +135,25 @@ function ProgressTracker() {
     return Math.min(Math.max(((val - 10) / 35) * 100, 0), 100);
   }, [bmi]);
 
+  const goalKey = useMemo(() => {
+    return Array.isArray(userData?.primaryGoal) ? userData.primaryGoal[0] : userData?.primaryGoal || 'lose';
+  }, [userData]);
+
+  const goalSummaryMsg = useMemo(() => {
+    switch(goalKey) {
+      case 'lose':
+        return distanceToGoal ? `You are ${distanceToGoal} ${unit} away from your target. Consistency is winning!` : "Track your weight daily to see your trend!";
+      case 'build':
+        return `Workout execution at ${currentWorkoutProgress}%. Keep feeding the muscle growth!`;
+      case 'maintain':
+        return `Holding steady. Your stability reflects your discipline.`;
+      case 'endurance':
+        return `Total activity rising. You're building an unstoppable engine!`;
+      default:
+        return `You're making great progress toward your vision!`;
+    }
+  }, [goalKey, distanceToGoal, unit, currentWorkoutProgress]);
+
 
   const weightChartData = useMemo(() => {
     if (progressHistory.length === 0) return [{ name: "Start", weight: Number(currentWeight), timestamp: Date.now() - 86400000 * 7 }];
@@ -211,57 +230,85 @@ function ProgressTracker() {
         <main className={styles.dashboardContent}>
           <div className={styles.heroSummary}>
             <div className={styles.heroText}>
-              <h2>Goal: {(() => {
-                const goal = Array.isArray(userData?.primaryGoal) ? userData.primaryGoal[0] : userData?.primaryGoal;
-                switch(goal) {
-                  case 'lose': return 'Lose Weight';
-                  case 'build': return 'Build Muscle';
-                  case 'maintain': return 'Maintain Weight';
-                  case 'endurance': return 'Improve Endurance';
-                  default: return 'Fitness Progress';
+              <span className={styles.goalBadge}>{(() => {
+                switch(goalKey) {
+                  case 'lose': return 'Fat Loss Phase';
+                  case 'build': return 'Hardcore Bulking';
+                  case 'maintain': return 'Optimal Maintenance';
+                  case 'endurance': return 'Endurance Elite';
+                  default: return 'Fitness Goal';
                 }
-              })()}</h2>
-              <p>You are <strong>{distanceToGoal} {unit}</strong> away from your target. Keep pushing!</p>
+              })()}</span>
+              <h2>{goalSummaryMsg}</h2>
             </div>
             <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
           </div>
 
           <div className={styles.statsHighlightGrid}>
-            {/* Weight Card */}
+            {/* Dynamic Card 1: Main Metric */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>Current Weight</span>
-                <div className={styles.statMain}>
-                  <span className={styles.statValue}>{currentWeight}</span>
-                  <span className={styles.statUnit}>{unit}</span>
-                </div>
-                {weightDelta && (
-                  <span className={`${styles.statBadge} ${parseFloat(weightDelta) <= 0 ? styles.positive : styles.negative}`}>
-                    {weightDelta} {unit} since last log
-                  </span>
+                <span className={styles.statLabel}>{goalKey === 'build' ? 'Muscle Fuel' : 'Current Weight'}</span>
+                {goalKey === 'build' ? (
+                  <>
+                    <div className={styles.statMain}>
+                      <span className={styles.statValue}>Surplus</span>
+                    </div>
+                    <span className={styles.statBadge}>High Protein Focus</span>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.statMain}>
+                      <span className={styles.statValue}>{currentWeight}</span>
+                      <span className={styles.statUnit}>{unit}</span>
+                    </div>
+                    {weightDelta && (
+                      <span className={`${styles.statBadge} ${parseFloat(weightDelta) <= 0 ? styles.positive : styles.negative}`}>
+                        {weightDelta} {unit} since last log
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </div>
 
-            {/* BMI Card */}
+            {/* Dynamic Card 2: Health/Context Metric */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>Body Mass Index</span>
-                <span className={styles.statValue}>{bmi || "N/A"}</span>
-                <div className={styles.bmiScale}>
-                  <div className={styles.scaleTrack}>
-                    <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
-                  </div>
-                  <div className={styles.scaleLabels}>
-                    <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Underweight</span>
-                    <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
-                    <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Overweight</span>
-                  </div>
-                </div>
+                <span className={styles.statLabel}>{goalKey === 'endurance' ? 'Performance' : 'Body Mass Index'}</span>
+                {goalKey === 'endurance' ? (
+                  <>
+                    <span className={styles.statValue}>Active</span>
+                    <div className={styles.bmiScale}>
+                      <div className={styles.scaleTrack} style={{ background: 'linear-gradient(90deg, #3b82f6, #10b981)' }}>
+                        <div className={styles.scaleMarker} style={{ left: `${currentWorkoutProgress}%` }}></div>
+                      </div>
+                      <div className={styles.scaleLabels}>
+                        <span>Rest</span>
+                        <span className={styles.activeLabel}>Moving</span>
+                        <span>Peak</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <span className={styles.statValue}>{bmi || "N/A"}</span>
+                    <div className={styles.bmiScale}>
+                      <div className={styles.scaleTrack}>
+                        <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
+                      </div>
+                      <div className={styles.scaleLabels}>
+                        <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Underweight</span>
+                        <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
+                        <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Overweight</span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* Streak Card */}
+            {/* Dynamic Card 3: Consistency */}
             <div className={styles.statCard}>
               <div className={styles.statCardContent}>
                 <span className={styles.statLabel}>Active Streak</span>
@@ -273,7 +320,7 @@ function ProgressTracker() {
                     ))}
                   </div>
                   <span className={styles.streakStatus}>
-                    {activeStreak >= 7 ? "Elite Consistency!" : `${7 - (activeStreak % 7)} days to next badge`}
+                    {goalKey === 'build' ? 'Recovery tracking on' : `${7 - (activeStreak % 7)} days to next badge`}
                   </span>
                 </div>
               </div>

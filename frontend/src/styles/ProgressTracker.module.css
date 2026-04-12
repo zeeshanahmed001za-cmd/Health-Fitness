@@ -26,11 +26,26 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-.heroText h2 {
-  font-size: 2rem;
+.goalBadge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-primary);
+  border-radius: 100px;
+  font-size: 0.75rem;
   font-weight: 800;
-  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.heroText h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
   color: #fff;
+  line-height: 1.2;
 }
 
 .heroText p {
