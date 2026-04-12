@@ -14,21 +14,20 @@ export const quickLog = asyncHandler(async (req, res) => {
     const input = text.toLowerCase();
     let result = null;
 
-    // Pattern 1: Water (e.g. "2 cups of water", "500ml water")
-    const waterPattern = /(\d+)\s*(cup|cups|ml|liter|liters|glass|glasses)\s*(?:of\s+)?water/i;
-    const waterMatch = input.match(waterPattern);
+    // --- 1. WATER DETECTION ---
+    const waterKeywords = ['water', 'drank', 'cup', 'cups', 'ml', 'glass', 'glasses'];
+    const isWater = waterKeywords.some(kw => input.includes(kw)) && !input.includes('calorie') && !input.includes('eat');
     
-    if (waterMatch) {
-        let amount = parseInt(waterMatch[1]);
-        const unit = waterMatch[2].toLowerCase();
-
-        // Convert common units to ml
-        if (unit.startsWith('cup') || unit.startsWith('glass')) {
-            amount = amount * 250;
-        } else if (unit.startsWith('liter')) {
-            amount = amount * 1000;
+    if (isWater) {
+        const amountMatch = input.match(/(\d+)/);
+        let amount = amountMatch ? parseInt(amountMatch[0]) : 1;
+        const subInput = input.replace(/\d+/g, '').trim();
+        
+        // If no unit but mentions cups/glasses, treat as cups
+        if (subInput.includes('cup') || subInput.includes('glass') || amount < 10) {
+            amount = amount * 250; // Assume 250ml per cup/glass
         }
-
+        
         result = await Nutrition.create({
             user: req.user._id,
             activityType: 'water',
@@ -43,50 +42,30 @@ export const quickLog = asyncHandler(async (req, res) => {
         });
     }
 
-    // Pattern 2: Food with calories (e.g. "500 calorie pizza", "ate 300 cal apple")
-    const foodPattern = /(?:ate\s+)?(\d+)\s*(?:calorie|calories|cal|cals)\s+(?:of\s+)?(.+)/i;
-    const foodMatch = input.match(foodPattern);
+    // --- 2. EXERCISE DETECTION ---
+    const exerciseKeywords = ['min', 'mins', 'minutes', 'ran', 'workout', 'pushup', 'did', 'run', 'gym', 'training'];
+    const isExercise = exerciseKeywords.some(kw => input.includes(kw));
 
-    if (foodMatch) {
-        const calories = parseInt(foodMatch[1]);
-        const foodName = foodMatch[2].trim();
-
-        // Simple estimation logic for macros if not provided
-        // In a real app, this would call a Nutrition API
-        result = await Nutrition.create({
-            user: req.user._id,
-            activityType: 'food',
-            name: foodName,
-            category: 'snacks', // Default
-            calories: calories,
-            protein: Math.round(calories * 0.05), // Estimation
-            carbs: Math.round(calories * 0.12),  // Estimation
-            fat: Math.round(calories * 0.03),    // Estimation
-            timestamp: Date.now()
-        });
-
-        return res.status(201).json({ 
-            message: `Logged ${foodName} (${calories} kcal)!`,
-            data: result 
-        });
-    }
-
-    // Pattern 3: Exercise (e.g. "30 mins of running", "ran for 20 minutes")
-    const exercisePattern = /(?:did\s+)?(\d+)\s*(?:mins|minutes|min)\s+(?:of\s+)?(.+)/i;
-    const exerciseMatch = input.match(exercisePattern);
-
-    if (exerciseMatch) {
-        const duration = parseInt(exerciseMatch[1]);
-        const exerciseName = exerciseMatch[2].trim();
+    if (isExercise) {
+        const durationMatch = input.match(/(\d+)/);
+        const duration = durationMatch ? parseInt(durationMatch[0]) : 30; // Default 30 mins
+        
+        // Clean up the input to extract exercise name
+        let exerciseName = input
+            .replace(/(\d+)/g, '')
+            .replace(/mins?|minutes?|did|for|of|the|workout/g, '')
+            .trim();
+        
+        exerciseName = exerciseName || 'General Exercise';
 
         result = await Workout.create({
             user: req.user._id,
             type: 'Other',
             duration: duration,
-            caloriesBurned: duration * 8, // Rough estimate
+            caloriesBurned: duration * 7, // Baseline 7 cal/min
             date: Date.now(),
             exercises: [{
-                name: exerciseName,
+                name: exerciseName.charAt(0).toUpperCase() + exerciseName.slice(1),
             }]
         });
 
@@ -96,7 +75,36 @@ export const quickLog = asyncHandler(async (req, res) => {
         });
     }
 
+    // --- 3. FOOD DETECTION (FALLBACK) ---
+    // If it mentions "ate", "had", "food", "calorie" or is just a string
+    const calorieMatch = input.match(/(\d+)\s*(?:cal|calories|kcal)/);
+    const calories = calorieMatch ? parseInt(calorieMatch[1]) : 300; // Default to 300 if just item named
+    
+    let foodName = input
+        .replace(/(\d+)\s*(?:cal|calories|kcal|cals)/g, '')
+        .replace(/ate|had|finished|some|a|one|for|lunch|dinner|breakfast|snack/g, '')
+        .trim();
+
+    if (foodName.length > 2) {
+        result = await Nutrition.create({
+            user: req.user._id,
+            activityType: 'food',
+            name: foodName.charAt(0).toUpperCase() + foodName.slice(1),
+            category: 'snacks',
+            calories: calories,
+            protein: Math.round(calories * 0.05),
+            carbs: Math.round(calories * 0.12),
+            fat: Math.round(calories * 0.03),
+            timestamp: Date.now()
+        });
+
+        return res.status(201).json({ 
+            message: `Logged ${foodName} (${calories} kcal)!`,
+            data: result 
+        });
+    }
+
     return res.status(400).json({ 
-        message: "Sorry, I couldn't parse that. Try something like '2 cups of water' or '500 cal pizza'." 
+        message: "I couldn't quite catch that. Try 'ate a burger' or 'ran 30 mins'." 
     });
 });
