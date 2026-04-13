@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/DashboardPage.module.css";
@@ -8,7 +8,6 @@ import { getWorkoutsAPI } from "../api";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import useKeyboardShortcuts from "../hooks/useKeyboardShortcuts";
 import * as Icons from "../components/Icons";
 import QuickLogModal from "../components/QuickLogModal";
 
@@ -26,7 +25,7 @@ function DashboardPage() {
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [notificationsClean, setNotificationsClean] = useState(false);
 
-    useKeyboardShortcuts({ toggleSidebar, toggleQuickLog, isQuickLogOpen });
+
 
     const loggedExercises = useMemo(() => {
         return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];
@@ -232,271 +231,256 @@ function DashboardPage() {
     };
 
     return (
-        <div className={dashStyles.pageWrapper}>
-            <Sidebar
-                activePage="dashboard"
-                isCollapsed={sidebarCollapsed}
-                isMobileOpen={mobileSidebarOpen}
-                onClose={() => setMobileSidebarOpen(false)}
-            />
-
-            <div className={dashStyles.mainWrapper}>
-                <header className={dashStyles.topNavbar}>
-                    <div className={dashStyles.navLeft}>
-                        <button
-                            className={dashStyles.toggleSidebarBtn}
-                            onClick={handleSidebarToggle}
-                            aria-label="Toggle Sidebar"
-                        >
-                            <Icons.HamburgerIcon />
-                        </button>
-                        <h1 className={dashStyles.pageTitle}>Overview</h1>
-                    </div>
-                    <div className={dashStyles.navRight}>
-                        <button
-                            className={dashStyles.iconBtn}
-                            onClick={() => toggleQuickLog(true)}
-                            aria-label="Quick Log"
-                            style={{ color: 'var(--accent-primary)' }}
-                        >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        </button>
-                        <button
-                            className={dashStyles.iconBtn}
-                            onClick={handleNotificationClick}
-                            aria-label="Notifications"
-                        >
-                            <Icons.BellIcon />
-                            {!notificationsClean && (
-                                <span className={dashStyles.badge}>3</span>
-                            )}
-                        </button>
-                        <Link to="/profile" className={dashStyles.profileDropdownBtn}>
-                            <div className={dashStyles.profileAvatar}>
-                                <img
-                                    src="../assets/images/avatar-placeholder.png"
-                                    alt="User Avatar"
-                                    onError={(e) => {
-                                        e.target.src = AVATAR_FALLBACK;
-                                    }}
-                                />
-                            </div>
-                        </Link>
-                    </div>
-                </header>
-
-                <main className={pageStyles.dashboardContent}>
-                    <section className={pageStyles.welcomeSection}>
-                        <div className={pageStyles.welcomeText}>
-                            <h2>Hello, {firstName}!</h2>
-                            <p>{getWelcomeMessage()}</p>
+        <main className={pageStyles.dashboardContent}>
+            <header className={dashStyles.topNavbar}>
+                <div className={dashStyles.navLeft}>
+                    <button
+                        className={dashStyles.toggleSidebarBtn}
+                        onClick={handleSidebarToggle}
+                        aria-label="Toggle Sidebar"
+                    >
+                        <Icons.HamburgerIcon />
+                    </button>
+                    <h1 className={dashStyles.pageTitle}>Overview</h1>
+                </div>
+                <div className={dashStyles.navRight}>
+                    <button
+                        className={dashStyles.iconBtn}
+                        onClick={() => toggleQuickLog(true)}
+                        aria-label="Quick Log"
+                        style={{ color: 'var(--accent-primary)' }}
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button
+                        className={dashStyles.iconBtn}
+                        onClick={handleNotificationClick}
+                        aria-label="Notifications"
+                    >
+                        <Icons.BellIcon />
+                        {!notificationsClean && (
+                            <span className={dashStyles.badge}>3</span>
+                        )}
+                    </button>
+                    <Link to="/profile" className={dashStyles.profileDropdownBtn}>
+                        <div className={dashStyles.profileAvatar}>
+                            <img
+                                src="../assets/images/avatar-placeholder.png"
+                                alt="User Avatar"
+                                onError={(e) => {
+                                    e.target.src = AVATAR_FALLBACK;
+                                }}
+                            />
                         </div>
-                        <div className={pageStyles.welcomeAction}>
-                            <button className={pageStyles.primaryBtn} onClick={() => toggleQuickLog(true)}>
-                               Quick Log
-                            </button>
+                    </Link>
+                </div>
+            </header>
+
+            <div className={pageStyles.contentInner}>
+                <section className={pageStyles.welcomeSection}>
+                    <div className={pageStyles.welcomeText}>
+                        <h2>Hello, {firstName}!</h2>
+                        <p>{getWelcomeMessage()}</p>
+                    </div>
+                    <div className={pageStyles.welcomeAction}>
+                        <button className={pageStyles.primaryBtn} onClick={() => toggleQuickLog(true)}>
+                            Quick Log
+                        </button>
+                    </div>
+                </section>
+
+                <section className={pageStyles.metricsGrid}>
+                    {/* 1. Hero Card - Calories Today */}
+                    <div className={`${pageStyles.metricCard} ${pageStyles.heroMetric}`}>
+                        <div className={pageStyles.metricHeader}>
+                            <span className={pageStyles.metricTitle}>{nutritionMetrics.hero.title}</span>
                         </div>
-                    </section>
 
-                    <section className={pageStyles.metricsGrid}>
-                        {/* 1. Hero Card - Calories Today */}
-                        <div className={`${pageStyles.metricCard} ${pageStyles.heroMetric}`}>
-                            <div className={pageStyles.metricHeader}>
-                                <span className={pageStyles.metricTitle}>{nutritionMetrics.hero.title}</span>
-                            </div>
+                        <div className={pageStyles.metricValue}>
+                            <span className={pageStyles.heroValue}>{nutritionMetrics.hero.primary}</span>
+                            <span className={pageStyles.metricSubValue}>{nutritionMetrics.hero.secondary}</span>
+                        </div>
+                        <div className={pageStyles.metricProgress}>
+                            <div
+                                className={pageStyles.progressBar}
+                                style={{ width: nutritionMetrics.hero.progress }}
+                            ></div>
+                        </div>
+                        <div className={pageStyles.metricFooter}>{nutritionMetrics.hero.footer}</div>
+                    </div>
 
-                            <div className={pageStyles.metricValue}>
-                                <span className={pageStyles.heroValue}>{nutritionMetrics.hero.primary}</span>
-                                <span className={pageStyles.metricSubValue}>{nutritionMetrics.hero.secondary}</span>
-                            </div>
-                            <div className={pageStyles.metricProgress}>
+                    {/* 2. Macros Card - 3 Rings */}
+                    <div className={`${pageStyles.metricCard} ${pageStyles.macrosCard}`}>
+                        <div className={pageStyles.metricHeader}>
+                            <span className={pageStyles.metricTitle}>{nutritionMetrics.macros.title}</span>
+                        </div>
+
+                        <div className={pageStyles.ringsContainer}>
+                            {nutritionMetrics.macros.items.map((m, i) => {
+                                const radius = 40;
+                                const circ = 2 * Math.PI * radius;
+                                const offset = circ - (m.pct / 100) * circ;
+
+                                return (
+                                    <div key={i} className={pageStyles.macroRingItem}>
+                                        <span className={pageStyles.macroLabel} style={{ color: m.color }}>{m.label}</span>
+                                        <div className={pageStyles.svgRingWrapper}>
+                                            <svg width="80" height="80" viewBox="0 0 100 100">
+                                                {/* Background Track */}
+                                                <circle
+                                                    cx="50" cy="50" r={radius}
+                                                    fill="transparent"
+                                                    stroke="rgba(255, 255, 255, 0.05)"
+                                                    strokeWidth="6"
+                                                />
+                                                {/* Active Progress */}
+                                                <circle
+                                                    cx="50" cy="50" r={radius}
+                                                    fill="transparent"
+                                                    stroke={m.color}
+                                                    strokeWidth="6"
+                                                    strokeDasharray={circ}
+                                                    strokeDashoffset={offset}
+                                                    strokeLinecap="round"
+                                                    transform="rotate(-90 50 50)"
+                                                    style={{
+                                                        transition: "stroke-dashoffset 1s ease-in-out",
+                                                        filter: `drop-shadow(0 0 4px ${m.color}80)`
+                                                    }}
+                                                />
+                                            </svg>
+                                            <div className={pageStyles.innerValueWrapper}>
+                                                <span className={pageStyles.innerValue}>{m.consumed}</span>
+                                            </div>
+                                        </div>
+                                        <span className={pageStyles.macroValue} style={{ color: `${m.color}cc` }}>{m.left} left</span>
+                                    </div>
+
+                                );
+                            })}
+                        </div>
+                    </div>
+
+
+                    {/* 3. Today's Food Log Panel */}
+                    <div className={`${pageStyles.metricCard} ${pageStyles.foodLogPanel}`}>
+                        <div className={pageStyles.metricHeader}>
+                            <span className={pageStyles.metricTitle}>{nutritionMetrics.foodLog.title}</span>
+                        </div>
+                        <div className={pageStyles.mealList}>
+                            {nutritionMetrics.foodLog.meals.map((meal, idx) => (
                                 <div
-                                    className={pageStyles.progressBar}
-                                    style={{ width: nutritionMetrics.hero.progress }}
-                                ></div>
-                            </div>
-                            <div className={pageStyles.metricFooter}>{nutritionMetrics.hero.footer}</div>
+                                    key={idx}
+                                    className={pageStyles.mealRow}
+                                    onClick={() => navigate("/nutrition")}
+                                >
+                                    <div className={pageStyles.mealInfo}>
+                                        <span className={pageStyles.mealCategory}>{meal.category}</span>
+                                        {meal.items > 0 && <span className={pageStyles.mealItemCount}>{meal.items} items</span>}
+                                    </div>
+                                    <div className={pageStyles.mealStats}>
+                                        {meal.kcal > 0 ? (
+                                            <span className={pageStyles.mealKcal}>{meal.kcal} <span className={pageStyles.unit}>kcal</span></span>
+                                        ) : (
+                                            <span className={pageStyles.mealLogPrompt}>+ Add Meal</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-
-                        {/* 2. Macros Card - 3 Rings */}
-                        <div className={`${pageStyles.metricCard} ${pageStyles.macrosCard}`}>
-                            <div className={pageStyles.metricHeader}>
-                                <span className={pageStyles.metricTitle}>{nutritionMetrics.macros.title}</span>
+                        {nutritionMetrics.foodLog.meals.every(m => m.kcal === 0) && (
+                            <div className={pageStyles.emptyLogState}>
+                                <p>No meals logged today.</p>
+                                <button
+                                    className={pageStyles.logMealBtn}
+                                    onClick={() => navigate("/nutrition")}
+                                >
+                                    Log a Meal
+                                </button>
                             </div>
-
-                            <div className={pageStyles.ringsContainer}>
-                                {nutritionMetrics.macros.items.map((m, i) => {
-                                    const radius = 40;
-                                    const circ = 2 * Math.PI * radius;
-                                    const offset = circ - (m.pct / 100) * circ;
-
-                                    return (
-                                        <div key={i} className={pageStyles.macroRingItem}>
-                                            <span className={pageStyles.macroLabel} style={{ color: m.color }}>{m.label}</span>
-                                            <div className={pageStyles.svgRingWrapper}>
-                                                <svg width="80" height="80" viewBox="0 0 100 100">
-                                                    {/* Background Track */}
-                                                    <circle
-                                                        cx="50" cy="50" r={radius}
-                                                        fill="transparent"
-                                                        stroke="rgba(255, 255, 255, 0.05)"
-                                                        strokeWidth="6"
-                                                    />
-                                                    {/* Active Progress */}
-                                                    <circle
-                                                        cx="50" cy="50" r={radius}
-                                                        fill="transparent"
-                                                        stroke={m.color}
-                                                        strokeWidth="6"
-                                                        strokeDasharray={circ}
-                                                        strokeDashoffset={offset}
-                                                        strokeLinecap="round"
-                                                        transform="rotate(-90 50 50)"
-                                                        style={{
-                                                            transition: "stroke-dashoffset 1s ease-in-out",
-                                                            filter: `drop-shadow(0 0 4px ${m.color}80)`
-                                                        }}
-                                                    />
-                                                </svg>
-                                                <div className={pageStyles.innerValueWrapper}>
-                                                    <span className={pageStyles.innerValue}>{m.consumed}</span>
-                                                </div>
-                                            </div>
-                                            <span className={pageStyles.macroValue} style={{ color: `${m.color}cc` }}>{m.left} left</span>
-                                        </div>
-
-                                    );
-                                })}
-                            </div>
+                        )}
+                    </div>
 
 
-
+                    {/* 4. Summary Card */}
+                    <div className={pageStyles.metricCard}>
+                        <div className={pageStyles.metricHeader}>
+                            <span className={pageStyles.metricTitle}>{nutritionMetrics.summary.title}</span>
                         </div>
-
-
-                        {/* 3. Today's Food Log Panel */}
-                        <div className={`${pageStyles.metricCard} ${pageStyles.foodLogPanel}`}>
-                            <div className={pageStyles.metricHeader}>
-                                <span className={pageStyles.metricTitle}>{nutritionMetrics.foodLog.title}</span>
+                        <div className={pageStyles.summaryBreakdown}>
+                            <div className={pageStyles.summaryRow}>
+                                <span className={pageStyles.summaryLabel}>Goal</span>
+                                <span className={pageStyles.summaryValue}>{nutritionMetrics.summary.goal}</span>
                             </div>
-                            <div className={pageStyles.mealList}>
-                                {nutritionMetrics.foodLog.meals.map((meal, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={pageStyles.mealRow}
-                                        onClick={() => navigate("/nutrition")}
-                                    >
-                                        <div className={pageStyles.mealInfo}>
-                                            <span className={pageStyles.mealCategory}>{meal.category}</span>
-                                            {meal.items > 0 && <span className={pageStyles.mealItemCount}>{meal.items} items</span>}
+                            <div className={pageStyles.summaryRow}>
+                                <span className={pageStyles.summaryLabel}>Consumed</span>
+                                <span className={pageStyles.summaryValue} style={{ color: "#ef4444" }}>- {nutritionMetrics.summary.consumed}</span>
+                            </div>
+                            <div className={pageStyles.summaryRow}>
+                                <span className={pageStyles.summaryLabel}>Burned</span>
+                                <span className={pageStyles.summaryValue} style={{ color: "var(--accent-primary)" }}>+ {nutritionMetrics.summary.burned}</span>
+                            </div>
+                            <div className={pageStyles.summaryDivider} />
+                            <div className={`${pageStyles.summaryRow} ${pageStyles.summaryNetRow}`}>
+                                <span className={pageStyles.summaryLabel}>Remaining</span>
+                                <span className={pageStyles.summaryValue}>{nutritionMetrics.summary.net} <span className={pageStyles.unit}>kcal</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section className={pageStyles.secondaryGrid}>
+                    <div className={pageStyles.panelCard}>
+                        <div className={pageStyles.panelHeader}>
+                            <h3>Recent Logs</h3>
+                            <div className={pageStyles.panelHeaderRight}>
+                                <button
+                                    className={pageStyles.viewAllLink}
+                                    onClick={() => navigate("/nutrition")}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                                >
+                                    Nutrition
+                                </button>
+                                <span style={{ opacity: 0.3 }}>•</span>
+                                <button
+                                    className={pageStyles.viewAllLink}
+                                    onClick={() => navigate("/workouts")}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
+                                >
+                                    Workouts
+                                </button>
+                            </div>
+                        </div>
+                        <div className={pageStyles.workoutList}>
+                            {recentActivities.length > 0 ? (
+                                recentActivities.map((activity) => (
+                                    <div key={activity.id} className={pageStyles.workoutItem}>
+                                        <div className={`${pageStyles.workoutIcon} ${activity.colorClass}`}>
+                                            {activity.icon}
                                         </div>
-                                        <div className={pageStyles.mealStats}>
-                                            {meal.kcal > 0 ? (
-                                                <span className={pageStyles.mealKcal}>{meal.kcal} <span className={pageStyles.unit}>kcal</span></span>
-                                            ) : (
-                                                <span className={pageStyles.mealLogPrompt}>+ Add Meal</span>
-                                            )}
+                                        <div className={pageStyles.workoutDetails}>
+                                            <h4>{activity.title}</h4>
+                                            <p>{activity.subtitle}</p>
+                                        </div>
+                                        <div className={pageStyles.workoutStats}>
+                                            <span>{activity.value}</span>
+                                            <span className={pageStyles.duration}>
+                                                {activity.timestamp ? new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
+                                            </span>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                            {nutritionMetrics.foodLog.meals.every(m => m.kcal === 0) && (
-                                <div className={pageStyles.emptyLogState}>
-                                    <p>No meals logged today.</p>
-                                    <button
-                                        className={pageStyles.logMealBtn}
-                                        onClick={() => navigate("/nutrition")}
-                                    >
-                                        Log a Meal
-                                    </button>
+                                ))
+                            ) : (
+                                <div className={pageStyles.emptyLogState} style={{ padding: '2rem 0' }}>
+                                    <p>No recent activity items found.</p>
                                 </div>
                             )}
                         </div>
-
-
-                        {/* 4. Summary Card */}
-                        <div className={pageStyles.metricCard}>
-                            <div className={pageStyles.metricHeader}>
-                                <span className={pageStyles.metricTitle}>{nutritionMetrics.summary.title}</span>
-                            </div>
-                            <div className={pageStyles.summaryBreakdown}>
-                                <div className={pageStyles.summaryRow}>
-                                    <span className={pageStyles.summaryLabel}>Goal</span>
-                                    <span className={pageStyles.summaryValue}>{nutritionMetrics.summary.goal}</span>
-                                </div>
-                                <div className={pageStyles.summaryRow}>
-                                    <span className={pageStyles.summaryLabel}>Consumed</span>
-                                    <span className={pageStyles.summaryValue} style={{ color: "#ef4444" }}>- {nutritionMetrics.summary.consumed}</span>
-                                </div>
-                                <div className={pageStyles.summaryRow}>
-                                    <span className={pageStyles.summaryLabel}>Burned</span>
-                                    <span className={pageStyles.summaryValue} style={{ color: "var(--accent-primary)" }}>+ {nutritionMetrics.summary.burned}</span>
-                                </div>
-                                <div className={pageStyles.summaryDivider} />
-                                <div className={`${pageStyles.summaryRow} ${pageStyles.summaryNetRow}`}>
-                                    <span className={pageStyles.summaryLabel}>Remaining</span>
-                                    <span className={pageStyles.summaryValue}>{nutritionMetrics.summary.net} <span className={pageStyles.unit}>kcal</span></span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-
-                    <section className={pageStyles.secondaryGrid}>
-
-
-                        <div className={pageStyles.panelCard}>
-                            <div className={pageStyles.panelHeader}>
-                                <h3>Recent Logs</h3>
-                                <div className={pageStyles.panelHeaderRight}>
-                                    <button
-                                        className={pageStyles.viewAllLink}
-                                        onClick={() => navigate("/nutrition")}
-                                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                                    >
-                                        Nutrition
-                                    </button>
-                                    <span style={{ opacity: 0.3 }}>•</span>
-                                    <button
-                                        className={pageStyles.viewAllLink}
-                                        onClick={() => navigate("/workouts")}
-                                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem' }}
-                                    >
-                                        Workouts
-                                    </button>
-                                </div>
-                            </div>
-                            <div className={pageStyles.workoutList}>
-                                {recentActivities.length > 0 ? (
-                                    recentActivities.map((activity) => (
-                                        <div key={activity.id} className={pageStyles.workoutItem}>
-                                            <div className={`${pageStyles.workoutIcon} ${activity.colorClass}`}>
-                                                {activity.icon}
-                                            </div>
-                                            <div className={pageStyles.workoutDetails}>
-                                                <h4>{activity.title}</h4>
-                                                <p>{activity.subtitle}</p>
-                                            </div>
-                                            <div className={pageStyles.workoutStats}>
-                                                <span>{activity.value}</span>
-                                                <span className={pageStyles.duration}>
-                                                    {activity.timestamp ? new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className={pageStyles.emptyLogState} style={{ padding: '2rem 0' }}>
-                                        <p>No recent activity items found.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </section>
-                </main>
+                    </div>
+                </section>
             </div>
-            <QuickLogModal />
-        </div>
+        </main>
     );
 }
 

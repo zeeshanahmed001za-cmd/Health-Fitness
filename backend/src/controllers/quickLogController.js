@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Nutrition from '../models/Nutrition.js';
 import Workout from '../models/Workout.js';
+import { fetchNutritionData } from '../services/nutritionService.js';
 
 // @desc    Parse natural language input and log activity
 // @route   POST /api/user/quick-log
@@ -12,6 +13,8 @@ export const quickLog = asyncHandler(async (req, res) => {
     }
 
     const input = text.toLowerCase();
+    console.log('QuickLog original:', text);
+    console.log('QuickLog lowercase:', input);
     let result = null;
 
     // --- 1. WATER DETECTION ---
@@ -19,25 +22,27 @@ export const quickLog = asyncHandler(async (req, res) => {
     const isWater = waterKeywords.some(kw => input.includes(kw)) && !input.includes('calorie') && !input.includes('eat');
     
     if (isWater) {
-        const amountMatch = input.match(/(\d+)/);
-        let amount = amountMatch ? parseInt(amountMatch[0]) : 1;
-        const subInput = input.replace(/\d+/g, '').trim();
+        const amountMatch = input.match(/(\d+\.?\d*)/);
+        let amount = amountMatch ? parseFloat(amountMatch[0]) : 1;
+        const subInput = input.replace(/\d+\.?\d*/g, '').trim();
         
-        // If no unit but mentions cups/glasses, treat as cups
+        // Handle common unit mappings
         if (subInput.includes('cup') || subInput.includes('glass') || amount < 10) {
             amount = amount * 250; // Assume 250ml per cup/glass
+        } else if (subInput.includes('litre') || subInput.includes('liter') || subInput.includes(' l')) {
+            amount = amount * 1000;
         }
         
         result = await Nutrition.create({
             user: req.user._id,
             activityType: 'water',
             name: 'Water',
-            amount: amount,
+            amount: Math.round(amount),
             timestamp: Date.now()
         });
 
         return res.status(201).json({ 
-            message: `Logged ${amount}ml of water!`,
+            message: `Logged ${Math.round(amount)}ml of water!`,
             data: result 
         });
     }
@@ -76,38 +81,55 @@ export const quickLog = asyncHandler(async (req, res) => {
     }
 
     // --- 3. FOOD DETECTION (CATCH-ALL) ---
-    // Extract calories if present, otherwise default to 250
+    // Extract quantity (e.g. "2" in "2 eggs")
+    const qtyMatch = input.match(/^(\d+)/);
+    const quantity = qtyMatch ? parseInt(qtyMatch[1]) : 1;
+
+    // Extract explicit calories if present (e.g. "500 cal pizza")
     const calorieMatch = input.match(/(\d+)\s*(?:cal|calories|kcal|cals)/);
-    const calories = calorieMatch ? parseInt(calorieMatch[1]) : 250;
+    let calories = calorieMatch ? parseInt(calorieMatch[1]) : null;
     
-    // Clean the string of noisy keywords and numbers to get the food name
-    let foodName = input
-        .replace(/(\d+)\s*(?:cal|calories|kcal|cals)/g, '') // Remove calories
-        .replace(/(\d+)/g, '') // Remove any other numbers like '1' in '1 burger'
-        .replace(/ate|had|finished|some|a|one|two|three|for|lunch|dinner|breakfast|snack|at|the/g, '')
-        .trim();
+    // Smart Clean: Split words and filter out noise
+    const noiseWords = new Set(['i', 'ate', 'had', 'an', 'a', 'the', 'some', 'finished', 'for', 'at', 'one', 'two', 'three', 'slices', 'slice', 'cups', 'cup', 'glasses', 'glass', 'of']);
+    let words = input.split(/\s+/)
+        .filter(w => !noiseWords.has(w)) // Remove noise words
+        .filter(w => !w.match(/^(\d+)(cal|calories|kcal|cals)?$/)) // Remove standalone numbers or calories
+        .filter(w => w.length > 0);
+    
+    let foodName = words.join(' ');
 
-    // If we have any text left, log it as food
-    if (foodName.length > 2) {
-        result = await Nutrition.create({
-            user: req.user._id,
-            activityType: 'food',
-            name: foodName.charAt(0).toUpperCase() + foodName.slice(1),
-            category: 'snacks',
-            calories: calories,
-            protein: Math.round(calories * 0.04),
-            carbs: Math.round(calories * 0.1),
-            fat: Math.round(calories * 0.05),
-            timestamp: Date.now()
-        });
+    // --- NEW: Try External API First ---
+    let nutritionData = await fetchNutritionData(text);
 
-        return res.status(201).json({ 
-            message: `Logged ${foodName} (${calories} kcal)!`,
-            data: result 
-        });
+    if (nutritionData) {
+        calories = nutritionData.calories;
+        foodName = nutritionData.name;
+    } else {
+        // --- FALLBACK (Basic) ---
+        if (!foodName || foodName.length < 2) {
+            foodName = text.length > 20 ? text.substring(0, 20) + '...' : text;
+        }
+
+        if (!calories) {
+            // Very basic fallback if API fails and no cals in text
+            calories = 250 * quantity; 
+        }
     }
 
-    return res.status(400).json({ 
-        message: "I'm not sure what to log. Try 'ate a burger' or '2 cups of water'." 
+    result = await Nutrition.create({
+        user: req.user._id,
+        activityType: 'food',
+        name: foodName.charAt(0).toUpperCase() + foodName.slice(1),
+        category: 'snacks',
+        calories: Number(calories) || 0,
+        protein: Number(nutritionData?.protein) || Math.round((Number(calories) || 0) * 0.04),
+        carbs: Number(nutritionData?.carbs) || Math.round((Number(calories) || 0) * 0.1),
+        fat: Number(nutritionData?.fat) || Math.round((Number(calories) || 0) * 0.05),
+        timestamp: Date.now()
+    });
+
+    return res.status(201).json({ 
+        message: `Logged ${foodName} (${calories} kcal)!`,
+        data: result 
     });
 });

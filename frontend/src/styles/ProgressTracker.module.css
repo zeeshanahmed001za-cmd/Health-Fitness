@@ -8,8 +8,13 @@
 .dashboardContent {
   flex: 1;
   overflow-y: auto;
-  padding: 32px;
   background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.contentInner {
+  padding: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;

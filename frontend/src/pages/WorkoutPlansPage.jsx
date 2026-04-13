@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import useSidebarShortcut from "../hooks/useSidebarShortcut";
 
 import { useUser } from "../context/UserContext";
 
@@ -184,7 +183,7 @@ function WorkoutPlansPage() {
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  useSidebarShortcut(toggleSidebar);
+
 
   // Data state
   const [exercises, setExercises] = useState(() => {
@@ -294,177 +293,165 @@ function WorkoutPlansPage() {
 
 
   return (
-    <div className={dashStyles.pageWrapper}>
-      <Sidebar
-        activePage="workouts"
-        isCollapsed={sidebarCollapsed}
-        isMobileOpen={mobileSidebarOpen}
-        onClose={() => setMobileSidebarOpen(false)}
-      />
+    <main className={pageStyles.dashboardContent}>
+      <header className={dashStyles.topNavbar}>
+        <div className={dashStyles.navLeft}>
+          <button
+            className={dashStyles.toggleSidebarBtn}
+            onClick={handleSidebarToggle}
+            aria-label="Toggle Sidebar"
+          >
+            <HamburgerIcon />
+          </button>
+          <h1 className={dashStyles.pageTitle}>Workout Log</h1>
+        </div>
+        <div className={dashStyles.navRight}>
+          <Link to="/workout-guidance" className={pageStyles.guidanceBtn}>
+            <InfoIcon />
+            <span>Workout Guidance</span>
+          </Link>
+          <Link to="/profile" className={dashStyles.profileDropdownBtn}>
+            <div className={dashStyles.profileAvatar}>
+              <img
+                src="../assets/images/avatar-placeholder.png"
+                alt="User Avatar"
+                onError={(e) => {
+                  e.target.src = AVATAR_FALLBACK;
+                }}
+              />
+            </div>
+          </Link>
+        </div>
+      </header>
 
-      <div className={dashStyles.mainWrapper}>
-        <header className={dashStyles.topNavbar}>
-          <div className={dashStyles.navLeft}>
-            <button
-              className={dashStyles.toggleSidebarBtn}
-              onClick={handleSidebarToggle}
-              aria-label="Toggle Sidebar"
-            >
-              <HamburgerIcon />
-            </button>
-            <h1 className={dashStyles.pageTitle}>Workout Log</h1>
+      <div className={pageStyles.contentInner}>
+        {/* Pre-Workout */}
+        <section className={pageStyles.logSection}>
+          <div className={pageStyles.sectionHeader}>
+            <h3>Pre-Workout Stretching</h3>
+            <p className={pageStyles.sectionGoal}>Goal: 5-10 mins mobility</p>
           </div>
-          <div className={dashStyles.navRight}>
-            <Link to="/workout-guidance" className={pageStyles.guidanceBtn}>
-              <InfoIcon />
-              <span>Workout Guidance</span>
-            </Link>
-            <Link to="/profile" className={dashStyles.profileDropdownBtn}>
-              <div className={dashStyles.profileAvatar}>
-                <img
-                  src="../assets/images/avatar-placeholder.png"
-                  alt="User Avatar"
-                  onError={(e) => {
-                    e.target.src = AVATAR_FALLBACK;
-                  }}
-                />
-              </div>
-            </Link>
-          </div>
-        </header>
-
-        <main className={pageStyles.dashboardContent}>
-          {/* Meta Header */}
-
-
-          {/* Pre-Workout */}
-          <section className={pageStyles.logSection}>
-            <div className={pageStyles.sectionHeader}>
-              <h3>Pre-Workout Stretching</h3>
-              <p className={pageStyles.sectionGoal}>Goal: 5-10 mins mobility</p>
-            </div>
-            <div className={pageStyles.exerciseList}>
-              {exercises.filter((e) => e.category === "pre").length > 0 ? (
-                exercises
-                  .filter((e) => e.category === "pre")
-                  .map((ex) => (
-                    <ExerciseItem
-                      key={ex.id}
-                      ex={ex}
-                      onToggle={toggleExercise}
-                      onRemove={removeExercise}
-                    />
-                  ))
-              ) : (
-                <div className={pageStyles.emptyState}>
-                  No pending stretches.
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* Main Exercises */}
-          <section className={pageStyles.logSection}>
-            <div className={pageStyles.logHeader}>
-              <h3>Main Exercises</h3>
-              <button
-                className={pageStyles.primaryBtn}
-                onClick={() => setIsModalActive(true)}
-              >
-                Add Exercise
-              </button>
-            </div>
-            <div className={pageStyles.muscleGroups}>
-              {Object.keys(mainGroups).length > 0 ? (
-                Object.keys(mainGroups).map((mg) => (
-                  <div key={mg} className={pageStyles.muscleGroupContainer}>
-                    <h4 className={pageStyles.muscleGroupTitle}>{mg}</h4>
-                    <div className={pageStyles.exerciseList}>
-                      {mainGroups[mg].map((ex) => (
-                        <ExerciseItem
-                          key={ex.id}
-                          ex={ex}
-                          onToggle={toggleExercise}
-                          onRemove={removeExercise}
-                        />
-                      ))}
-                    </div>
-                  </div>
+          <div className={pageStyles.exerciseList}>
+            {exercises.filter((e) => e.category === "pre").length > 0 ? (
+              exercises
+                .filter((e) => e.category === "pre")
+                .map((ex) => (
+                  <ExerciseItem
+                    key={ex.id}
+                    ex={ex}
+                    onToggle={toggleExercise}
+                    onRemove={removeExercise}
+                  />
                 ))
-              ) : (
-                <div className={pageStyles.emptyState}>
-                  No pending main exercises.
-                </div>
-              )}
-            </div>
-          </section>
+            ) : (
+              <div className={pageStyles.emptyState}>
+                No pending stretches.
+              </div>
+            )}
+          </div>
+        </section>
 
-          {/* Post-Workout */}
-          <section className={pageStyles.logSection}>
-            <div className={pageStyles.sectionHeader}>
-              <h3>Post-Workout Recovery</h3>
-              <p className={pageStyles.sectionGoal}>
-                Goal: 5-10 mins static stretching
-              </p>
-            </div>
-            <div className={pageStyles.exerciseList}>
-              {exercises.filter((e) => e.category === "post").length > 0 ? (
-                exercises
-                  .filter((e) => e.category === "post")
-                  .map((ex) => (
-                    <ExerciseItem
-                      key={ex.id}
-                      ex={ex}
-                      onToggle={toggleExercise}
-                      onRemove={removeExercise}
-                    />
-                  ))
-              ) : (
-                <div className={pageStyles.emptyState}>
-                  No pending recovery exercises.
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* Summary */}
-          <section className={pageStyles.workoutSummary}>
-            <div className={pageStyles.summaryCard}>
-              <span className={pageStyles.label}>Total Routine</span>
-              <span className={pageStyles.value}>
-                {workoutSummary.total} Tasks
-              </span>
-            </div>
-            <div
-              className={`${pageStyles.summaryCard} ${pageStyles.highlight}`}
+        {/* Main Exercises */}
+        <section className={pageStyles.logSection}>
+          <div className={pageStyles.logHeader}>
+            <h3>Main Exercises</h3>
+            <button
+              className={pageStyles.primaryBtn}
+              onClick={() => setIsModalActive(true)}
             >
-              <span className={pageStyles.label}>Completed</span>
-              <span className={pageStyles.value}>
-                {workoutSummary.completed} Done
-              </span>
-            </div>
-            <div className={pageStyles.summaryCard}>
-              <span className={pageStyles.label}>Energy Burned</span>
-              <span className={pageStyles.value} style={{ color: "#f59e0b" }}>
-                {workoutSummary.totalCals} <small>kcal</small>
-              </span>
-            </div>
-          </section>
+              Add Exercise
+            </button>
+          </div>
+          <div className={pageStyles.muscleGroups}>
+            {Object.keys(mainGroups).length > 0 ? (
+              Object.keys(mainGroups).map((mg) => (
+                <div key={mg} className={pageStyles.muscleGroupContainer}>
+                  <h4 className={pageStyles.muscleGroupTitle}>{mg}</h4>
+                  <div className={pageStyles.exerciseList}>
+                    {mainGroups[mg].map((ex) => (
+                      <ExerciseItem
+                        key={ex.id}
+                        ex={ex}
+                        onToggle={toggleExercise}
+                        onRemove={removeExercise}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={pageStyles.emptyState}>
+                No pending main exercises.
+              </div>
+            )}
+          </div>
+        </section>
 
-          {/* Progress */}
-          <section className={pageStyles.workoutProgress}>
-            <div className={pageStyles.progressHeader}>
-              <span>Workout Completion</span>
-              <span>{completionPercent}%</span>
-            </div>
-            <div className={pageStyles.progressBar}>
-              <div
-                className={pageStyles.progressFill}
-                style={{ width: `${completionPercent}%` }}
-              ></div>
-            </div>
-          </section>
-        </main>
+        {/* Post-Workout */}
+        <section className={pageStyles.logSection}>
+          <div className={pageStyles.sectionHeader}>
+            <h3>Post-Workout Recovery</h3>
+            <p className={pageStyles.sectionGoal}>
+              Goal: 5-10 mins static stretching
+            </p>
+          </div>
+          <div className={pageStyles.exerciseList}>
+            {exercises.filter((e) => e.category === "post").length > 0 ? (
+              exercises
+                .filter((e) => e.category === "post")
+                .map((ex) => (
+                  <ExerciseItem
+                    key={ex.id}
+                    ex={ex}
+                    onToggle={toggleExercise}
+                    onRemove={removeExercise}
+                  />
+                ))
+            ) : (
+              <div className={pageStyles.emptyState}>
+                No pending recovery exercises.
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Summary */}
+        <section className={pageStyles.workoutSummary}>
+          <div className={pageStyles.summaryCard}>
+            <span className={pageStyles.label}>Total Routine</span>
+            <span className={pageStyles.value}>
+              {workoutSummary.total} Tasks
+            </span>
+          </div>
+          <div
+            className={`${pageStyles.summaryCard} ${pageStyles.highlight}`}
+          >
+            <span className={pageStyles.label}>Completed</span>
+            <span className={pageStyles.value}>
+              {workoutSummary.completed} Done
+            </span>
+          </div>
+          <div className={pageStyles.summaryCard}>
+            <span className={pageStyles.label}>Energy Burned</span>
+            <span className={pageStyles.value} style={{ color: "#f59e0b" }}>
+              {workoutSummary.totalCals} <small>kcal</small>
+            </span>
+          </div>
+        </section>
+
+        {/* Progress */}
+        <section className={pageStyles.workoutProgress}>
+          <div className={pageStyles.progressHeader}>
+            <span>Workout Completion</span>
+            <span>{completionPercent}%</span>
+          </div>
+          <div className={pageStyles.progressBar}>
+            <div
+              className={pageStyles.progressFill}
+              style={{ width: `${completionPercent}%` }}
+            ></div>
+          </div>
+        </section>
       </div>
 
       {/* Modal */}
@@ -566,7 +553,7 @@ function WorkoutPlansPage() {
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

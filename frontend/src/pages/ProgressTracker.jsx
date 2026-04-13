@@ -4,9 +4,8 @@ import {
   AreaChart, Area, ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine
 } from "recharts";
 
-import Sidebar from "../components/Sidebar";
+
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
 import { getProgressHistoryAPI, addProgressAPI, getWorkoutsAPI } from "../api";
@@ -36,7 +35,7 @@ function ProgressTracker() {
   const [newWeightInput, setNewWeightInput] = useState("");
   const [timeRange, setTimeRange] = useState("1M");
 
-  useSidebarShortcut(toggleSidebar);
+
 
   useEffect(() => {
     fetchProgress();
@@ -224,140 +223,147 @@ function ProgressTracker() {
   };
 
   return (
-    <div className={dashStyles.pageWrapper}>
-      <Sidebar activePage="progress" isCollapsed={sidebarCollapsed} isMobileOpen={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
+    <main className={styles.dashboardContent}>
+      <header className={dashStyles.topNavbar}>
+        <div className={dashStyles.navLeft}>
+          <button className={dashStyles.toggleSidebarBtn} onClick={() => toggleSidebar()}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <h1 className={dashStyles.pageTitle}>Progress Hub</h1>
+        </div>
+        <div className={dashStyles.navRight}>
+          <Link to="/profile" className={dashStyles.profileDropdownBtn}><div className={dashStyles.profileAvatar}><img src={AVATAR_FALLBACK} alt="User" /></div></Link>
+        </div>
+      </header>
 
-      <div className={dashStyles.mainWrapper}>
-        <header className={dashStyles.topNavbar}>
-          <div className={dashStyles.navLeft}>
-            <button className={dashStyles.toggleSidebarBtn} onClick={() => window.innerWidth <= 768 ? setMobileSidebarOpen(true) : toggleSidebar()}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-            <h1 className={dashStyles.pageTitle}>Progress Hub</h1>
+      <div className={styles.contentInner}>
+        <div className={styles.heroSummary}>
+          <div className={styles.heroText}>
+            <h2>{goalKey === 'build' ? 'Strength & Muscle Building' : goalKey === 'lose' ? 'Weight Management Plan' : goalKey === 'maintain' ? 'Optimal Maintenance Plan' : 'Endurance Training Plan'}</h2>
+            <p>Weekly Progress: <strong>{weeklyAverages.workout}% Workout</strong> Consistency & <strong>{weeklyAverages.nutrition}% Nutrition</strong> Adherence</p>
           </div>
-          <div className={dashStyles.navRight}>
-            <Link to="/profile" className={dashStyles.profileDropdownBtn}><div className={dashStyles.profileAvatar}><img src={AVATAR_FALLBACK} alt="User" /></div></Link>
-          </div>
-        </header>
+          <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
+        </div>
 
-        <main className={styles.dashboardContent}>
-          <div className={styles.heroSummary}>
-            <div className={styles.heroText}>
-              <h2>{goalKey === 'build' ? 'Strength & Muscle Building' : goalKey === 'lose' ? 'Weight Management Plan' : goalKey === 'maintain' ? 'Optimal Maintenance Plan' : 'Endurance Training Plan'}</h2>
-              <p>Weekly Progress: <strong>{weeklyAverages.workout}% Workout</strong> Consistency & <strong>{weeklyAverages.nutrition}% Nutrition</strong> Adherence</p>
+        <div className={styles.statsHighlightGrid}>
+          {/* Card 1: Weight Overview */}
+          <div className={styles.statCard}>
+            <div className={styles.statCardContent}>
+              <span className={styles.statLabel}>Performance Weight</span>
+              <div className={styles.statMain}>
+                <span className={styles.statValue}>{currentWeight}</span>
+                <span className={styles.statUnit}>{unit}</span>
+              </div>
+              <span className={styles.statBadge}>
+                {weightDelta ? `${weightDelta} ${unit} since last log` : (goalWeight ? `Target: ${goalWeight} ${unit}` : 'Tracking active')}
+              </span>
             </div>
-            <button className={styles.primaryBtn} onClick={() => setShowUpdateModal(true)}>Update Metrics</button>
           </div>
 
-          <div className={styles.statsHighlightGrid}>
-            {/* Card 1: Weight Overview */}
-            <div className={styles.statCard}>
-              <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>Performance Weight</span>
-                <div className={styles.statMain}>
-                  <span className={styles.statValue}>{currentWeight}</span>
-                  <span className={styles.statUnit}>{unit}</span>
+          {/* Card 2: Body Mass Index */}
+          <div className={styles.statCard}>
+            <div className={styles.statCardContent}>
+              <span className={styles.statLabel}>Body Mass Index</span>
+              <span className={styles.statValue}>{bmi || "N/A"}</span>
+              <div className={styles.bmiScale}>
+                <div className={styles.scaleTrack}>
+                  <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
                 </div>
-                <span className={styles.statBadge}>
-                  {weightDelta ? `${weightDelta} ${unit} since last log` : (goalWeight ? `Target: ${goalWeight} ${unit}` : 'Tracking active')}
+                <div className={styles.scaleLabels}>
+                  <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
+                  <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
+                  <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Dynamic Card 3: Consistency */}
+          <div className={styles.statCard}>
+            <div className={styles.statCardContent}>
+              <span className={styles.statLabel}>Active Streak</span>
+              <span className={styles.statValue}>{activeStreak}<small> Days</small></span>
+              <div className={styles.streakGoalInfo}>
+                <div className={styles.streakDots}>
+                  {[...Array(7)].map((_, i) => (
+                    <div key={i} className={`${styles.streakDot} ${activeStreak > i ? styles.active : ''}`}></div>
+                  ))}
+                </div>
+                <span className={styles.streakStatus}>
+                  {goalKey === 'build' ? 'Recovery tracking on' : `${7 - (activeStreak % 7)} days to next badge`}
                 </span>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Card 2: Body Mass Index */}
-            <div className={styles.statCard}>
-              <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>Body Mass Index</span>
-                <span className={styles.statValue}>{bmi || "N/A"}</span>
-                <div className={styles.bmiScale}>
-                  <div className={styles.scaleTrack}>
-                    <div className={styles.scaleMarker} style={{ left: `${bmiMarkerPos}%` }}></div>
-                  </div>
-                  <div className={styles.scaleLabels}>
-                    <span className={bmiStatus === 'Underweight' ? styles.activeLabel : ''}>Under</span>
-                    <span className={bmiStatus === 'Healthy' ? styles.activeLabel : ''}>Healthy</span>
-                    <span className={bmiStatus === 'Overweight' ? styles.activeLabel : ''}>Over</span>
-                  </div>
-                </div>
-              </div>
+        <div className={styles.visualizationHub}>
+          <div className={styles.hubHeader}>
+            <div className={styles.hubTabs}>
+              <button className={`${styles.tabBtn} ${activeTab === 'weight' ? styles.active : ''}`} onClick={() => setActiveTab('weight')}>Weight Trend</button>
+              <button className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.active : ''}`} onClick={() => setActiveTab('activity')}>Activity Progress</button>
             </div>
-
-            {/* Dynamic Card 3: Consistency */}
-            <div className={styles.statCard}>
-              <div className={styles.statCardContent}>
-                <span className={styles.statLabel}>Active Streak</span>
-                <span className={styles.statValue}>{activeStreak}<small> Days</small></span>
-                <div className={styles.streakGoalInfo}>
-                  <div className={styles.streakDots}>
-                    {[...Array(7)].map((_, i) => (
-                      <div key={i} className={`${styles.streakDot} ${activeStreak > i ? styles.active : ''}`}></div>
-                    ))}
-                  </div>
-                  <span className={styles.streakStatus}>
-                    {goalKey === 'build' ? 'Recovery tracking on' : `${7 - (activeStreak % 7)} days to next badge`}
-                  </span>
-                </div>
+            {activeTab === 'weight' && (
+              <div className={styles.chartFilters}>
+                {['1M', '3M', '6M'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => setTimeRange(r)}>{r}</button>)}
               </div>
-            </div>
+            )}
           </div>
 
-          <div className={styles.visualizationHub}>
-            <div className={styles.hubHeader}>
-              <div className={styles.hubTabs}>
-                <button className={`${styles.tabBtn} ${activeTab === 'weight' ? styles.active : ''}`} onClick={() => setActiveTab('weight')}>Weight Trend</button>
-                <button className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.active : ''}`} onClick={() => setActiveTab('activity')}>Activity Progress</button>
-              </div>
-              {activeTab === 'weight' && (
-                <div className={styles.chartFilters}>
-                  {['1M', '3M', '6M'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => setTimeRange(r)}>{r}</button>)}
-                </div>
+          <div className={styles.mainVisualArea}>
+            <ResponsiveContainer width="100%" height={420}>
+              {activeTab === 'weight' ? (
+                <ComposedChart data={weightChartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                  <defs>
+                    <filter id="shadow" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+                      <feOffset dx="0" dy="4" result="offsetblur" />
+                      <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+                      <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} padding={{ left: 20, right: 20 }} />
+                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={['auto', 'auto']} padding={{ top: 20, bottom: 20 }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" label={{ value: 'Target', fill: '#f59e0b', fontSize: 12, position: 'insideTopLeft' }} />}
+                  <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={4} dot={{ r: 4, fill: "var(--accent-primary)", strokeWidth: 2, stroke: "#1e293b" }} activeDot={{ r: 8, strokeWidth: 0 }} animationDuration={1000} filter="url(#shadow)" />
+                </ComposedChart>
+              ) : (
+                <ComposedChart data={weeklyActivityData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="workout" fill="#818cf8" radius={[6, 6, 0, 0]} name="Workouts (%)" barSize={30} animationDuration={1000} />
+                  <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={4} name="Nutrition (%)" dot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1000} />
+                </ComposedChart>
               )}
-            </div>
-
-            <div className={styles.mainVisualArea}>
-              <ResponsiveContainer width="100%" height={420}>
-                {activeTab === 'weight' ? (
-                  <ComposedChart data={weightChartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
-                    <defs>
-                      <filter id="shadow" height="200%">
-                        <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-                        <feOffset dx="0" dy="4" result="offsetblur" />
-                        <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
-                        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
-                      </filter>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} padding={{ left: 20, right: 20 }} />
-                    <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={['auto', 'auto']} padding={{ top: 20, bottom: 20 }} />
-                    <Tooltip content={<CustomTooltip />} />
-                    {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" label={{ value: 'Target', fill: '#f59e0b', fontSize: 12, position: 'insideTopLeft' }} />}
-                    <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={4} dot={{ r: 4, fill: "var(--accent-primary)", strokeWidth: 2, stroke: "#1e293b" }} activeDot={{ r: 8, strokeWidth: 0 }} animationDuration={1000} filter="url(#shadow)" />
-                  </ComposedChart>
-                ) : (
-                  <ComposedChart data={weeklyActivityData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="workout" fill="#818cf8" radius={[6, 6, 0, 0]} name="Workouts (%)" barSize={30} animationDuration={1000} />
-                    <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={4} name="Nutrition (%)" dot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1000} />
-                  </ComposedChart>
-                )}
-              </ResponsiveContainer>
-            </div>
+            </ResponsiveContainer>
           </div>
-
-        </main>
+        </div>
       </div>
-
       {showUpdateModal && (
         <div className={`${styles.modal} ${showUpdateModal ? styles.active : ""}`}>
           <div className={styles.modalContent}>
-            <div className={styles.modalHeader}><h2>Log Progress</h2><button className={styles.closeModalBtn} onClick={() => setShowUpdateModal(false)}>×</button></div>
-            <div className={styles.formGroup}><label>Current Weight ({unit})</label><input type="number" step="0.1" autoFocus placeholder={currentWeight} value={newWeightInput} onChange={e => setNewWeightInput(e.target.value)} /></div>
+            <div className={styles.modalHeader}>
+              <h2>Log Progress</h2>
+              <button className={styles.closeModalBtn} onClick={() => setShowUpdateModal(false)}>×</button>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Current Weight ({unit})</label>
+              <input 
+                type="number" 
+                step="0.1" 
+                autoFocus 
+                placeholder={currentWeight} 
+                value={newWeightInput} 
+                onChange={e => setNewWeightInput(e.target.value)} 
+              />
+            </div>
             <button className={styles.submitBtn} onClick={handleWeightSubmit}>Save Entry</button>
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }
 

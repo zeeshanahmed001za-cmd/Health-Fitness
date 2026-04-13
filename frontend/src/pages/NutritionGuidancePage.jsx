@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import useSidebarShortcut from "../hooks/useSidebarShortcut";
 import { useUser } from "../context/UserContext";
 
 import dashStyles from "../styles/Dashboard.module.css";
@@ -88,7 +87,7 @@ function NutritionGuidancePage() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [expandedNutrients, setExpandedNutrients] = useState([]);
 
-  useSidebarShortcut(toggleSidebar);
+
 
   const toggleNutrient = (id) => {
     setExpandedNutrients((prev) =>
@@ -108,112 +107,103 @@ function NutritionGuidancePage() {
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
   return (
-    <div className={dashStyles.pageWrapper}>
-      <Sidebar
-        activePage="nutrition"
-        isCollapsed={sidebarCollapsed}
-        isMobileOpen={mobileSidebarOpen}
-        onClose={() => setMobileSidebarOpen(false)}
-      />
-
-      <div className={dashStyles.mainWrapper}>
-        <header className={dashStyles.topNavbar}>
-          <div className={dashStyles.navLeft}>
-            <button
-              className={dashStyles.toggleSidebarBtn}
-              onClick={handleSidebarToggle}
-              aria-label="Toggle Sidebar"
-            >
-              <HamburgerIcon />
-            </button>
-            <h1 className={dashStyles.pageTitle}>Nutrition Guidance</h1>
-          </div>
-          <div className={dashStyles.navRight}>
-            <Link to="/nutrition" className={styles.backBtn}>
-              <BackIcon />
-              <span>Back to Nutrition</span>
-            </Link>
-            <Link to="/profile" className={dashStyles.profileDropdownBtn}>
-              <div className={dashStyles.profileAvatar}>
-                <img
-                  src="../assets/images/avatar-placeholder.png"
-                  alt="User Avatar"
-                  onError={(e) => {
-                    e.target.src = avatarFallback;
-                  }}
-                />
-              </div>
-            </Link>
-          </div>
-        </header>
-
-        <main className={styles.dashboardContent}>
-          <section className={styles.guidanceHero}>
-            <div className={styles.heroContent}>
-              <h2>Understanding Nutrients</h2>
-              <p>
-                Nutrients are chemical compounds in food that are crucial to human growth, 
-                disease prevention, and overall health.
-              </p>
+    <main className={styles.dashboardContent}>
+      <header className={dashStyles.topNavbar}>
+        <div className={dashStyles.navLeft}>
+          <button
+            className={dashStyles.toggleSidebarBtn}
+            onClick={handleSidebarToggle}
+            aria-label="Toggle Sidebar"
+          >
+            <HamburgerIcon />
+          </button>
+          <h1 className={dashStyles.pageTitle}>Nutrition Guidance</h1>
+        </div>
+        <div className={dashStyles.navRight}>
+          <Link to="/nutrition" className={styles.backBtn}>
+            <BackIcon />
+            <span>Back to Nutrition</span>
+          </Link>
+          <Link to="/profile" className={dashStyles.profileDropdownBtn}>
+            <div className={dashStyles.profileAvatar}>
+              <img
+                src="../assets/images/avatar-placeholder.png"
+                alt="User Avatar"
+                onError={(e) => {
+                  e.target.src = avatarFallback;
+                }}
+              />
             </div>
-          </section>
+          </Link>
+        </div>
+      </header>
 
-          <div className={styles.nutrientsList}>
-            {nutrientData.map((nutrient) => {
-              const isExpanded = expandedNutrients.includes(nutrient.id);
-              return (
-                <div
-                  key={nutrient.id}
-                  className={`${styles.nutrientRow} ${isExpanded ? styles.expanded : ""}`}
-                  onClick={() => toggleNutrient(nutrient.id)}
-                  tabIndex={0}
-                  aria-expanded={isExpanded}
-                >
-                  <div className={styles.nutrientHeaderRow}>
-                    <div className={styles.nutrientTitleGroup}>
-                      <div>
-                        <h3>{nutrient.title}</h3>
-                        <span className={styles.nutrientType}>{nutrient.type}</span>
-                      </div>
-                    </div>
-                    <div className={styles.accordionIcon}>
-                      <ChevronDown />
+      <div className={styles.contentInner}>
+        <section className={styles.guidanceHero}>
+          <div className={styles.heroContent}>
+            <h2>Understanding Nutrients</h2>
+            <p>
+              Nutrients are chemical compounds in food that are crucial to human growth, 
+              disease prevention, and overall health.
+            </p>
+          </div>
+        </section>
+
+        <div className={styles.nutrientsList}>
+          {nutrientData.map((nutrient) => {
+            const isExpanded = expandedNutrients.includes(nutrient.id);
+            return (
+              <div
+                key={nutrient.id}
+                className={`${styles.nutrientRow} ${isExpanded ? styles.expanded : ""}`}
+                onClick={() => toggleNutrient(nutrient.id)}
+                tabIndex={0}
+                aria-expanded={isExpanded}
+              >
+                <div className={styles.nutrientHeaderRow}>
+                  <div className={styles.nutrientTitleGroup}>
+                    <div>
+                      <h3>{nutrient.title}</h3>
+                      <span className={styles.nutrientType}>{nutrient.type}</span>
                     </div>
                   </div>
-                  <p className={styles.nutrientBrief}>{nutrient.brief}</p>
-                  {isExpanded && (
-                    <div className={styles.nutrientDropdownContent}>
-                      <div className={styles.nutrientDropdownInner}>
-                        <p>
-                          <strong>Importance & Function:</strong> {nutrient.importance}
-                        </p>
-                        <p>
-                          <strong>Food Sources:</strong> {nutrient.sources}
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                  <div className={styles.accordionIcon}>
+                    <ChevronDown />
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+                <p className={styles.nutrientBrief}>{nutrient.brief}</p>
+                {isExpanded && (
+                  <div className={styles.nutrientDropdownContent}>
+                    <div className={styles.nutrientDropdownInner}>
+                      <p>
+                        <strong>Importance & Function:</strong> {nutrient.importance}
+                      </p>
+                      <p>
+                        <strong>Food Sources:</strong> {nutrient.sources}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
-          <section className={styles.tipsSection}>
-            <h3 className={styles.categoryTitle}>Eating Guidelines</h3>
-            <div className={styles.minimalGrid}>
-              <div className={styles.miniCard}>
-                <h4>Quality First</h4>
-                <p>Prioritize whole foods over processed alternatives for better micronutrient density.</p>
-              </div>
-              <div className={styles.miniCard}>
-                <h4>Timing</h4>
-                <p>Distribute macro intake evenly throughout the day to support energy levels.</p>
-              </div>
+        <section className={styles.tipsSection}>
+          <h3 className={styles.categoryTitle}>Eating Guidelines</h3>
+          <div className={styles.minimalGrid}>
+            <div className={styles.miniCard}>
+              <h4>Quality First</h4>
+              <p>Prioritize whole foods over processed alternatives for better micronutrient density.</p>
             </div>
-          </section>
-        </main>
+            <div className={styles.miniCard}>
+              <h4>Timing</h4>
+              <p>Distribute macro intake evenly throughout the day to support energy levels.</p>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 

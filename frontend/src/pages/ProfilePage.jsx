@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import useSidebarShortcut from "../hooks/useSidebarShortcut";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/Profilepage.module.css";
@@ -68,7 +67,7 @@ function ProfilePage() {
   // Sidebar state
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  useSidebarShortcut(toggleSidebar);
+
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
@@ -238,355 +237,342 @@ function ProfilePage() {
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
   return (
-    <div className={dashStyles.pageWrapper}>
-      <Sidebar
-        activePage="profile"
-        isCollapsed={sidebarCollapsed}
-        isMobileOpen={mobileSidebarOpen}
-        onClose={() => setMobileSidebarOpen(false)}
-      />
+    <main className={styles.profileDashboard}>
+      <header className={dashStyles.topNavbar}>
+        <div className={dashStyles.navLeft}>
+          <button
+            className={dashStyles.toggleSidebarBtn}
+            onClick={handleSidebarToggle}
+            aria-label="Toggle Sidebar"
+          >
+            <HamburgerIcon />
+          </button>
+          <h1 className={dashStyles.pageTitle}>My Profile</h1>
+        </div>
+        <div className={dashStyles.navRight}>
+          <button className={dashStyles.iconBtn} aria-label="Notifications">
+            <BellIcon />
+            <span className={dashStyles.badge}>3</span>
+          </button>
+          <Link to="/profile" className={dashStyles.profileDropdownBtn}>
+            <div className={dashStyles.profileAvatar}>
+              <img
+                src="../assets/images/avatar-placeholder.png"
+                alt="User Avatar"
+                onError={(e) => {
+                  e.target.src = avatarFallback;
+                }}
+              />
+            </div>
+          </Link>
+        </div>
+      </header>
 
-      <div className={dashStyles.mainWrapper}>
-        {/* Top Navbar */}
-        <header className={dashStyles.topNavbar}>
-          <div className={dashStyles.navLeft}>
+      <div className={styles.profilePageContainer}>
+        {/* Profile Header Card */}
+        <div className={`${styles.profileHeaderCard} ${styles.card}`}>
+          <div className={styles.profileAvatarLarge}>
+            <img
+              src="../assets/images/avatar-placeholder.png"
+              alt="User Avatar"
+              onError={(e) => {
+                e.target.src = avatarFallback;
+              }}
+            />
             <button
-              className={dashStyles.toggleSidebarBtn}
-              onClick={handleSidebarToggle}
-              aria-label="Toggle Sidebar"
+              className={styles.editAvatarBtn}
+              aria-label="Edit Avatar"
             >
-              <HamburgerIcon />
+              <EditIcon />
             </button>
-            <h1 className={dashStyles.pageTitle}>My Profile</h1>
           </div>
-          <div className={dashStyles.navRight}>
-            <button className={dashStyles.iconBtn} aria-label="Notifications">
-              <BellIcon />
-              <span className={dashStyles.badge}>3</span>
-            </button>
-            <Link to="/profile" className={dashStyles.profileDropdownBtn}>
-              <div className={dashStyles.profileAvatar}>
-                <img
-                  src="../assets/images/avatar-placeholder.png"
-                  alt="User Avatar"
-                  onError={(e) => {
-                    e.target.src = avatarFallback;
-                  }}
-                />
-              </div>
-            </Link>
-          </div>
-        </header>
 
-        {/* Main Content */}
-        <main className={styles.profileDashboard}>
-          <div className={styles.profilePageContainer}>
-            {/* Profile Header Card */}
-            <div className={`${styles.profileHeaderCard} ${styles.card}`}>
-              <div className={styles.profileAvatarLarge}>
-                <img
-                  src="../assets/images/avatar-placeholder.png"
-                  alt="User Avatar"
-                  onError={(e) => {
-                    e.target.src = avatarFallback;
-                  }}
-                />
-                <button
-                  className={styles.editAvatarBtn}
-                  aria-label="Edit Avatar"
-                >
-                  <EditIcon />
+          <div className={styles.profileInfoBasic}>
+            <h2>
+              {personalInfo.firstName} {personalInfo.lastName}
+            </h2>
+            <p className={styles.roleText}>Fitness Enthusiast</p>
+            <p className={styles.memberSince}>Member since Jan 2026</p>
+          </div>
+
+          <div className={styles.headerActions}>
+            {!isEditing && (
+              <button className={styles.primaryBtn} onClick={handleEdit}>
+                Edit Profile
+              </button>
+            )}
+            {isEditing && (
+              <>
+                <button className={styles.primaryBtn} onClick={handleSave}>
+                  Save Changes
                 </button>
-              </div>
+                <button className={styles.btnCancel} onClick={handleCancel}>
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
+        </div>
 
-              <div className={styles.profileInfoBasic}>
-                <h2>
-                  {personalInfo.firstName} {personalInfo.lastName}
-                </h2>
-                <p className={styles.roleText}>Fitness Enthusiast</p>
-                <p className={styles.memberSince}>Member since Jan 2026</p>
-              </div>
-
-              <div className={styles.headerActions}>
-                {!isEditing && (
-                  <button className={styles.primaryBtn} onClick={handleEdit}>
-                    Edit Profile
-                  </button>
-                )}
-                {isEditing && (
-                  <>
-                    <button className={styles.primaryBtn} onClick={handleSave}>
-                      Save Changes
-                    </button>
-                    <button className={styles.btnCancel} onClick={handleCancel}>
-                      Cancel
-                    </button>
-                  </>
-                )}
-              </div>
+        {/* Profile Grid */}
+        <div className={styles.profileGrid}>
+          {/* Personal Information */}
+          <div className={`${styles.card} ${styles.formCard}`}>
+            <div className={styles.sectionHeader}>
+              <h3>Personal Information</h3>
             </div>
-
-            {/* Profile Grid */}
-            <div className={styles.profileGrid}>
-              {/* Personal Information */}
-              <div className={`${styles.card} ${styles.formCard}`}>
-                <div className={styles.sectionHeader}>
-                  <h3>Personal Information</h3>
+            <div className={styles.profileForm}>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    value={personalInfo.firstName}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePersonalChange("firstName", e.target.value)
+                    }
+                  />
                 </div>
-                <div className={styles.profileForm}>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>First Name</label>
-                      <input
-                        type="text"
-                        value={personalInfo.firstName}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePersonalChange("firstName", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Last Name</label>
-                      <input
-                        type="text"
-                        value={personalInfo.lastName}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePersonalChange("lastName", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>Email Address</label>
-                      <input
-                        type="email"
-                        value={personalInfo.email}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePersonalChange("email", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Phone Number</label>
-                      <input
-                        type="tel"
-                        value={personalInfo.phone}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePersonalChange("phone", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>Date of Birth</label>
-                      <input
-                        type="date"
-                        value={personalInfo.dob}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePersonalChange("dob", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Gender</label>
-                      <select
-                        value={personalInfo.gender}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePersonalChange("gender", e.target.value)
-                        }
-                      >
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                        <option value="prefer-not-to-say">
-                          Prefer not to say
-                        </option>
-                      </select>
-                    </div>
-                  </div>
+                <div className={styles.formGroup}>
+                  <label>Last Name</label>
+                  <input
+                    type="text"
+                    value={personalInfo.lastName}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePersonalChange("lastName", e.target.value)
+                    }
+                  />
                 </div>
               </div>
-
-              {/* Physical Details & Goals */}
-              <div className={`${styles.card} ${styles.formCard}`}>
-                <div className={styles.sectionHeader}>
-                  <h3>Physical Details & Goals</h3>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    value={personalInfo.email}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePersonalChange("email", e.target.value)
+                    }
+                  />
                 </div>
-                <div className={styles.profileForm}>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>
-                        Current Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})
-                        {isEditing && (
-                          <button onClick={toggleWeightUnit} className={styles.inlineToggleBtn}>
-                            Switch to {userData.weightUnit === "imperial" ? "kg" : "lbs"}
-                          </button>
-                        )}
-                      </label>
-                      <input
-                        type="number"
-                        value={physicalInfo.currentWeight}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePhysicalChange("currentWeight", e.target.value)
-                        }
-                      />
-                      {!isEditing && physicalInfo.currentWeight && (
-                        <span className={styles.unitHint}>
-                          {userData.weightUnit === 'metric' 
-                            ? `${(parseFloat(physicalInfo.currentWeight) * 2.20462).toFixed(1)} lbs`
-                            : `${(parseFloat(physicalInfo.currentWeight) / 2.20462).toFixed(1)} kg`}
-                        </span>
-                      )}
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Target Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})</label>
-                      <input
-                        type="number"
-                        value={physicalInfo.targetWeight}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePhysicalChange("targetWeight", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
-                      <label>
-                        Height ({userData.heightUnit === "imperial" ? "ft'in\"" : "cm"})
-                        {isEditing && (
-                          <button onClick={toggleHeightUnit} className={styles.inlineToggleBtn}>
-                            Switch to {userData.heightUnit === "imperial" ? "cm" : "ft'in\""}
-                          </button>
-                        )}
-                      </label>
-                      <input
-                        type="text"
-                        value={physicalInfo.height}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePhysicalChange("height", e.target.value)
-                        }
-                        placeholder={userData.heightUnit === "imperial" ? "5'9\"" : "175"}
-                      />
-                      {!isEditing && physicalInfo.height && (
-                        <span className={styles.unitHint}>
-                          {userData.heightUnit === 'metric' 
-                            ? (() => {
-                                const totalInches = parseFloat(physicalInfo.height) / 2.54;
-                                return `${Math.floor(totalInches / 12)}'${Math.round(totalInches % 12)}"`;
-                              })()
-                            : (() => {
-                                const match = physicalInfo.height.match(/(\d+)'(\d+)"?/);
-                                if (!match) return "";
-                                return `${Math.round((parseInt(match[1]) * 12 + parseInt(match[2])) * 2.54)} cm`;
-                              })()
-                          }
-                        </span>
-                      )}
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Activity Level</label>
-                      <select
-                        value={physicalInfo.activityLevel}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePhysicalChange("activityLevel", e.target.value)
-                        }
-                      >
-                        <option value="sedentary">Sedentary</option>
-                        <option value="light">Lightly Active</option>
-                        <option value="moderate">Moderately Active</option>
-                        <option value="very">Very Active</option>
-                        <option value="extra">Extra Active</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className={styles.formRow}>
-                    <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                      <label>Primary Goal</label>
-                      <select
-                        value={physicalInfo.primaryGoal}
-                        disabled={!isEditing}
-                        onChange={(e) =>
-                          handlePhysicalChange("primaryGoal", e.target.value)
-                        }
-                      >
-                        <option value="lose">Lose Weight</option>
-                        <option value="maintain">Maintain Weight</option>
-                        <option value="build">Build Muscle</option>
-                        <option value="endurance">Improve Endurance</option>
-                      </select>
-                    </div>
-                  </div>
+                <div className={styles.formGroup}>
+                  <label>Phone Number</label>
+                  <input
+                    type="tel"
+                    value={personalInfo.phone}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePersonalChange("phone", e.target.value)
+                    }
+                  />
                 </div>
               </div>
-
-              {/* Preferences */}
-              <div className={`${styles.card} ${styles.preferencesCard}`}>
-                <div className={styles.sectionHeader}>
-                  <h3>Preferences</h3>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Date of Birth</label>
+                  <input
+                    type="date"
+                    value={personalInfo.dob}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePersonalChange("dob", e.target.value)
+                    }
+                  />
                 </div>
-
-                <div className={styles.preferenceList}>
-                  {[
-                    {
-                      key: "emailNotifications",
-                      title: "Email Notifications",
-                      desc: "Receive daily summaries and goal updates.",
-                    },
-                    {
-                      key: "smsReminders",
-                      title: "SMS Reminders",
-                      desc: "Get text reminders for scheduled workouts.",
-                    },
-                    {
-                      key: "publicProfile",
-                      title: "Public Profile",
-                      desc: "Allow other users to view your achievements and progress.",
-                    },
-                  ].map((pref) => (
-                    <div key={pref.key} className={styles.preferenceItem}>
-                      <div className={styles.prefInfo}>
-                        <h4>{pref.title}</h4>
-                        <p>{pref.desc}</p>
-                      </div>
-                      <label className={styles.switch}>
-                        <input
-                          type="checkbox"
-                          checked={preferences[pref.key]}
-                          onChange={() => handlePreferenceToggle(pref.key)}
-                        />
-                        <span
-                          className={`${styles.slider} ${styles.round}`}
-                        ></span>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-
-                <div className={styles.dangerZone}>
-                  <div>
-                    <h4>Danger Zone</h4>
-                    <p>Irreversible and destructive actions.</p>
-                  </div>
-                  <button className={styles.btnDanger}>Delete Account</button>
+                <div className={styles.formGroup}>
+                  <label>Gender</label>
+                  <select
+                    value={personalInfo.gender}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePersonalChange("gender", e.target.value)
+                    }
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer-not-to-say">
+                      Prefer not to say
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
           </div>
-        </main>
+
+          {/* Physical Details & Goals */}
+          <div className={`${styles.card} ${styles.formCard}`}>
+            <div className={styles.sectionHeader}>
+              <h3>Physical Details & Goals</h3>
+            </div>
+            <div className={styles.profileForm}>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>
+                    Current Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})
+                    {isEditing && (
+                      <button onClick={toggleWeightUnit} className={styles.inlineToggleBtn}>
+                        Switch to {userData.weightUnit === "imperial" ? "kg" : "lbs"}
+                      </button>
+                    )}
+                  </label>
+                  <input
+                    type="number"
+                    value={physicalInfo.currentWeight}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePhysicalChange("currentWeight", e.target.value)
+                    }
+                  />
+                  {!isEditing && physicalInfo.currentWeight && (
+                    <span className={styles.unitHint}>
+                      {userData.weightUnit === 'metric' 
+                        ? `${(parseFloat(physicalInfo.currentWeight) * 2.20462).toFixed(1)} lbs`
+                        : `${(parseFloat(physicalInfo.currentWeight) / 2.20462).toFixed(1)} kg`}
+                    </span>
+                  )}
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Target Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})</label>
+                  <input
+                    type="number"
+                    value={physicalInfo.targetWeight}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePhysicalChange("targetWeight", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>
+                    Height ({userData.heightUnit === "imperial" ? "ft'in\"" : "cm"})
+                    {isEditing && (
+                      <button onClick={toggleHeightUnit} className={styles.inlineToggleBtn}>
+                        Switch to {userData.heightUnit === "imperial" ? "cm" : "ft'in\""}
+                      </button>
+                    )}
+                  </label>
+                  <input
+                    type="text"
+                    value={physicalInfo.height}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePhysicalChange("height", e.target.value)
+                    }
+                    placeholder={userData.heightUnit === "imperial" ? "5'9\"" : "175"}
+                  />
+                  {!isEditing && physicalInfo.height && (
+                    <span className={styles.unitHint}>
+                      {userData.heightUnit === 'metric' 
+                        ? (() => {
+                            const totalInches = parseFloat(physicalInfo.height) / 2.54;
+                            return `${Math.floor(totalInches / 12)}'${Math.round(totalInches % 12)}"`;
+                          })()
+                        : (() => {
+                            const match = physicalInfo.height.match(/(\d+)'(\d+)"?/);
+                            if (!match) return "";
+                            return `${Math.round((parseInt(match[1]) * 12 + parseInt(match[2])) * 2.54)} cm`;
+                          })()
+                      }
+                    </span>
+                  )}
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Activity Level</label>
+                  <select
+                    value={physicalInfo.activityLevel}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePhysicalChange("activityLevel", e.target.value)
+                    }
+                  >
+                    <option value="sedentary">Sedentary</option>
+                    <option value="light">Lightly Active</option>
+                    <option value="moderate">Moderately Active</option>
+                    <option value="very">Very Active</option>
+                    <option value="extra">Extra Active</option>
+                  </select>
+                </div>
+              </div>
+              <div className={styles.formRow}>
+                <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                  <label>Primary Goal</label>
+                  <select
+                    value={physicalInfo.primaryGoal}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      handlePhysicalChange("primaryGoal", e.target.value)
+                    }
+                  >
+                    <option value="lose">Lose Weight</option>
+                    <option value="maintain">Maintain Weight</option>
+                    <option value="build">Build Muscle</option>
+                    <option value="endurance">Improve Endurance</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Preferences */}
+          <div className={`${styles.card} ${styles.preferencesCard}`}>
+            <div className={styles.sectionHeader}>
+              <h3>Preferences</h3>
+            </div>
+
+            <div className={styles.preferenceList}>
+              {[
+                {
+                  key: "emailNotifications",
+                  title: "Email Notifications",
+                  desc: "Receive daily summaries and goal updates.",
+                },
+                {
+                  key: "smsReminders",
+                  title: "SMS Reminders",
+                  desc: "Get text reminders for scheduled workouts.",
+                },
+                {
+                  key: "publicProfile",
+                  title: "Public Profile",
+                  desc: "Allow other users to view your achievements and progress.",
+                },
+              ].map((pref) => (
+                <div key={pref.key} className={styles.preferenceItem}>
+                  <div className={styles.prefInfo}>
+                    <h4>{pref.title}</h4>
+                    <p>{pref.desc}</p>
+                  </div>
+                  <label className={styles.switch}>
+                    <input
+                      type="checkbox"
+                      checked={preferences[pref.key]}
+                      onChange={() => handlePreferenceToggle(pref.key)}
+                    />
+                    <span
+                      className={`${styles.slider} ${styles.round}`}
+                    ></span>
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.dangerZone}>
+              <div>
+                <h4>Danger Zone</h4>
+                <p>Irreversible and destructive actions.</p>
+              </div>
+              <button className={styles.btnDanger}>Delete Account</button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 
