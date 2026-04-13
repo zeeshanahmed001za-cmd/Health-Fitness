@@ -253,7 +253,7 @@ function LoginPage() {
                   />
                   <label htmlFor="checkBoxInput">
                     I agree to Health & Fitness{" "}
-                    <a href="#">Terms & Conditions</a>
+                    <Link to="/terms">Terms & Conditions</Link>
                   </label>
                 </div>
                 <span className={styles.errorText}>
