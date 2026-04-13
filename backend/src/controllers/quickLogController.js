@@ -87,22 +87,42 @@ export const quickLog = asyncHandler(async (req, res) => {
 
     // Extract explicit calories if present (e.g. "500 cal pizza")
     const calorieMatch = input.match(/(\d+)\s*(?:cal|calories|kcal|cals)/);
-    let calories = calorieMatch ? parseInt(calorieMatch[1]) : null;
+    const explicitCalories = calorieMatch ? parseInt(calorieMatch[1]) : null;
     
+    // Category detection
+    let category = 'snacks';
+    if (input.includes('breakfast')) category = 'breakfast';
+    else if (input.includes('lunch')) category = 'lunch';
+    else if (input.includes('dinner')) category = 'dinner';
+
     // Smart Clean: Split words and filter out noise
-    const noiseWords = new Set(['i', 'ate', 'had', 'an', 'a', 'the', 'some', 'finished', 'for', 'at', 'one', 'two', 'three', 'slices', 'slice', 'cups', 'cup', 'glasses', 'glass', 'of']);
+    const noiseWords = new Set(['i', 'ate', 'had', 'an', 'a', 'the', 'some', 'finished', 'for', 'at', 'one', 'two', 'three', 'slices', 'slice', 'cups', 'cup', 'glasses', 'glass', 'of', 'breakfast', 'lunch', 'dinner']);
     let words = input.split(/\s+/)
         .filter(w => !noiseWords.has(w)) // Remove noise words
         .filter(w => !w.match(/^(\d+)(cal|calories|kcal|cals)?$/)) // Remove standalone numbers or calories
         .filter(w => w.length > 0);
     
     let foodName = words.join(' ');
+    let calories, protein, carbs, fat;
 
     // --- NEW: Try External API First ---
     let nutritionData = await fetchNutritionData(text);
 
     if (nutritionData) {
-        calories = nutritionData.calories;
+        // Use API values
+        if (explicitCalories && nutritionData.calories > 0) {
+            // User provided explicit calories, scale the macros accordingly
+            const ratio = explicitCalories / nutritionData.calories;
+            calories = explicitCalories;
+            protein = nutritionData.protein * ratio;
+            carbs = nutritionData.carbs * ratio;
+            fat = nutritionData.fat * ratio;
+        } else {
+            calories = nutritionData.calories;
+            protein = nutritionData.protein;
+            carbs = nutritionData.carbs;
+            fat = nutritionData.fat;
+        }
         foodName = nutritionData.name;
     } else {
         // --- FALLBACK (Basic) ---
@@ -110,26 +130,29 @@ export const quickLog = asyncHandler(async (req, res) => {
             foodName = text.length > 20 ? text.substring(0, 20) + '...' : text;
         }
 
-        if (!calories) {
-            // Very basic fallback if API fails and no cals in text
-            calories = 250 * quantity; 
-        }
+        calories = explicitCalories || (150 * quantity);
+        
+        // Estimated standard distribution (grams per calorie)
+        // Protein: 25% cals (0.0625g/cal), Carbs: 45% cals (0.1125g/cal), Fat: 30% cals (0.0333g/cal)
+        protein = calories * 0.06;
+        carbs = calories * 0.11;
+        fat = calories * 0.035;
     }
 
     result = await Nutrition.create({
         user: req.user._id,
         activityType: 'food',
         name: foodName.charAt(0).toUpperCase() + foodName.slice(1),
-        category: 'snacks',
-        calories: Number(calories) || 0,
-        protein: Number(nutritionData?.protein) || Math.round((Number(calories) || 0) * 0.04),
-        carbs: Number(nutritionData?.carbs) || Math.round((Number(calories) || 0) * 0.1),
-        fat: Number(nutritionData?.fat) || Math.round((Number(calories) || 0) * 0.05),
+        category: category,
+        calories: Math.round(Number(calories) || 0),
+        protein: Math.round(Number(protein) || 0),
+        carbs: Math.round(Number(carbs) || 0),
+        fat: Math.round(Number(fat) || 0),
         timestamp: Date.now()
     });
 
     return res.status(201).json({ 
-        message: `Logged ${foodName} (${calories} kcal)!`,
+        message: `Logged ${foodName} (${Math.round(calories)} kcal)!`,
         data: result 
     });
 });
