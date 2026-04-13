@@ -76,7 +76,13 @@ export const UserProvider = ({ children }) => {
     sessionStorage.removeItem("onboardingData");
     localStorage.removeItem("userSession");
     localStorage.removeItem("userToken");
-    localStorage.removeItem("sidebar_collapsed"); // Reset on logout
+    localStorage.removeItem("sidebar_collapsed");
+    
+    // Clear all domain-specific data to prevent leakage
+    localStorage.removeItem("loggedExercises_grouped");
+    localStorage.removeItem("journal_food_logs");
+    localStorage.removeItem("journal_water_logs");
+    localStorage.removeItem("journal_nutrition_goals");
   }, []);
 
   // Memoize the value to prevent unnecessary re-renders of consumers

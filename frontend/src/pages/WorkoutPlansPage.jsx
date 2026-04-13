@@ -177,7 +177,7 @@ const ExerciseItem = ({ ex, onToggle, onRemove }) => (
 );
 
 function WorkoutPlansPage() {
-  const { sidebarCollapsed, toggleSidebar } = useUser();
+  const { userData, sidebarCollapsed, toggleSidebar } = useUser();
   useDocumentTitle("Workout Log");
   // Sidebar state
 
@@ -192,6 +192,14 @@ function WorkoutPlansPage() {
       defaultExercises
     );
   });
+
+  // Reset state when user logs out
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      setExercises(defaultExercises);
+      localStorage.removeItem("loggedExercises_grouped");
+    }
+  }, [userData]);
 
   // Modal state
   const [isModalActive, setIsModalActive] = useState(false);

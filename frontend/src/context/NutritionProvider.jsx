@@ -56,6 +56,20 @@ export const NutritionProvider = ({ children }) => {
     return defaultGoals;
   });
 
+  // Reset state when user logs out
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      setFoodLogs([]);
+      setWaterLogs([]);
+      setNutritionGoals({ calories: 2100, protein: 150, carbs: 200, fat: 70 });
+      
+      // Clear persistence keys to prevent leakage
+      localStorage.removeItem('journal_food_logs');
+      localStorage.removeItem('journal_water_logs');
+      localStorage.removeItem('journal_nutrition_goals');
+    }
+  }, [userData]);
+
   // Calculate dynamic goals based on userData
   useEffect(() => {
     if (userData && Object.keys(userData).length > 0) {
