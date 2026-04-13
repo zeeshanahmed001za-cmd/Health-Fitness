@@ -67,14 +67,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -16px; /* Offset parent 16px padding to center in 80px */
-  transition: all 0.3s var(--transition-smooth);
+  margin-left: -16px; /* Offset parent padding */
+  transition: width 0.3s var(--transition-smooth), min-width 0.3s var(--transition-smooth);
 }
 
 .sidebar:not(.collapsed) .logoIconWrapper {
-  width: auto;
-  min-width: auto;
-  margin-left: 8px; /* Match standard alignment */
+  width: 48px;
+  min-width: 48px;
 }
 
 .brandTitle {
