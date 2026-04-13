@@ -3,10 +3,10 @@ import { Check, ArrowRight } from "lucide-react";
 import styles from "./FeatureShowcase.module.css";
 
 // Import screenshots
-import nutritionImg from "../../assets/images/nutrition_mockup.png";
-import dashboardImg from "../../assets/images/dashboard_mockup.png";
-import progressImg from "../../assets/images/progress_mockup.png";
-import workoutsImg from "../../assets/images/workout_mockup.png";
+import nutritionImg from "../../assets/images/nutrition-app.png";
+import dashboardImg from "../../assets/images/dashboard-app.png";
+import progressImg from "../../assets/images/progress-app.png";
+import workoutsImg from "../../assets/images/workouts-app.png";
 
 const featureData = [
   {
