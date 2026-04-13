@@ -125,6 +125,7 @@ function NutritionPage() {
   const { updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
   const {
     foodLogs,
+    todaysFoodLogs,
     addFoodLog,
     removeFoodLog,
     waterTotal,
@@ -284,8 +285,8 @@ function NutritionPage() {
                 </button>
               </div>
               <div className={pageStyles.foodList}>
-                {foodLogs.length > 0 ? (
-                  foodLogs.map((log) => (
+                {todaysFoodLogs.length > 0 ? (
+                  todaysFoodLogs.map((log) => (
                     <FoodItem
                       key={log.id}
                       food={log}

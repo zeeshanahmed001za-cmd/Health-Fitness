@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import { mapUserToJSON } from '../utils/userUtils.js';
 
 // @desc    Register a new user
 // @route   POST /api/users
@@ -43,32 +44,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            token: generateToken(user._id),
-            firstName: user.firstName,
-            lastName: user.lastName,
-            dob: user.dob,
-            age: user.age,
-            gender: user.gender,
-            location: user.location,
-            primaryGoal: user.primaryGoal,
-            fitnessLevel: user.fitnessLevel,
-            activityLevel: user.activityLevel,
-            heightUnit: user.heightUnit,
-            heightFeet: user.heightFeet,
-            heightInches: user.heightInches,
-            heightCm: user.heightCm,
-            height: user.height,
-            weightUnit: user.weightUnit,
-            weightValue: user.weightValue,
-            goalWeightValue: user.goalWeightValue,
-            emailNotifications: user.emailNotifications,
-            smsReminders: user.smsReminders,
-            publicProfile: user.publicProfile,
-        });
+        res.json(mapUserToJSON(user, true));
     } else {
         res.status(401);
         throw new Error('Invalid email or password');
@@ -82,31 +58,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            dob: user.dob,
-            age: user.age,
-            gender: user.gender,
-            location: user.location,
-            primaryGoal: user.primaryGoal,
-            fitnessLevel: user.fitnessLevel,
-            activityLevel: user.activityLevel,
-            heightUnit: user.heightUnit,
-            heightFeet: user.heightFeet,
-            heightInches: user.heightInches,
-            heightCm: user.heightCm,
-            height: user.height,
-            weightUnit: user.weightUnit,
-            weightValue: user.weightValue,
-            goalWeightValue: user.goalWeightValue,
-            emailNotifications: user.emailNotifications,
-            smsReminders: user.smsReminders,
-            publicProfile: user.publicProfile,
-        });
+        res.json(mapUserToJSON(user));
     } else {
         res.status(404);
         throw new Error('User not found');
@@ -152,34 +104,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         }
 
         const updatedUser = await user.save();
-
-        res.json({
-            _id: updatedUser._id,
-            name: updatedUser.name,
-            email: updatedUser.email,
-            token: generateToken(updatedUser._id),
-            // include updated fields back
-            firstName: updatedUser.firstName,
-            lastName: updatedUser.lastName,
-            dob: updatedUser.dob,
-            age: updatedUser.age,
-            gender: updatedUser.gender,
-            location: updatedUser.location,
-            primaryGoal: updatedUser.primaryGoal,
-            fitnessLevel: updatedUser.fitnessLevel,
-            activityLevel: updatedUser.activityLevel,
-            heightUnit: updatedUser.heightUnit,
-            heightFeet: updatedUser.heightFeet,
-            heightInches: updatedUser.heightInches,
-            heightCm: updatedUser.heightCm,
-            height: updatedUser.height,
-            weightUnit: updatedUser.weightUnit,
-            weightValue: updatedUser.weightValue,
-            goalWeightValue: updatedUser.goalWeightValue,
-            emailNotifications: updatedUser.emailNotifications,
-            smsReminders: updatedUser.smsReminders,
-            publicProfile: updatedUser.publicProfile,
-        });
+        res.json(mapUserToJSON(updatedUser, true));
     } else {
         res.status(404);
         throw new Error('User not found');
