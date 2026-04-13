@@ -40,7 +40,7 @@ const navItems = [
 ];
 
 function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
-  const { logout } = useUser();
+  const { logout, toggleSidebar } = useUser();
   const { toggleQuickLog } = useNutrition();
   const navigate = useNavigate();
   const location = useLocation();
@@ -68,17 +68,22 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
       <aside className={sidebarClass}>
         <div className={styles.sidebarHeader}>
           <Link to="/dashboard" className={styles.logoLink}>
-            <h2>Health&Fitness</h2>
+            <h2>H&F</h2>
           </Link>
 
           <button
-            className={styles.closeSidebarBtn}
-            onClick={onClose}
-            aria-label="Close Sidebar"
+            className={styles.toggleSidebarBtn}
+            onClick={() => toggleSidebar()}
+            aria-label="Toggle Sidebar"
           >
-            <CloseIcon />
+            {isCollapsed ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            )}
           </button>
         </div>
+
 
         <nav className={styles.sidebarNav}>
           {navItems.map((item) => (

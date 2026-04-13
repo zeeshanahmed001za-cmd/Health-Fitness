@@ -35,7 +35,7 @@
   --radius-lg: 20px;
   /* dashboard sidebar */
   --sidebar-width: 290px;
-  --sidebar-collapsed-width: 0;
+  --sidebar-collapsed-width: 80px;
   --header-height: 70px;
 }
 

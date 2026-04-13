@@ -234,13 +234,6 @@ function DashboardPage() {
         <main className={pageStyles.dashboardContent}>
             <header className={dashStyles.topNavbar}>
                 <div className={dashStyles.navLeft}>
-                    <button
-                        className={dashStyles.toggleSidebarBtn}
-                        onClick={handleSidebarToggle}
-                        aria-label="Toggle Sidebar"
-                    >
-                        <Icons.HamburgerIcon />
-                    </button>
                     <h1 className={dashStyles.pageTitle}>Overview</h1>
                 </div>
                 <div className={dashStyles.navRight}>
