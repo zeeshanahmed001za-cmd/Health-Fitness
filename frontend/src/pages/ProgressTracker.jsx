@@ -52,7 +52,12 @@ function ProgressTracker() {
     }
   };
 
-  const loggedExercises = useMemo(() => JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [], []);
+  const userId = userData?._id || userData?.id;
+
+  const loggedExercises = useMemo(() => {
+    if (!userId) return [];
+    return JSON.parse(localStorage.getItem(`loggedExercises_grouped_${userId}`)) || [];
+  }, [userId]);
   const completedToday = useMemo(() => loggedExercises.filter((ex) => ex.completed), [loggedExercises]);
   const currentWorkoutProgress = useMemo(() => {
     if (loggedExercises.length === 0) return 0;

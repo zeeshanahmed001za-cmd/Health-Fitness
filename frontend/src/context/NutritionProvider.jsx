@@ -10,65 +10,34 @@ import { isToday, calculateDynamicGoals } from '../utils/nutritionUtils';
  */
 export const NutritionProvider = ({ children }) => {
   const { userData } = useUser();
+  const userId = userData?._id || userData?.id;
+
   // 1. Initial State from localStorage
-  const [foodLogs, setFoodLogs] = useState(() => {
-    const saved = localStorage.getItem('journal_food_logs');
-    try {
-      return saved ? JSON.parse(saved) || [] : [];
-    } catch {
-      return [];
-    }
-  });
+  const [foodLogs, setFoodLogs] = useState([]);
+  const [waterLogs, setWaterLogs] = useState([]);
+  const [nutritionGoals, setNutritionGoals] = useState({ calories: 2100, protein: 150, carbs: 200, fat: 70 });
 
-  const [waterLogs, setWaterLogs] = useState(() => {
-    const saved = localStorage.getItem('journal_water_logs');
-    try {
-      return saved ? JSON.parse(saved) || [] : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const [nutritionGoals, setNutritionGoals] = useState(() => {
-    const defaultGoals = { calories: 2100, protein: 150, carbs: 200, fat: 70 };
-    const saved = localStorage.getItem('journal_nutrition_goals');
-    
-    try {
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object') return parsed;
-      }
-    } catch (e) {
-      console.error("Error parsing nutrition goals", e);
-    }
-    
-    // Fallback to onboarding data if available
-    const onboarding = sessionStorage.getItem('onboardingData');
-    if (onboarding) {
-      try {
-        const data = JSON.parse(onboarding);
-        if (data.calorieGoal) return { ...defaultGoals, calories: data.calorieGoal };
-      } catch {
-        // Fallback to defaults if parsing fails
-      }
-    }
-    
-    return defaultGoals;
-  });
-
-  // Reset state when user logs out
+  // Load user-specific data when userId changes
   useEffect(() => {
-    if (!userData || Object.keys(userData).length === 0) {
+    if (userId) {
+      const savedFood = localStorage.getItem(`journal_food_logs_${userId}`);
+      const savedWater = localStorage.getItem(`journal_water_logs_${userId}`);
+      const savedGoals = localStorage.getItem(`journal_nutrition_goals_${userId}`);
+
+      try {
+        if (savedFood) setFoodLogs(JSON.parse(savedFood));
+        if (savedWater) setWaterLogs(JSON.parse(savedWater));
+        if (savedGoals) setNutritionGoals(JSON.parse(savedGoals));
+      } catch (e) {
+        console.error("Error loading user-specific data", e);
+      }
+    } else {
+      // Clear current state if no user
       setFoodLogs([]);
       setWaterLogs([]);
       setNutritionGoals({ calories: 2100, protein: 150, carbs: 200, fat: 70 });
-      
-      // Clear persistence keys to prevent leakage
-      localStorage.removeItem('journal_food_logs');
-      localStorage.removeItem('journal_water_logs');
-      localStorage.removeItem('journal_nutrition_goals');
     }
-  }, [userData]);
+  }, [userId]);
 
   // Calculate dynamic goals based on userData
   useEffect(() => {
@@ -84,10 +53,10 @@ export const NutritionProvider = ({ children }) => {
   }, [userData]);
 
 
-  // Fetch from backend
+  // Fetch/Refresh from backend
   useEffect(() => {
     const token = localStorage.getItem('userToken');
-    if (!token) return;
+    if (!token || !userId) return;
 
     getNutritionLogsAPI()
       .then(logs => {
@@ -99,20 +68,26 @@ export const NutritionProvider = ({ children }) => {
         }
       })
       .catch(err => console.error("Failed to load nutrition from cloud", err));
-  }, []);
+  }, [userId]);
 
-  // 2. Persistence Layer (Local fallback)
+  // 2. Persistence Layer (Local fallback) - User Specific
   useEffect(() => {
-    localStorage.setItem('journal_food_logs', JSON.stringify(foodLogs));
-  }, [foodLogs]);
-
-  useEffect(() => {
-    localStorage.setItem('journal_water_logs', JSON.stringify(waterLogs));
-  }, [waterLogs]);
+    if (userId) {
+      localStorage.setItem(`journal_food_logs_${userId}`, JSON.stringify(foodLogs));
+    }
+  }, [foodLogs, userId]);
 
   useEffect(() => {
-    localStorage.setItem('journal_nutrition_goals', JSON.stringify(nutritionGoals));
-  }, [nutritionGoals]);
+    if (userId) {
+      localStorage.setItem(`journal_water_logs_${userId}`, JSON.stringify(waterLogs));
+    }
+  }, [waterLogs, userId]);
+
+  useEffect(() => {
+    if (userId) {
+      localStorage.setItem(`journal_nutrition_goals_${userId}`, JSON.stringify(nutritionGoals));
+    }
+  }, [nutritionGoals, userId]);
 
   // 3. Actions (Business Logic)
   const addFoodLog = useCallback(async (foodItem) => {

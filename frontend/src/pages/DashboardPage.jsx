@@ -27,9 +27,12 @@ function DashboardPage() {
 
 
 
+    const userId = userData?._id || userData?.id;
+
     const loggedExercises = useMemo(() => {
-        return JSON.parse(localStorage.getItem("loggedExercises_grouped")) || [];
-    }, []);
+        if (!userId) return [];
+        return JSON.parse(localStorage.getItem(`loggedExercises_grouped_${userId}`)) || [];
+    }, [userId]);
 
     // Use context values
     const firstName = userData.firstName || userData.name || "User";

@@ -178,28 +178,32 @@ const ExerciseItem = ({ ex, onToggle, onRemove }) => (
 
 function WorkoutPlansPage() {
   const { userData, sidebarCollapsed, toggleSidebar } = useUser();
+  const userId = userData?._id || userData?.id;
   useDocumentTitle("Workout Log");
   // Sidebar state
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-
-
   // Data state
-  const [exercises, setExercises] = useState(() => {
-    return (
-      JSON.parse(localStorage.getItem("loggedExercises_grouped")) ||
-      defaultExercises
-    );
-  });
+  const [exercises, setExercises] = useState(defaultExercises);
 
-  // Reset state when user logs out
+  // Load user-specific data when userId changes
   useEffect(() => {
-    if (!userData || Object.keys(userData).length === 0) {
+    if (userId) {
+      const saved = localStorage.getItem(`loggedExercises_grouped_${userId}`);
+      if (saved) {
+        try {
+          setExercises(JSON.parse(saved));
+        } catch (e) {
+          console.error("Error loading user-specific workout data", e);
+        }
+      } else {
+        setExercises(defaultExercises);
+      }
+    } else {
       setExercises(defaultExercises);
-      localStorage.removeItem("loggedExercises_grouped");
     }
-  }, [userData]);
+  }, [userId]);
 
   // Modal state
   const [isModalActive, setIsModalActive] = useState(false);
@@ -212,10 +216,12 @@ function WorkoutPlansPage() {
     calories: "",
   });
 
-  // Persist data
+  // Persist data - User Specific
   useEffect(() => {
-    localStorage.setItem("loggedExercises_grouped", JSON.stringify(exercises));
-  }, [exercises]);
+    if (userId && exercises !== defaultExercises) {
+      localStorage.setItem(`loggedExercises_grouped_${userId}`, JSON.stringify(exercises));
+    }
+  }, [exercises, userId]);
 
 
   const completionPercent = useMemo(() => {
