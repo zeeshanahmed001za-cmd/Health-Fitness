@@ -62,19 +62,56 @@ function ProgressTracker() {
   }, [loggedExercises, completedToday]);
 
   const activeStreak = useMemo(() => {
-    if (completedToday.length === 0) return 0;
-    const sortedDates = [...completedToday].map(ex => new Date(ex.completedAt || ex.date).setHours(0,0,0,0)).sort((a,b) => b - a);
-    const uniqueDates = [...new Set(sortedDates)];
+    // Combine all activity dates into a set of unique local dates
+    const activityDates = new Set();
+    
+    // Helper to get local date string YYYY-MM-DD
+    const getLocalDate = (d) => {
+      const date = new Date(d);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+    // Add food/water activity
+    foodLogs.forEach(log => activityDates.add(getLocalDate(log.timestamp)));
+    waterLogs.forEach(log => activityDates.add(getLocalDate(log.timestamp)));
+    
+    // Add workout activity
+    workoutLogs.forEach(log => activityDates.add(getLocalDate(log.date || log.createdAt)));
+    
+    // Add current local exercises if any
+    completedToday.forEach(ex => activityDates.add(getLocalDate(ex.completedAt || ex.date || Date.now())));
+
+    if (activityDates.size === 0) return 0;
+
+    const sortedDates = Array.from(activityDates).sort().reverse(); // Newest first
+    const todayStr = getLocalDate(new Date());
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = getLocalDate(yesterday);
+
+    // If no activity today or yesterday, streak is broken
+    if (sortedDates[0] !== todayStr && sortedDates[0] !== yesterdayStr) return 0;
+
     let streak = 0;
-    const today = new Date().setHours(0,0,0,0);
-    const msInDay = 86400000;
-    let currentCheckDate = today;
-    if (uniqueDates[0] < today - msInDay) return 0;
-    for (const d of uniqueDates) {
-      if (d === currentCheckDate || d === currentCheckDate - msInDay) { streak++; currentCheckDate = d; } else break;
+    let checkDate = new Date();
+    // If first date in set is yesterday, we start checking from yesterday
+    if (sortedDates[0] === yesterdayStr) {
+      checkDate.setDate(checkDate.getDate() - 1);
     }
+
+    for (let i = 0; i < 1000; i++) { // Safety cap
+      const checkStr = getLocalDate(checkDate);
+      if (activityDates.has(checkStr)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    
     return streak;
-  }, [completedToday]);
+  }, [foodLogs, waterLogs, workoutLogs, completedToday]);
+
 
   const currentWeight = progressHistory.length > 0 ? progressHistory[progressHistory.length - 1].weight : (userData?.weightValue || "175");
   const unit = userData?.weightUnit === "metric" ? "kg" : "lbs";
