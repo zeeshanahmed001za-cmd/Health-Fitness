@@ -184,7 +184,7 @@ function SignUpPage() {
             <div className={styles.recaptchaText}>
               <p>
                 This site is protected by reCAPTCHA and the Google{" "}
-                <a href="#">Privacy Policy</a> and <a href="#">Terms</a> apply.
+                <Link to="/privacy">Privacy Policy</Link> and <Link to="/terms">Terms</Link> apply.
               </p>
             </div>
 
