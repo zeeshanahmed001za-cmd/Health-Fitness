@@ -102,7 +102,11 @@ export const NutritionIcon = () => (
 
 export const WorkoutsIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        <path d="M6 7h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+        <path d="M18 8V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"></path>
+        <path d="M6 16v2a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-2"></path>
+        <circle cx="9" cy="12" r="1"></circle>
+        <circle cx="15" cy="12" r="1"></circle>
     </svg>
 );
 
