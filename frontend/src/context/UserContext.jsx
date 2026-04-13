@@ -56,34 +56,62 @@ export const UserProvider = ({ children }) => {
     });
   }, []);
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    const pref = localStorage.getItem("sidebar_collapsed");
-    // If no preference found (new user), default to true (collapsed)
-    return pref === null ? true : JSON.parse(pref);
-  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+
+  // Load sidebar preference when userId changes
+  useEffect(() => {
+    const userId = userData?._id || userData?.id;
+    if (userId) {
+      const pref = localStorage.getItem(`sidebar_collapsed_${userId}`);
+      if (pref !== null) {
+        setSidebarCollapsed(JSON.parse(pref));
+      }
+    } else {
+      const globalPref = localStorage.getItem("sidebar_collapsed");
+      if (globalPref !== null) {
+        setSidebarCollapsed(JSON.parse(globalPref));
+      }
+    }
+  }, [userData?._id, userData?.id]);
 
   // Persist sidebar preference
   useEffect(() => {
-    localStorage.setItem("sidebar_collapsed", JSON.stringify(sidebarCollapsed));
-  }, [sidebarCollapsed]);
+    const userId = userData?._id || userData?.id;
+    if (userId) {
+      localStorage.setItem(`sidebar_collapsed_${userId}`, JSON.stringify(sidebarCollapsed));
+    } else {
+      localStorage.setItem("sidebar_collapsed", JSON.stringify(sidebarCollapsed));
+    }
+  }, [sidebarCollapsed, userData?._id, userData?.id]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarCollapsed((prev) => !prev);
   }, []);
 
   const logout = useCallback(() => {
+    const userId = userData?._id || userData?.id;
+    
+    // Clear all domain-specific data for the current user to prevent leakage
+    if (userId) {
+      localStorage.removeItem(`sidebar_collapsed_${userId}`);
+      localStorage.removeItem(`loggedExercises_grouped_${userId}`);
+      localStorage.removeItem(`journal_food_logs_${userId}`);
+      localStorage.removeItem(`journal_water_logs_${userId}`);
+      localStorage.removeItem(`journal_nutrition_goals_${userId}`);
+    }
+
     setUserData({});
     sessionStorage.removeItem("onboardingData");
     localStorage.removeItem("userSession");
     localStorage.removeItem("userToken");
-    localStorage.removeItem("sidebar_collapsed");
     
-    // Clear all domain-specific data to prevent leakage
+    // also clear any legacy generic keys if they exist
+    localStorage.removeItem("sidebar_collapsed");
     localStorage.removeItem("loggedExercises_grouped");
     localStorage.removeItem("journal_food_logs");
     localStorage.removeItem("journal_water_logs");
     localStorage.removeItem("journal_nutrition_goals");
-  }, []);
+  }, [userData]);
 
   // Memoize the value to prevent unnecessary re-renders of consumers
   const contextValue = useMemo(
