@@ -102,18 +102,16 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
           )}
         </nav>
 
-        {!isCollapsed && (
-          <div className={styles.sidebarFooter}>
-            <button
-              className={`${styles.navItem} ${styles.logoutBtn}`}
-              onClick={handleLogout}
-              style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center' }}
-            >
-              <LogoutIcon />
-              <span className={styles.navText}>Log Out</span>
-            </button>
-          </div>
-        )}
+        <div className={styles.sidebarFooter}>
+          <button
+            className={`${styles.navItem} ${styles.logoutBtn}`}
+            onClick={handleLogout}
+            style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center' }}
+          >
+            <LogoutIcon />
+            <span className={styles.navText}>Log Out</span>
+          </button>
+        </div>
       </aside>
     </>
   );
