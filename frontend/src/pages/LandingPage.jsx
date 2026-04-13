@@ -618,9 +618,9 @@ function LandingPage() {
             <p>
               &copy; 2026 Health & Fitness. All rights reserved.
               <span className={styles.legalSeparator}>|</span>
-              <Link to="#">Privacy Policy</Link>
+              <Link to="/terms">Privacy Policy</Link>
               <span className={styles.legalSeparator}>|</span>
-              <Link to="#">Terms of Service</Link>
+              <Link to="/terms">Terms and Conditions</Link>
             </p>
           </div>
         </div>
