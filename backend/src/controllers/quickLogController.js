@@ -2,11 +2,12 @@ import asyncHandler from 'express-async-handler';
 import Nutrition from '../models/Nutrition.js';
 import Workout from '../models/Workout.js';
 import Progress from '../models/Progress.js';
-import { parseWithRules, parseWithExternalAPI, parseWithAI } from '../services/parserService.js';
+import { parseWithRules, parseWithExternalAPI } from '../services/parserService.js';
 
 /**
  * Controller for handling natural language activity logs.
- * It uses a multi-layered approach: Rule-based -> External API -> AI Fallback.
+ * It uses a layered approach: Rule-based -> External API.
+ * If details are missing, it prompts the user for refinement.
  */
 
 // @desc    Parse natural language input and log activity
@@ -14,11 +15,9 @@ import { parseWithRules, parseWithExternalAPI, parseWithAI } from '../services/p
 // @access  Private
 export const quickLog = asyncHandler(async (req, res) => {
     const { text } = req.body;
-    if (!text) {
-        return res.status(400).json({ message: 'No text provided' });
-    }
+    if (!text) return res.status(400).json({ message: 'No text provided' });
 
-    // Attempt parsing through layers
+    // Attempt parsing through layers (Rules -> External API)
     let parsed = parseWithRules(text);
     let source = 'rules';
 
@@ -27,18 +26,33 @@ export const quickLog = asyncHandler(async (req, res) => {
         source = 'external-api';
     }
 
-    if (!parsed) {
-        parsed = await parseWithAI(text);
-        source = 'ai';
+    // Determine if we need refinement (Manual input for macros/specifics)
+    // If it's a food log but lacks calories or protein, we ask for refinement
+    if (parsed && parsed.activityType === 'food') {
+        const d = parsed.data;
+        if (!d.calories || (!d.protein && !d.carbs && !d.fat)) {
+            return res.status(200).json({
+                needsRefinement: true,
+                activityType: 'food',
+                name: d.name,
+                data: d
+            });
+        }
     }
 
-    if (!parsed || !parsed.activityType || !parsed.data) {
-        return res.status(400).json({ message: 'Could not understand the log. Try being more specific.' });
+    // If no match at all, ask for manual entry refinement
+    if (!parsed) {
+        return res.status(200).json({
+            needsRefinement: true,
+            activityType: 'food',
+            name: text,
+            data: {}
+        });
     }
 
     const { activityType, data } = parsed;
     let result = null;
-    let message = "";
+    let message = `Logged via ${source}`;
 
     switch (activityType) {
         case 'food':
@@ -90,8 +104,9 @@ export const quickLog = asyncHandler(async (req, res) => {
     }
 
     if (result) {
-        return res.status(201).json({ message: `${message} (via ${source})`, data: result });
+        return res.status(201).json({ message: `${message}`, data: result });
     } else {
-        return res.status(400).json({ message: 'Failed to process and save the log.' });
+        return res.status(400).json({ message: 'Failed to process log.' });
     }
 });
+

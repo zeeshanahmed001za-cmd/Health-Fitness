@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { quickLogAPI } from '../api';
+import { quickLogAPI, addNutritionLogAPI, addProgressAPI, logWorkoutAPI } from '../api';
 import { useNutrition } from '../context/NutritionContext';
 import styles from './QuickLogModal.module.css';
 
@@ -8,14 +8,57 @@ const QuickLogModal = () => {
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
+    const [refinementData, setRefinementData] = useState(null);
     const inputRef = useRef(null);
 
     // Auto-focus input when opened
     useEffect(() => {
-        if (isQuickLogOpen && inputRef.current) {
+        if (isQuickLogOpen && inputRef.current && !refinementData) {
             inputRef.current.focus();
         }
-    }, [isQuickLogOpen]);
+    }, [isQuickLogOpen, refinementData]);
+
+    const handleRefinedSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            if (refinementData.activityType === 'food') {
+                await addNutritionLogAPI({
+                    activityType: 'food',
+                    name: refinementData.name,
+                    calories: Number(data.calories),
+                    protein: Number(data.protein),
+                    carbs: Number(data.carbs),
+                    fat: Number(data.fat),
+                    category: data.category || 'snacks'
+                });
+            } else if (refinementData.activityType === 'weight') {
+                await addProgressAPI({ weight: Number(data.weight) });
+            } else if (refinementData.activityType === 'workout') {
+                await logWorkoutAPI({
+                    type: data.type || 'Other',
+                    duration: Number(data.duration),
+                    exercises: [{ name: refinementData.name }]
+                });
+            }
+
+            setStatus({ type: 'success', message: 'Activity logged successfully!' });
+            setTimeout(() => {
+                toggleQuickLog(false);
+                setRefinementData(null);
+                setText('');
+                setStatus(null);
+                if (refreshLogs) refreshLogs();
+            }, 1000);
+        } catch (err) {
+            setStatus({ type: 'error', message: err.message || 'Failed to save log' });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         if (e) e.preventDefault();
@@ -25,22 +68,28 @@ const QuickLogModal = () => {
         setStatus(null);
 
         try {
-            const data = await quickLogAPI(text);
-            setStatus({ type: 'success', message: data.message });
-            setText('');
-            if (refreshLogs) refreshLogs();
+            const res = await quickLogAPI(text);
             
-            // Close after success
-            setTimeout(() => {
-                toggleQuickLog(false);
-                setStatus(null);
-            }, 1000);
+            if (res.needsRefinement) {
+                setRefinementData({
+                    activityType: res.activityType || 'food',
+                    name: res.name || text,
+                    ...res.data
+                });
+            } else {
+                setStatus({ type: 'success', message: res.message });
+                setText('');
+                if (refreshLogs) refreshLogs();
+                setTimeout(() => {
+                    toggleQuickLog(false);
+                    setStatus(null);
+                }, 1500);
+            }
         } catch (err) {
             setStatus({ 
                 type: 'error', 
                 message: err.message || 'Could not parse input' 
             });
-            setTimeout(() => setStatus(null), 5000);
         } finally {
             setLoading(false);
         }
@@ -53,42 +102,98 @@ const QuickLogModal = () => {
             <div className={styles.overlay} onClick={() => toggleQuickLog(false)} />
             <div className={styles.logCard}>
                 <div className={styles.cardHeader}>
-                    <h3>Quick Log</h3>
+                    <h3>{refinementData ? 'Refine Details' : 'Quick Log'}</h3>
                     <button className={styles.closeBtn} onClick={() => toggleQuickLog(false)}>&times;</button>
                 </div>
-                <div className={styles.modalInfo}>
-                    <p className={styles.description}>Log your day in seconds using natural language.</p>
-                    <div className={styles.examples}>
-                        <span>Examples:</span>
-                        <ul>
-                            <li>"2 cups of water"</li>
-                            <li>"500 calorie pizza"</li>
-                            <li>"ran for 30 minutes"</li>
-                        </ul>
-                    </div>
-                </div>
-                <form onSubmit={handleSubmit} className={styles.form}>
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        className={styles.cardInput}
-                        placeholder="e.g., '2 cups water' or 'ran 30 mins'"
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        disabled={loading}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && status?.type === 'success') {
-                                toggleQuickLog(false);
-                            }
-                        }}
-                    />
-                    <div className={styles.cardFooter}>
-                        <span className={styles.enterHint}>Press Enter to save</span>
-                        <button type="submit" className={styles.submitBtn} disabled={loading || !text.trim()}>
-                            {loading ? <span className={styles.spinner}></span> : 'Log Activity'}
-                        </button>
-                    </div>
-                </form>
+
+                {!refinementData ? (
+                    <>
+                        <div className={styles.modalInfo}>
+                            <p className={styles.description}>Log your day by typing naturally.</p>
+                            <div className={styles.examples}>
+                                <ul>
+                                    <li>"2 cups of water"</li>
+                                    <li>"300 calorie snack"</li>
+                                    <li>"ran for 30 minutes"</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <form onSubmit={handleSubmit} className={styles.form}>
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                className={styles.cardInput}
+                                placeholder="What did you do?"
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                                disabled={loading}
+                            />
+                            <div className={styles.cardFooter}>
+                                <button type="submit" className={styles.submitBtn} disabled={loading || !text.trim()}>
+                                    {loading ? 'Analyzing...' : 'Next'}
+                                </button>
+                            </div>
+                        </form>
+                    </>
+                ) : (
+                    <form onSubmit={handleRefinedSubmit} className={styles.refinementForm}>
+                        <p className={styles.refineLabel}>Logging: <strong>{refinementData.name}</strong></p>
+                        
+                        {refinementData.activityType === 'food' && (
+                            <div className={styles.gridFields}>
+                                <div className={styles.inputGroup}>
+                                    <label>Calories (kcal)</label>
+                                    <input name="calories" type="number" defaultValue={refinementData.calories || ''} required placeholder="0" />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>Protein (g)</label>
+                                    <input name="protein" type="number" defaultValue={refinementData.protein || ''} placeholder="0" />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>Carbs (g)</label>
+                                    <input name="carbs" type="number" defaultValue={refinementData.carbs || ''} placeholder="0" />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>Fat (g)</label>
+                                    <input name="fat" type="number" defaultValue={refinementData.fat || ''} placeholder="0" />
+                                </div>
+                            </div>
+                        )}
+
+                        {refinementData.activityType === 'workout' && (
+                            <div className={styles.gridFields}>
+                                <div className={styles.inputGroup}>
+                                    <label>Duration (mins)</label>
+                                    <input name="duration" type="number" defaultValue={refinementData.duration || ''} required />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>Type</label>
+                                    <select name="type" defaultValue={refinementData.type || 'Other'}>
+                                        <option value="Cardio">Cardio</option>
+                                        <option value="Strength">Strength</option>
+                                        <option value="Flexibility">Flexibility</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        )}
+
+                        {refinementData.activityType === 'weight' && (
+                            <div className={styles.inputGroup}>
+                                <label>Weight (kg)</label>
+                                <input name="weight" type="number" step="0.1" defaultValue={refinementData.weight || ''} required />
+                            </div>
+                        )}
+
+                        <div className={styles.cardFooter}>
+                            <button type="button" className={styles.backBtn} onClick={() => setRefinementData(null)}>Back</button>
+                            <button type="submit" className={styles.submitBtn} disabled={loading}>
+                                {loading ? 'Saving...' : 'Save Log'}
+                            </button>
+                        </div>
+                    </form>
+                )}
+
                 {status && (
                     <div className={`${styles.statusMsg} ${styles[status.type]}`}>
                         {status.message}
@@ -100,3 +205,4 @@ const QuickLogModal = () => {
 };
 
 export default QuickLogModal;
+

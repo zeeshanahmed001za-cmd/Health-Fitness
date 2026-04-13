@@ -186,6 +186,71 @@
     cursor: not-allowed;
 }
 
+.refinementForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.refineLabel {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+.gridFields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.inputGroup label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.inputGroup input, .inputGroup select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    color: #fff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.inputGroup input:focus, .inputGroup select:focus {
+    border-color: var(--accent-primary);
+}
+
+.backBtn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
 .statusMsg {
     margin-top: 16px;
     padding: 10px 16px;

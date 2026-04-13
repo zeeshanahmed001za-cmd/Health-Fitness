@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 /**
- * Intelligent parser service that handles both rule-based (Regex) 
- * and AI-based (Gemini) parsing for health and fitness logs.
+ * Intelligent parser service that handles rule-based (Regex) 
+ * and external API parsing for health and fitness logs.
  */
 
 // --- 1. Rule-Based Regex Parser ---
@@ -90,24 +89,3 @@ export const parseWithExternalAPI = async (query) => {
     return null;
 };
 
-// --- 3. AI-Based Fallback Parser (Gemini) ---
-export const parseWithAI = async (text) => {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) return null;
-    try {
-        const genAI = new GoogleGenerativeAI(key);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const prompt = `
-            Act as a nutrition expert. Parse: "${text}". Return STRICT JSON format ONLY.
-            Format: {"activityType": "food"|"water"|"workout"|"weight", "data": { ... }}
-            For food: name, calories, protein, carbs, fat, category.
-            For water: amount (ml).
-            For workout: name, type, duration (mins), caloriesBurned.
-            For weight: weight (kg).
-            Convert lbs to kg. Numbers ONLY for values.
-        `;
-        const result = await model.generateContent(prompt);
-        const jsonStr = result.response.text().replace(/```json|```/g, '').trim();
-        return JSON.parse(jsonStr);
-    } catch (e) { console.error('AI Parser Error:', e.message); return null; }
-};
