@@ -68,6 +68,12 @@
   justify-content: center;
   align-items: center;
   margin-left: -16px; /* Offset parent padding */
+  transition: width 0.3s var(--transition-smooth), min-width 0.3s var(--transition-smooth);
+}
+
+.sidebar:not(.collapsed) .logoIconWrapper {
+  width: 48px;
+  min-width: 48px;
 }
 
 .brandTitle {
