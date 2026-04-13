@@ -55,13 +55,26 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 12px;
   width: 100%;
+  position: relative;
+  overflow: hidden;
+  height: 48px;
 }
 
-.sidebar.collapsed .logoLink {
+.logoIconWrapper {
+  width: var(--sidebar-collapsed-width);
+  min-width: var(--sidebar-collapsed-width);
+  display: flex;
   justify-content: center;
-  gap: 0;
+  align-items: center;
+  margin-left: -16px; /* Offset the 16px padding of sidebarHeader to center in 80px */
+  transition: all 0.3s var(--transition-smooth);
+}
+
+.sidebar:not(.collapsed) .logoIconWrapper {
+  width: 48px;
+  min-width: 48px;
+  margin-left: 0;
 }
 
 .brandTitle {
@@ -78,10 +91,16 @@
   color: transparent;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s var(--transition-smooth), transform 0.2s var(--transition-smooth);
+  margin-left: 2px;
 }
 
-.sidebar.collapsed .sidebarHeader h2 {
-  display: none;
+.sidebar.collapsed .brandTitle {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-10px);
 }
 
 .toggleSidebarBtn {

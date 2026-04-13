@@ -73,8 +73,10 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
       >
         <div className={styles.sidebarHeader}>
           <Link to="/dashboard" className={styles.logoLink}>
-            <AppLogo />
-            {!isCollapsed && <h2 className={styles.brandTitle}>Health & Fitness</h2>}
+            <div className={styles.logoIconWrapper}>
+              <AppLogo />
+            </div>
+            <h2 className={styles.brandTitle}>Health & Fitness</h2>
           </Link>
         </div>
 
