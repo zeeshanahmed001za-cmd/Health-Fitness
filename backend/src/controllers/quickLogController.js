@@ -27,10 +27,13 @@ export const quickLog = asyncHandler(async (req, res) => {
     }
 
     // Determine if we need refinement (Manual input for macros/specifics)
-    // If it's a food log but lacks calories or protein, we ask for refinement
+    // ALWAYS refine food logs from external-api or if rules didn't provide complete info
     if (parsed && parsed.activityType === 'food') {
         const d = parsed.data;
-        if (!d.calories || (!d.protein && !d.carbs && !d.fat)) {
+        const fromRules = source === 'rules';
+        
+        // If it's a rule match but has 0 calories, or if it's from an external API, ask for refinement
+        if (!fromRules || !d.calories || d.calories < 10) {
             return res.status(200).json({
                 needsRefinement: true,
                 activityType: 'food',
