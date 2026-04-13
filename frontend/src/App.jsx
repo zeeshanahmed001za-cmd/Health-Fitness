@@ -16,6 +16,7 @@ import WorkoutGuidancePage from "./pages/WorkoutGuidancePage";
 import ProgressTracker from "./pages/ProgressTracker";
 import ProfilePage from "./pages/ProfilePage";
 import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/MainLayout";
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/onboarding" element={<OnBoardingQuestions />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>

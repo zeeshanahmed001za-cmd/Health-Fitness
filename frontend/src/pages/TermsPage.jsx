@@ -59,14 +59,14 @@ const TermsPage = () => {
             </p>
           </section>
 
-          {/* 2. Privacy */}
+          {/* 2. Account Security */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
-              <Lock size={20} className={styles.sectionIcon} />
-              <h2>2. Privacy & Data Integrity</h2>
+              <Users size={20} className={styles.sectionIcon} />
+              <h2>2. Account Responsibility</h2>
             </div>
             <p>
-              Your health journey is personal. We collect biometric data (weight, height) and logs solely for the purpose of personalizing your experience. We utilize user-specific encryption to ensure data isolation.
+              Users are responsible for safeguarding their login credentials. We are not responsible for any data loss resulting from unauthorized account access due to user negligence.
             </p>
           </section>
 
@@ -136,77 +136,66 @@ const TermsPage = () => {
             </p>
           </section>
 
-          {/* 9. Account Security */}
-          <section className={styles.section}>
-            <div className={styles.sectionTitleWrapper}>
-              <Users size={20} className={styles.sectionIcon} />
-              <h2>9. Account Responsibility</h2>
-            </div>
-            <p>
-              Users are responsible for safeguarding their login credentials. We are not responsible for any data loss resulting from unauthorized account access due to user negligence.
-            </p>
-          </section>
-
-          {/* 10. Community Standards */}
+          {/* 9. Community Standards */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
               <Globe size={20} className={styles.sectionIcon} />
-              <h2>10. Global Community Standards</h2>
+              <h2>9. Global Community Standards</h2>
             </div>
             <p>
               Users must respect others within the Health&Fitness ecosystem. Harassment, hate speech, or inappropriate content in support or community channels is strictly prohibited.
             </p>
           </section>
 
-          {/* 11. Termination */}
+          {/* 10. Termination */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
               <Clock size={20} className={styles.sectionIcon} />
-              <h2>11. Access Termination</h2>
+              <h2>10. Access Termination</h2>
             </div>
             <p>
               We may terminate or suspend your account immediately, without prior notice or liability, for any reason, including without limitation if you breach the Terms.
             </p>
           </section>
 
-          {/* 12. Governing Law */}
+          {/* 11. Governing Law */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
               <Scale size={20} className={styles.sectionIcon} />
-              <h2>12. Governing Law</h2>
+              <h2>11. Governing Law</h2>
             </div>
             <p>
               These Terms shall be governed and construed in accordance with the laws of the jurisdiction in which the company is registered, without regard to its conflict of law provisions.
             </p>
           </section>
 
-          {/* 13. Warranties */}
+          {/* 12. Warranties */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
               <AlertTriangle size={20} className={styles.sectionIcon} />
-              <h2>13. "As Is" Disclaimer</h2>
+              <h2>12. "As Is" Disclaimer</h2>
             </div>
             <p>
               The service is provided on an "AS IS" and "AS AVAILABLE" basis. Health&Fitness makes no warranties, expressed or implied, regarding the accuracy or reliability of the platform.
             </p>
           </section>
 
-          {/* 14. Subscription Terms */}
+          {/* 13. Subscription Terms */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
               <CreditCard size={20} className={styles.sectionIcon} />
-              <h2>14. Subscriptions & Billing</h2>
+              <h2>13. Subscriptions & Billing</h2>
             </div>
             <p>
               Any paid features or subscriptions are non-refundable unless stated otherwise. We reserve the right to change our pricing structures with 30 days' notice.
             </p>
           </section>
 
-          {/* 15. Contact */}
+          {/* 14. Contact */}
           <section className={styles.section}>
             <div className={styles.sectionTitleWrapper}>
               <Mail size={20} className={styles.sectionIcon} />
-              <h2>15. Contact Information</h2>
+              <h2>14. Contact Information</h2>
             </div>
             <p>
               For any legal inquiries regarding these terms, please reach out to us at legal@healthfitness.com.

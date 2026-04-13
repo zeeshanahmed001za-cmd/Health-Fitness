@@ -205,7 +205,7 @@ function SignUpPage() {
                 />
                 <label>
                   I agree to Health & Fitness <Link to="/terms">Terms & Conditions</Link>{" "}
-                  and <Link to="/terms">Privacy Policy</Link>.
+                  and <Link to="/privacy">Privacy Policy</Link>.
                 </label>
               </div>
               <span className={styles.errorText}>
