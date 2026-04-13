@@ -14,8 +14,12 @@ const handleResponse = async (res) => {
         localStorage.removeItem('userToken');
         localStorage.removeItem('userSession');
         sessionStorage.removeItem('onboardingData');
-        window.location.href = '/login';
-        throw new Error('Session expired. Please login again.');
+        
+        // Only redirect if not already on auth pages to avoid infinite reloads/state loss
+        if (!['/login', '/signup'].includes(window.location.pathname)) {
+            window.location.href = '/login';
+        }
+        throw new Error(data.message || 'Session expired. Please login again.');
     }
     if (!res.ok) throw new Error(data.message || 'Request failed');
     return data;

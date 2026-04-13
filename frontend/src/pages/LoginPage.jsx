@@ -10,9 +10,7 @@ import { EyeOpen, EyeClose } from "../components/Icons";
 
 const emailPolicy = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const passwordPolicy = (password) =>
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/.test(
-    password,
-  );
+  password.length >= 10 && !/\s/.test(password);
 
 
 
@@ -25,7 +23,8 @@ function LoginPage() {
     if (localStorage.getItem("userToken")) {
       logout();
     }
-  }, [logout]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on mount
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -211,7 +210,7 @@ function LoginPage() {
                   </button>
                 </div>
                 <span className={styles.errorText}>
-                  Must be 10+ chars with symbols & numbers.
+                  Must be at least 10 characters, no spaces.
                 </span>
                 
                 {forgotMessage && (
