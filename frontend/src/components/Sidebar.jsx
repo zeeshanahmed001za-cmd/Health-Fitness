@@ -8,7 +8,8 @@ import {
   WorkoutsIcon,
   ProgressIcon,
   LogoutIcon,
-  CloseIcon
+  CloseIcon,
+  AppLogo
 } from "./Icons";
 
 // navItems data array
@@ -72,7 +73,8 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
       >
         <div className={styles.sidebarHeader}>
           <Link to="/dashboard" className={styles.logoLink}>
-            <h2>{isCollapsed ? "H&F" : "Health & Fitness"}</h2>
+            <AppLogo />
+            {!isCollapsed && <h2 className={styles.brandTitle}>Health & Fitness</h2>}
           </Link>
         </div>
 

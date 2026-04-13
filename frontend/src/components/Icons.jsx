@@ -127,3 +127,11 @@ export const CloseIcon = () => (
     </svg>
 );
 
+export const AppLogo = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L3 7v5c0 5.25 3.84 10.14 9 11 5.16-.86 9-5.75 9-11V7l-9-5z" stroke="var(--accent-primary)" />
+        <path d="M12 8v8" stroke="var(--accent-cyan)" />
+        <path d="M8 12h8" stroke="var(--accent-cyan)" />
+    </svg>
+);
+
