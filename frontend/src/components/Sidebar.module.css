@@ -67,14 +67,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -16px; /* Offset the 16px padding of sidebarHeader to center in 80px */
   transition: all 0.3s var(--transition-smooth);
 }
 
 .sidebar:not(.collapsed) .logoIconWrapper {
-  width: 48px;
-  min-width: 48px;
-  margin-left: 0;
+  width: auto;
+  min-width: auto;
+  /* When expanded, the logo sits on the left with 0 extra margin because the header has padding */
 }
 
 .brandTitle {
