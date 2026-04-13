@@ -93,7 +93,7 @@
   opacity: 1;
   visibility: visible;
   transition: opacity 0.2s var(--transition-smooth), transform 0.2s var(--transition-smooth);
-  margin-left: 2px;
+  margin-left: 12px;
 }
 
 .sidebar.collapsed .brandTitle {
