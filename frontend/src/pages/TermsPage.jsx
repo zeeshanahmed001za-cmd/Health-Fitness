@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronLeft, Shield, FileText, Lock, scale3d } from "lucide-react";
+import { ChevronLeft, Shield, FileText, Lock } from "lucide-react";
 import styles from "../styles/TermsPage.module.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
