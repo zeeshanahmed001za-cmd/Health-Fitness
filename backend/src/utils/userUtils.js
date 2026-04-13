@@ -35,6 +35,8 @@ export const mapUserToJSON = (user, includeToken = false) => {
         emailNotifications: user.emailNotifications,
         smsReminders: user.smsReminders,
         publicProfile: user.publicProfile,
+        loginStreak: user.loginStreak || 0,
+        lastLoginDate: user.lastLoginDate
     };
 
     if (includeToken) {
@@ -42,4 +44,31 @@ export const mapUserToJSON = (user, includeToken = false) => {
     }
 
     return json;
+};
+
+/**
+ * Updates a user's login streak based on current date.
+ * @param {Object} user - Mongoose user document
+ * @returns {Promise<Object>} Updated user document
+ */
+export const updateStreak = async (user) => {
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    if (user.lastLoginDate === todayStr) {
+        return user; // Already logged today
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    if (user.lastLoginDate === yesterdayStr) {
+        user.loginStreak = (user.loginStreak || 0) + 1;
+    } else {
+        user.loginStreak = 1; // Reset if missed a day
+    }
+
+    user.lastLoginDate = todayStr;
+    return await user.save();
 };

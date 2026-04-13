@@ -25,7 +25,9 @@ const userSchema = mongoose.Schema({
     emailNotifications: { type: Boolean, default: true },
     smsReminders: { type: Boolean, default: false },
     publicProfile: { type: Boolean, default: true },
-    role: { type: String, default: 'user' }
+    role: { type: String, default: 'user' },
+    lastLoginDate: { type: String }, // YYYY-MM-DD format
+    loginStreak: { type: Number, default: 1 }
 }, { timestamps: true });
 
 // Match user entered password to hashed password in database

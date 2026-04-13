@@ -35,8 +35,6 @@ function ProgressTracker() {
   const [newWeightInput, setNewWeightInput] = useState("");
   const [timeRange, setTimeRange] = useState("1M");
 
-
-
   useEffect(() => {
     fetchProgress();
   }, []);
@@ -60,58 +58,6 @@ function ProgressTracker() {
     if (loggedExercises.length === 0) return 0;
     return Math.round((completedToday.length / loggedExercises.length) * 100);
   }, [loggedExercises, completedToday]);
-
-  const activeStreak = useMemo(() => {
-    // Combine all activity dates into a set of unique local dates
-    const activityDates = new Set();
-    
-    // Helper to get local date string YYYY-MM-DD
-    const getLocalDate = (d) => {
-      const date = new Date(d);
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    };
-
-    // Add food/water activity
-    foodLogs.forEach(log => activityDates.add(getLocalDate(log.timestamp)));
-    waterLogs.forEach(log => activityDates.add(getLocalDate(log.timestamp)));
-    
-    // Add workout activity
-    workoutLogs.forEach(log => activityDates.add(getLocalDate(log.date || log.createdAt)));
-    
-    // Add current local exercises if any
-    completedToday.forEach(ex => activityDates.add(getLocalDate(ex.completedAt || ex.date || Date.now())));
-
-    if (activityDates.size === 0) return 0;
-
-    const sortedDates = Array.from(activityDates).sort().reverse(); // Newest first
-    const todayStr = getLocalDate(new Date());
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = getLocalDate(yesterday);
-
-    // If no activity today or yesterday, streak is broken
-    if (sortedDates[0] !== todayStr && sortedDates[0] !== yesterdayStr) return 0;
-
-    let streak = 0;
-    let checkDate = new Date();
-    // If first date in set is yesterday, we start checking from yesterday
-    if (sortedDates[0] === yesterdayStr) {
-      checkDate.setDate(checkDate.getDate() - 1);
-    }
-
-    for (let i = 0; i < 1000; i++) { // Safety cap
-      const checkStr = getLocalDate(checkDate);
-      if (activityDates.has(checkStr)) {
-        streak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-    
-    return streak;
-  }, [foodLogs, waterLogs, workoutLogs, completedToday]);
-
 
   const currentWeight = progressHistory.length > 0 ? progressHistory[progressHistory.length - 1].weight : (userData?.weightValue || "175");
   const unit = userData?.weightUnit === "metric" ? "kg" : "lbs";
@@ -232,10 +178,6 @@ function ProgressTracker() {
     return dataFiltered.filter(d => d.timestamp >= cutoff);
   }, [progressHistory, timeRange, currentWeight]);
 
-
-
-
-
   const handleWeightSubmit = async () => {
     if (!newWeightInput || isNaN(newWeightInput)) return;
     try {
@@ -313,19 +255,19 @@ function ProgressTracker() {
             </div>
           </div>
 
-          {/* Dynamic Card 3: Consistency */}
+          {/* Card 3: Active Streak */}
           <div className={styles.statCard}>
             <div className={styles.statCardContent}>
               <span className={styles.statLabel}>Active Streak</span>
-              <span className={styles.statValue}>{activeStreak}<small> Days</small></span>
+              <span className={styles.statValue}>{(userData?.loginStreak || 0)}<small> Days</small></span>
               <div className={styles.streakGoalInfo}>
                 <div className={styles.streakDots}>
                   {[...Array(7)].map((_, i) => (
-                    <div key={i} className={`${styles.streakDot} ${activeStreak > i ? styles.active : ''}`}></div>
+                    <div key={i} className={`${styles.streakDot} ${(userData?.loginStreak || 0) > i ? styles.active : ''}`}></div>
                   ))}
                 </div>
                 <span className={styles.streakStatus}>
-                  {goalKey === 'build' ? 'Recovery tracking on' : `${7 - (activeStreak % 7)} days to next badge`}
+                  {`Log in daily to keep your streak!`}
                 </span>
               </div>
             </div>
