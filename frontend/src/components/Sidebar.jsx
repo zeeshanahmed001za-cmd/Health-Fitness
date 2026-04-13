@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
@@ -39,16 +39,18 @@ const navItems = [
   },
 ];
 
-function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
+function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
   const { logout } = useUser();
   const { toggleQuickLog } = useNutrition();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const sidebarClass = [
     styles.sidebar,
     isCollapsed ? styles.collapsed : "",
     isMobileOpen ? styles.mobileOpen : "",
   ].join(" ");
+
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -83,7 +85,7 @@ function Sidebar({ activePage, isCollapsed, isMobileOpen, onClose }) {
             <Link
               key={item.id}
               to={item.path}
-              className={`${styles.navItem} ${activePage === item.id ? styles.active : ""}`}
+              className={`${styles.navItem} ${location.pathname.startsWith(item.path) ? styles.active : ""}`}
               onClick={onClose}
             >
               {item.icon}

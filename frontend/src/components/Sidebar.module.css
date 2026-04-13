@@ -131,8 +131,18 @@
 
 .navItem.active {
   color: var(--accent-primary);
-  background-color: rgba(16, 185, 129, 0.1);
-  border-right: 3px solid var(--accent-primary);
+  background-color: rgba(16, 185, 129, 0.12);
+  border-left: 4px solid var(--accent-primary);
+  border-right: none;
+  font-weight: 700;
+  margin: 0 12px;
+  border-radius: 12px;
+}
+
+.sidebar.collapsed .navItem.active {
+  margin: 4px 8px;
+  border-left: none;
+  background-color: rgba(16, 185, 129, 0.2);
 }
 
 .navItem.active svg {
