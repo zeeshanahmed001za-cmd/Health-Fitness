@@ -2,11 +2,11 @@ import asyncHandler from 'express-async-handler';
 import Nutrition from '../models/Nutrition.js';
 import Workout from '../models/Workout.js';
 import Progress from '../models/Progress.js';
-import { parseWithRules, parseWithExternalAPI } from '../services/parserService.js';
+import { parseWithRules } from '../services/parserService.js';
 
 /**
  * Controller for handling natural language activity logs.
- * It uses a layered approach: Rule-based -> External API.
+ * It uses a rule-based approach to identify user input.
  * If details are missing, it prompts the user for refinement.
  */
 
@@ -17,23 +17,16 @@ export const quickLog = asyncHandler(async (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ message: 'No text provided' });
 
-    // Attempt parsing through layers (Rules -> External API)
+    // Attempt parsing through rules
     let parsed = parseWithRules(text);
     let source = 'rules';
 
-    if (!parsed) {
-        parsed = await parseWithExternalAPI(text);
-        source = 'external-api';
-    }
-
     // Determine if we need refinement (Manual input for macros/specifics)
-    // ALWAYS refine food logs from external-api or if rules didn't provide complete info
     if (parsed && parsed.activityType === 'food') {
         const d = parsed.data;
-        const fromRules = source === 'rules';
         
-        // If it's a rule match but has 0 calories, or if it's from an external API, ask for refinement
-        if (!fromRules || !d.calories || d.calories < 10) {
+        // If it's a rule match but has 0 calories, ask for refinement
+        if (!d.calories || d.calories < 10) {
             return res.status(200).json({
                 needsRefinement: true,
                 activityType: 'food',
@@ -112,4 +105,5 @@ export const quickLog = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Failed to process log.' });
     }
 });
+
 

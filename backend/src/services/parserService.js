@@ -1,11 +1,9 @@
-import axios from 'axios';
-
 /**
  * Intelligent parser service that handles rule-based (Regex) 
- * and external API parsing for health and fitness logs.
+ * parsing for health and fitness logs.
  */
 
-// --- 1. Rule-Based Regex Parser ---
+// --- Rule-Based Regex Parser ---
 export const parseWithRules = (text) => {
     const input = text.toLowerCase().trim();
     
@@ -68,24 +66,4 @@ export const parseWithRules = (text) => {
     return null; // No rule match
 };
 
-// --- 2. External API Parser (Nutritionix/API Ninjas) ---
-export const parseWithExternalAPI = async (query) => {
-    const NINJA_KEY = process.env.API_NINJAS_KEY;
-    if (NINJA_KEY) {
-        try {
-            const res = await axios.get(`https://api.api-ninjas.com/v1/nutrition?query=${encodeURIComponent(query)}`, { headers: { 'X-Api-Key': NINJA_KEY } });
-            if (res.data?.length > 0) {
-                const totals = res.data.reduce((acc, item) => ({
-                    calories: acc.calories + (Number(item.calories) || 0),
-                    protein: acc.protein + (Number(item.protein_g) || 0),
-                    fat: acc.fat + (Number(item.fat_total_g) || 0),
-                    carbs: acc.carbs + (Number(item.carbohydrates_total_g) || 0),
-                    names: [...acc.names, item.name]
-                }), { calories: 0, protein: 0, fat: 0, carbs: 0, names: [] });
-                return { activityType: 'food', data: { name: totals.names.join(', '), ...totals, names: undefined } };
-            }
-        } catch (e) { console.error('API Ninjas Error:', e.message); }
-    }
-    return null;
-};
 
