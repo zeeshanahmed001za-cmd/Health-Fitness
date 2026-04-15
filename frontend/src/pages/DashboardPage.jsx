@@ -11,6 +11,81 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import * as Icons from "../components/Icons";
 import QuickLogModal from "../components/QuickLogModal";
 
+const GOAL_CONTENT = {
+    weight_loss: {
+        title: "Weight Loss Focus",
+        insight: "Maintain a caloric deficit and track your protein to preserve muscle mass while losing fat.",
+        metricLabel: "Calorie Deficit",
+        metricValue: "Tracked",
+        color: "#fbbf24", // Amber
+        icon: <Icons.CaloriesIcon />,
+        tip: "Try drinking water before meals to help control appetite."
+    },
+    muscle_gain: {
+        title: "Muscle Building Phase",
+        insight: "Ensure you're hitting your protein targets and getting enough sleep for muscle recovery.",
+        metricLabel: "Muscle Growth",
+        metricValue: "Active",
+        color: "#818cf8", // Indigo
+        icon: <Icons.StrengthIcon />,
+        tip: "Progressive overload is key—try to increase your weights slightly each week."
+    },
+    general_fitness: {
+        title: "General Fitness",
+        insight: "Consistency is your superpower. Keep showing up every day for long-term health benefits.",
+        metricLabel: "Active Streak",
+        metricValue: "Consistent",
+        color: "#10b981", // Emerald
+        icon: <Icons.ActiveIcon />,
+        tip: "Mixing cardio and strength training provides the best overall health benefits."
+    },
+    maintain_weight: {
+        title: "Maintenance Mode",
+        insight: "Focus on balancing your calorie intake with your energy expenditure to stay at your current weight.",
+        metricLabel: "Net Calories",
+        metricValue: "Balanced",
+        color: "#06b6d4", // Cyan
+        icon: <Icons.MacroIcon />,
+        tip: "Listen to your hunger cues; maintenance is about finding your body's equilibrium."
+    },
+    manage_stress: {
+        title: "Mind & Body Balance",
+        insight: "Incorporate low-intensity movement or meditation today to help manage your cortisol levels.",
+        metricLabel: "Stress Management",
+        metricValue: "Prioritized",
+        color: "#a78bfa", // Violet
+        icon: <Icons.YogaIcon />,
+        tip: "A 10-minute walk in nature is one of the fastest ways to lower stress levels."
+    },
+    improve_flexibility: {
+        title: "Mobility & Posture",
+        insight: "Daily dynamic stretching and mobility work will help improve your range of motion and reduce stiffness.",
+        metricLabel: "Mobility Focus",
+        metricValue: "Enhanced",
+        color: "#2dd4bf", // Teal
+        icon: <Icons.YogaIcon />,
+        tip: "Consistency beats intensity for flexibility. 10 minutes every day is better than an hour once a week."
+    },
+    build_endurance: {
+        title: "Stamina Builder",
+        insight: "Progressive cardio volume is the key to building an unshakeable aerobic base.",
+        metricLabel: "Endurance Volume",
+        metricValue: "Building",
+        color: "#f87171", // Red
+        icon: <Icons.RunIcon />,
+        tip: "Focus on your breathing rhythm during cardio to improve efficiency."
+    },
+    increase_energy: {
+        title: "Energy Optimization",
+        insight: "A consistent sleep schedule and staying hydrated are the foundations of all-day energy.",
+        metricLabel: "Energy Baseline",
+        metricValue: "Optimized",
+        color: "#3b82f6", // Blue
+        icon: <Icons.WaterIcon />,
+        tip: "Limit caffeine in the afternoon to improve your sleep quality and next-day energy."
+    }
+};
+
 // A Data URL SVG is an image encoded as text and embedded directly inside JavaScript or HTML.
 const AVATAR_FALLBACK =
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
@@ -28,6 +103,11 @@ function DashboardPage() {
 
 
     const userId = userData?._id || userData?.id;
+    // Get primary goal content
+    const userGoal = useMemo(() => {
+        return Array.isArray(userData?.primaryGoal) ? userData.primaryGoal[0] : userData?.primaryGoal;
+    }, [userData?.primaryGoal]);
+    const goalInfo = GOAL_CONTENT[userGoal] || GOAL_CONTENT.general_fitness;
 
     const loggedExercises = useMemo(() => {
         if (!userId) return [];
@@ -35,7 +115,7 @@ function DashboardPage() {
     }, [userId]);
 
     // Use context values
-    const firstName = userData.firstName || userData.name || "User";
+    const firstName = userData?.firstName || userData?.name || "User";
     const completedExercises = useMemo(
         () => loggedExercises.filter((ex) => ex.completed),
         [loggedExercises],
@@ -96,7 +176,8 @@ function DashboardPage() {
                     consumed: `${Math.round(totals.protein)}g`,
                     left: `${Math.max(nutritionGoals.protein - totals.protein, 0).toFixed(0)}g left`,
                     color: "#2dd4bf",
-                    pct: Math.min((totals.protein / nutritionGoals.protein) * 100, 100)
+                    pct: Math.min((totals.protein / nutritionGoals.protein) * 100, 100),
+                    isPriority: userGoal === 'muscle_gain'
                 },
                 {
                     label: "Carbohydrates",
@@ -112,7 +193,7 @@ function DashboardPage() {
                     color: "#818cf8",
                     pct: Math.min((totals.fat / nutritionGoals.fat) * 100, 100)
                 }
-            ]
+            ].sort((a, b) => (b.isPriority ? 1 : 0) - (a.isPriority ? 1 : 0))
         },
 
         foodLog: {
@@ -129,7 +210,8 @@ function DashboardPage() {
             goal: calorieGoal,
             consumed: caloriesConsumed,
             burned: totalBurned,
-            net: calorieGoal - caloriesConsumed + totalBurned
+            net: calorieGoal - caloriesConsumed + totalBurned,
+            showDeficit: userGoal === 'weight_loss'
         },
 
     };
@@ -222,16 +304,28 @@ function DashboardPage() {
     };
 
     const getWelcomeMessage = () => {
+        const goalMessages = {
+            weight_loss: "Burn fat, keep muscle. Let's make every calorie count!",
+            muscle_gain: "Time to grow! Focus on your form and your fuel.",
+            general_fitness: "Consistency is key. Let's move your body today!",
+            maintain_weight: "Balance is everything. Stay on track today.",
+            manage_stress: "Breathe and move. Let's find your center today.",
+            improve_flexibility: "Reach further today. Your body will thank you.",
+            build_endurance: "Go the distance. One step at a time.",
+            increase_energy: "Power through your day with healthy choices."
+        };
+
+        const baseMsg = goalMessages[userGoal] || "Ready to conquer the day?";
+
         if (loggedExercises.length === 0 || progress === 0) {
-            return "Ready to conquer the day? Let's get started on your fitness goals!";
-        } else if (progress < 50) {
-            return `Great start! You've crushed ${progress}% of your routine today. Keep it up!`;
+            return baseMsg;
         } else if (progress < 100) {
-            return `You're doing great! ${progress}% of your routine is complete. Keep going strong!`;
+            return `You're ${progress}% through your routine! ${baseMsg}`;
         } else {
             return "Amazing job! You have completed today's goal.";
         }
     };
+
 
     return (
         <main className={pageStyles.dashboardContent}>
@@ -282,6 +376,25 @@ function DashboardPage() {
                         <button className={pageStyles.primaryBtn} onClick={() => toggleQuickLog(true)}>
                             Quick Log
                         </button>
+                    </div>
+                </section>
+
+                <section className={pageStyles.goalSection} style={{ borderLeft: `4px solid ${goalInfo.color}` }}>
+                    <div className={pageStyles.goalIcon} style={{ backgroundColor: `${goalInfo.color}15`, color: goalInfo.color }}>
+                        {goalInfo.icon}
+                    </div>
+                    <div className={pageStyles.goalTextContent}>
+                        <div className={pageStyles.goalHeader}>
+                            <span className={pageStyles.goalLabel}>{goalInfo.title}</span>
+                            <span className={pageStyles.goalStatusTag} style={{ backgroundColor: `${goalInfo.color}20`, color: goalInfo.color }}>
+                                {goalInfo.metricValue}
+                            </span>
+                        </div>
+                        <p className={pageStyles.goalInsight}>{goalInfo.insight}</p>
+                        <div className={pageStyles.goalTipWrapper}>
+                            <span className={pageStyles.tipLabel}>PRO TIP:</span>
+                            <span className={pageStyles.tipText}>{goalInfo.tip}</span>
+                        </div>
                     </div>
                 </section>
 
@@ -418,7 +531,7 @@ function DashboardPage() {
                             </div>
                             <div className={pageStyles.summaryDivider} />
                             <div className={`${pageStyles.summaryRow} ${pageStyles.summaryNetRow}`}>
-                                <span className={pageStyles.summaryLabel}>Remaining</span>
+                                <span className={pageStyles.summaryLabel}>{nutritionMetrics.summary.showDeficit ? 'Target Deficit' : 'Remaining'}</span>
                                 <span className={pageStyles.summaryValue}>{nutritionMetrics.summary.net} <span className={pageStyles.unit}>kcal</span></span>
                             </div>
                         </div>

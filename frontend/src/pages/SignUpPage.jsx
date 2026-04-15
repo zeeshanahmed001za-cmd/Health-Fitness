@@ -58,12 +58,12 @@ function SignUpPage() {
         
         // Sync any onboarding data immediately using the new token
         try {
-           const fullData = { ...userData, email: email.trim() };
+           const fullData = { ...userData, ...data, email: email.trim() };
            await updateUserProfileAPI(fullData);
            updateUserData(fullData);
         } catch(updateErr) {
            console.error("Failed to sync onboarding data", updateErr);
-           updateUserData({ email: email.trim() });
+           updateUserData({ ...data, email: email.trim() });
         }
 
         console.log("Validation passed. Redirecting to dashboard...");
