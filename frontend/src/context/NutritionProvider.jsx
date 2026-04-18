@@ -45,7 +45,12 @@ export const NutritionProvider = ({ children }) => {
        const dynamicGoals = calculateDynamicGoals(userData);
        if (dynamicGoals) {
          setNutritionGoals(prev => {
-           if (prev.calories === dynamicGoals.calories && prev.protein === dynamicGoals.protein) return prev;
+           if (
+             prev.calories === dynamicGoals.calories &&
+             prev.protein  === dynamicGoals.protein  &&
+             prev.carbs    === dynamicGoals.carbs    &&
+             prev.fat      === dynamicGoals.fat
+           ) return prev;
            return dynamicGoals;
          });
        }

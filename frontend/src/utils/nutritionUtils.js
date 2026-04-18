@@ -65,15 +65,34 @@ export const calculateDynamicGoals = (data) => {
     let bmr = (10 * weight) + (6.25 * height) - (5 * age) + (isMale ? 5 : -161);
     let tdee = bmr * 1.55;
 
-    if (data.activityLevel === "sedentary") tdee = bmr * 1.2;
-    else if (data.activityLevel === "lightly_active") tdee = bmr * 1.375;
-    else if (data.activityLevel === "active") tdee = bmr * 1.55;
-    else if (data.activityLevel === "very_active") tdee = bmr * 1.725;
+    // Normalize activity level: ProfilePage uses "light"/"moderate"/"very"/"extra"
+    const activityMultipliers = {
+        sedentary: 1.2,
+        light: 1.375,
+        lightly_active: 1.375,
+        moderate: 1.55,
+        active: 1.55,
+        very: 1.725,
+        very_active: 1.725,
+        extra: 1.9,
+        extra_active: 1.9,
+    };
+    const actMultiplier = activityMultipliers[data.activityLevel] || 1.55;
+    tdee = bmr * actMultiplier;
 
     let calorieModifier = 0;
-    const goal = Array.isArray(data.primaryGoal) ? data.primaryGoal[0] : data.primaryGoal;
+    const rawGoal = Array.isArray(data.primaryGoal) ? data.primaryGoal[0] : data.primaryGoal;
+    // Normalize goal: ProfilePage uses short forms, onboarding uses long forms
+    const goalMap = {
+        lose: "weight_loss",
+        build: "muscle_gain",
+        maintain: "maintain_weight",
+        endurance: "build_endurance",
+    };
+    const goal = goalMap[rawGoal] || rawGoal;
     if (goal === "weight_loss") calorieModifier = -500;
     else if (goal === "muscle_gain") calorieModifier = 300;
+    else if (goal === "build_endurance") calorieModifier = 200;
 
     const finalCalories = Math.round(tdee + calorieModifier);
     const protein = Math.round(weight * 2.2);

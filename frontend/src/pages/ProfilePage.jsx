@@ -87,14 +87,13 @@ function ProfilePage() {
     targetWeight: userData.goalWeightValue || "",
     height: userData.heightCm || (userData.heightFeet ? `${userData.heightFeet}'${userData.heightInches || 0}"` : ""),
     activityLevel: userData.activityLevel || "moderate",
-    primaryGoal: Array.isArray(userData.primaryGoal) ? userData.primaryGoal[0] : userData.primaryGoal || "maintain",
+    primaryGoal: (() => {
+      const raw = Array.isArray(userData.primaryGoal) ? userData.primaryGoal[0] : userData.primaryGoal || "maintain";
+      const reverseMap = { weight_loss: "lose", muscle_gain: "build", maintain_weight: "maintain", build_endurance: "endurance" };
+      return reverseMap[raw] || raw;
+    })(),
   });
 
-  const [preferences, setPreferences] = useState({
-    emailNotifications: userData.emailNotifications ?? true,
-    smsReminders: userData.smsReminders ?? false,
-    publicProfile: userData.publicProfile ?? true,
-  });
 
   // Snapshot to restore on cancel
   const [personalSnapshot, setPersonalSnapshot] = useState(null);
@@ -116,7 +115,12 @@ function ProfilePage() {
         targetWeight: userData.goalWeightValue || "",
         height: userData.heightCm || (userData.heightFeet ? `${userData.heightFeet}'${userData.heightInches || 0}"` : ""),
         activityLevel: userData.activityLevel || "moderate",
-        primaryGoal: Array.isArray(userData.primaryGoal) ? userData.primaryGoal[0] : userData.primaryGoal || "maintain",
+        // Reverse-map long form back to short form for the select dropdown
+        primaryGoal: (() => {
+          const raw = Array.isArray(userData.primaryGoal) ? userData.primaryGoal[0] : userData.primaryGoal || "maintain";
+          const reverseMap = { weight_loss: "lose", muscle_gain: "build", maintain_weight: "maintain", build_endurance: "endurance" };
+          return reverseMap[raw] || raw;
+        })(),
       });
     }
   }, [userData, isEditing]);
@@ -143,6 +147,17 @@ function ProfilePage() {
   };
 
   const handleSave = async () => {
+    // Normalize short-form goal values from the select to the canonical long-form
+    // used throughout the app (DashboardPage GOAL_CONTENT, nutritionUtils, etc.)
+    const goalNormalizationMap = {
+      lose: "weight_loss",
+      build: "muscle_gain",
+      maintain: "maintain_weight",
+      endurance: "build_endurance",
+    };
+    const normalizedGoal =
+      goalNormalizationMap[physicalInfo.primaryGoal] || physicalInfo.primaryGoal;
+
     // Sync back to global context
     const updatedData = {
       ...userData,
@@ -150,7 +165,7 @@ function ProfilePage() {
       weightValue: physicalInfo.currentWeight,
       goalWeightValue: physicalInfo.targetWeight,
       activityLevel: physicalInfo.activityLevel,
-      primaryGoal: [physicalInfo.primaryGoal], // Maintain array structure if needed
+      primaryGoal: [normalizedGoal],
     };
     
     // Handle height parsing if it was edited as a string (keep it simple for now)
@@ -164,13 +179,20 @@ function ProfilePage() {
        updatedData.heightUnit = 'metric';
     }
 
+    // Clear stale cached nutrition goals so the NutritionProvider
+    // recalculates fresh goals from the new profile data immediately.
+    const userId = userData?._id || userData?.id;
+    if (userId) {
+      localStorage.removeItem(`journal_nutrition_goals_${userId}`);
+    }
+
     try {
       await updateUserProfileAPI(updatedData);
       updateUserData(updatedData);
       setIsEditing(false);
     } catch (err) {
       console.error("Failed to update profile", err);
-      // fallback just update context
+      // fallback: still update context so UI reflects the change
       updateUserData(updatedData);
       setIsEditing(false);
     }
@@ -226,12 +248,6 @@ function ProfilePage() {
     updateUserData({ heightUnit: userData.heightUnit === 'metric' ? 'imperial' : 'metric' });
   };
 
-  const handlePreferenceToggle = (key) => {
-    const newVal = !preferences[key];
-    setPreferences((prev) => ({ ...prev, [key]: newVal }));
-    // Update context immediately for preferences
-    updateUserData({ [key]: newVal });
-  };
 
   const avatarFallback =
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
@@ -519,57 +535,6 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* Preferences */}
-          <div className={`${styles.card} ${styles.preferencesCard}`}>
-            <div className={styles.sectionHeader}>
-              <h3>Preferences</h3>
-            </div>
-
-            <div className={styles.preferenceList}>
-              {[
-                {
-                  key: "emailNotifications",
-                  title: "Email Notifications",
-                  desc: "Receive daily summaries and goal updates.",
-                },
-                {
-                  key: "smsReminders",
-                  title: "SMS Reminders",
-                  desc: "Get text reminders for scheduled workouts.",
-                },
-                {
-                  key: "publicProfile",
-                  title: "Public Profile",
-                  desc: "Allow other users to view your achievements and progress.",
-                },
-              ].map((pref) => (
-                <div key={pref.key} className={styles.preferenceItem}>
-                  <div className={styles.prefInfo}>
-                    <h4>{pref.title}</h4>
-                    <p>{pref.desc}</p>
-                  </div>
-                  <label className={styles.switch}>
-                    <input
-                      type="checkbox"
-                      checked={preferences[pref.key]}
-                      onChange={() => handlePreferenceToggle(pref.key)}
-                    />
-                    <span
-                      className={`${styles.slider} ${styles.round}`}
-                    ></span>
-                  </label>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.dangerZone}>
-              <div>
-                <h4>Danger Zone</h4>
-                <p>Irreversible and destructive actions.</p>
-              </div>
-              <button className={styles.btnDanger}>Delete Account</button>
-            </div>
-          </div>
         </div>
       </div>
     </main>
