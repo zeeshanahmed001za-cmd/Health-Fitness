@@ -8,7 +8,6 @@ import {
   WorkoutsIcon,
   ProgressIcon,
   LogoutIcon,
-  CloseIcon,
   AppLogo
 } from "./Icons";
 
@@ -80,11 +79,6 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
             </div>
             <h2 className={styles.brandTitle}>Health & Fitness</h2>
           </Link>
-          {isMobileOpen && (
-            <button className={styles.closeSidebarBtn} onClick={onClose} aria-label="Close menu">
-               <CloseIcon />
-            </button>
-          )}
         </div>
 
 
