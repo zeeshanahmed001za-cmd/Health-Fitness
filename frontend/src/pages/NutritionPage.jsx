@@ -296,17 +296,20 @@ function NutritionPage() {
                         } else if (target < waterTotal) {
                             setIsSyncingWater(true);
                             const diff = waterTotal - target;
+                            const promises = [];
                             for(let j=0; j<diff; j++) {
-                                await removeWaterLog();
+                                promises.push(removeWaterLog());
                             }
+                            await Promise.all(promises);
                             setIsSyncingWater(false);
                         } else {
                             setIsSyncingWater(true);
                             const diff = Math.min(target - waterTotal, TOTAL_GLASSES_GOAL - waterTotal);
-                            // Run sequentially to ensure the backend/context logic (like max 8 check) works
+                            const promises = [];
                             for(let j=0; j<diff; j++) {
-                                await addWaterLog();
+                                promises.push(addWaterLog());
                             }
+                            await Promise.all(promises);
                             setIsSyncingWater(false);
                         }
                       }}

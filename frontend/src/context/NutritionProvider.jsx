@@ -120,39 +120,58 @@ export const NutritionProvider = ({ children }) => {
   }, []);
 
   const addWaterLog = useCallback(async () => {
-    const todaysWater = waterLogs.filter(log => isToday(log.timestamp));
-    if (todaysWater.length >= 8) return; // max 8 glasses
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
+    let successfullyAdded = false;
 
-    const newEntry = {
-      timestamp: new Date().toISOString(),
-      amount: 250, // per glass
-      activityType: 'water'
-    };
+    setWaterLogs((prev) => {
+      const todaysWater = prev.filter(log => isToday(log.timestamp));
+      if (todaysWater.length >= 8) return prev;
+      
+      successfullyAdded = true;
+      const newEntry = {
+        id: tempId,
+        timestamp: new Date().toISOString(),
+        amount: 250,
+        activityType: 'water'
+      };
+      return [...prev, newEntry];
+    });
+
+    if (!successfullyAdded) return;
 
     try {
-      const saved = await addNutritionLogAPI(newEntry);
-      setWaterLogs((prev) => [...prev, { ...saved, id: saved._id }]);
+      const newEntryForAPI = {
+        timestamp: new Date().toISOString(),
+        amount: 250,
+        activityType: 'water'
+      };
+      const saved = await addNutritionLogAPI(newEntryForAPI);
+      setWaterLogs((prev) => prev.map(log => log.id === tempId ? { ...saved, id: saved._id } : log));
     } catch(err) {
-      console.error(err);
-      setWaterLogs((prev) => [...prev, { ...newEntry, id: Date.now().toString() }]);
+      console.error("Failed to sync water log", err);
     }
-  }, [waterLogs]);
+  }, []);
 
   const removeWaterLog = useCallback(async () => {
-    // Find the last index of today's log
-    const lastLogIdx = waterLogs.map(l => isToday(l.timestamp)).lastIndexOf(true);
-    if (lastLogIdx !== -1) {
-      const logToRemove = waterLogs[lastLogIdx];
-      try {
-        if (logToRemove._id || !logToRemove.id.includes(today)) { // basic check
-          await deleteNutritionLogAPI(logToRemove.id || logToRemove._id);
-        }
-      } catch(err) {
-        console.error(err);
+    let logToDel = null;
+
+    setWaterLogs((prev) => {
+      const lastLogIdx = prev.map(l => isToday(l.timestamp)).lastIndexOf(true);
+      if (lastLogIdx === -1) return prev;
+      logToDel = prev[lastLogIdx];
+      return [...prev.slice(0, lastLogIdx), ...prev.slice(lastLogIdx + 1)];
+    });
+
+    if (!logToDel) return;
+
+    try {
+      if (logToDel._id || (logToDel.id && !logToDel.id.startsWith('temp-'))) {
+        await deleteNutritionLogAPI(logToDel.id || logToDel._id);
       }
-      setWaterLogs((prev) => [...prev.slice(0, lastLogIdx), ...prev.slice(lastLogIdx + 1)]);
+    } catch(err) {
+      console.error("Failed to delete water log", err);
     }
-  }, [waterLogs]);
+  }, []);
 
   const updateGoal = useCallback((newGoals) => {
     setNutritionGoals((prev) => ({ ...prev, ...newGoals }));
