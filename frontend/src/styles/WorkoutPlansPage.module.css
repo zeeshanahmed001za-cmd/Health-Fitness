@@ -16,7 +16,7 @@
 
 @media (max-width: 768px) {
   .contentInner {
-    padding: 16px;
+    padding: 20px;
     gap: 20px;
   }
 }
@@ -349,10 +349,17 @@
   padding: 32px;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
+  width: 90%;
   max-width: 450px;
   transform: translateY(20px);
   transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .modalContent {
+    padding: 24px;
+    width: 88%;
+  }
 }
 
 .modalOverlay.active .modalContent {
