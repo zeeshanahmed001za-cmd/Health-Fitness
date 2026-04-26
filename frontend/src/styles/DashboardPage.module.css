@@ -286,14 +286,17 @@
   align-items: center;
   flex: 1;
   padding: 12px 0;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .macroRingItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 8px;
+  gap: 8px;
+  padding: 4px;
+  min-width: 90px;
 }
 
 
@@ -703,13 +706,46 @@
     grid-column: span 1;
   }
 
-  .welcomeSection {
-    flex-direction: column;
-    align-items: flex-start;
+  .dashboardContent {
+    padding: 0;
+  }
+  
+  .contentInner {
+    padding: 16px;
     gap: 16px;
   }
 
-  .dashboardContent {
-    padding: 24px 16px;
+  .welcomeSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 16px;
+  }
+
+  .welcomeText h2 {
+    font-size: 1.5rem;
+  }
+
+  .goalSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .metricCard {
+    padding: 16px;
+  }
+
+  .heroValue {
+    font-size: 2rem;
+  }
+
+  .metricTitle {
+    font-size: 1.1rem;
+  }
+
+  .ringsContainer {
+    gap: 12px;
   }
 }
