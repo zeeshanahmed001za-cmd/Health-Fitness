@@ -10,6 +10,7 @@ import dashStyles from '../styles/Dashboard.module.css';
 const MainLayout = () => {
     const { sidebarCollapsed, toggleSidebar } = useUser();
     const { toggleQuickLog, isQuickLogOpen } = useNutrition();
+    const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
     // Register Global Keyboard Shortcuts
     useKeyboardShortcuts({ toggleSidebar, toggleQuickLog, isQuickLogOpen });
@@ -18,9 +19,21 @@ const MainLayout = () => {
         <div className={dashStyles.pageWrapper}>
             <Sidebar
                 isCollapsed={sidebarCollapsed}
-                // We don't need activePage here if Sidebar handles it via useLocation (it does)
+                isMobileOpen={isMobileOpen}
+                onClose={() => setIsMobileOpen(false)}
             />
             <div className={dashStyles.mainWrapper}>
+                <button 
+                    className={dashStyles.mobileMenuBtn} 
+                    onClick={() => setIsMobileOpen(true)}
+                    aria-label="Open Menu"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
                 <Outlet />
             </div>
             {/* Global Quick Log Modal reachable from anywhere */}

@@ -75,6 +75,21 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
+.mobileMenuBtn {
+  display: none;
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 50;
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
 .toggleSidebarBtn:hover::after {
   opacity: 1;
   visibility: visible;
@@ -153,13 +168,24 @@
 
   .topNavbar {
     padding: 0 16px;
+    padding-left: 64px; /* Space for the floating hamburger button */
+  }
+  
+  .mobileMenuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .navRight {
-    gap: 16px;
+    gap: 12px;
   }
 
   .pageTitle {
     font-size: 1.1rem;
+  }
+  
+  .pageWrapper {
+    flex-direction: column;
   }
 }
