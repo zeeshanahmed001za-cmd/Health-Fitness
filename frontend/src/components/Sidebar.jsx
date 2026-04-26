@@ -46,9 +46,11 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const effectiveCollapsed = isMobileOpen ? false : isCollapsed;
+  
   const sidebarClass = [
     styles.sidebar,
-    isCollapsed ? styles.collapsed : "",
+    effectiveCollapsed ? styles.collapsed : "",
     isMobileOpen ? styles.mobileOpen : "",
   ].join(" ");
 
@@ -68,8 +70,8 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
 
       <aside 
         className={sidebarClass}
-        onMouseEnter={() => isCollapsed && toggleSidebar()}
-        onMouseLeave={() => !isCollapsed && toggleSidebar()}
+        onMouseEnter={() => !isMobileOpen && isCollapsed && toggleSidebar()}
+        onMouseLeave={() => !isMobileOpen && !isCollapsed && toggleSidebar()}
       >
         <div className={styles.sidebarHeader}>
           <Link to="/dashboard" className={styles.logoLink}>
@@ -78,6 +80,11 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
             </div>
             <h2 className={styles.brandTitle}>Health & Fitness</h2>
           </Link>
+          {isMobileOpen && (
+            <button className={styles.closeSidebarBtn} onClick={onClose} aria-label="Close menu">
+               <CloseIcon />
+            </button>
+          )}
         </div>
 
 
@@ -94,7 +101,7 @@ function Sidebar({ isCollapsed, isMobileOpen, onClose }) {
             </Link>
           ))}
           
-          {!isCollapsed && (
+          {!effectiveCollapsed && (
             <button 
               className={`${styles.navItem} ${styles.quickActionBtn}`} 
               onClick={() => { toggleQuickLog(true); onClose(); }}

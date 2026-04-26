@@ -269,6 +269,22 @@
   }
 
   .closeSidebarBtn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-left: 8px;
+  }
+
+  .closeSidebarBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
   }
 }
