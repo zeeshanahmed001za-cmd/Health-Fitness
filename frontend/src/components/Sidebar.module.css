@@ -47,7 +47,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 24px; /* Match navItem padding */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   gap: 8px;
 }
@@ -76,10 +76,10 @@
   transition: all 0.3s var(--transition-smooth);
 }
 
-.sidebar:not(.collapsed) .logoIconWrapper {
+.sidebar:not(.collapsed) .logoIconWrapper,
+.sidebar.mobileOpen .logoIconWrapper {
   width: auto;
   min-width: auto;
-  /* When expanded, the logo sits on the left with 0 extra margin because the header has padding */
 }
 
 .brandTitle {
@@ -99,7 +99,7 @@
   opacity: 1;
   visibility: visible;
   transition: opacity 0.2s var(--transition-smooth), transform 0.2s var(--transition-smooth);
-  margin-left: 12px;
+  margin-left: 16px; /* Balanced gap between icon and text */
 }
 
 .sidebar.collapsed .brandTitle {
@@ -263,8 +263,9 @@
   }
 
   .sidebar.mobileOpen .sidebarHeader {
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 0 24px;
+    gap: 0;
   }
 
   .closeSidebarBtn {
