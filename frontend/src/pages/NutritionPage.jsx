@@ -285,12 +285,23 @@ function NutritionPage() {
                       key={i}
                       className={`${pageStyles.glass} ${i < waterTotal ? pageStyles.active : ""}`}
                       onClick={() => {
-                        if (i < waterTotal) {
-                          removeWaterLog();
+                        // If clicking an already active glass, set to that number (effectively removing higher ones)
+                        // Actually, common UX: 
+                        // If you click glass 5 and you had 3, you get 5.
+                        // If you click glass 3 and you had 5, you get 3.
+                        // But removeWaterLog/addWaterLog might be specific logs.
+                        // Let's just adjust the count based on index.
+                        const target = i + 1;
+                        if (target === waterTotal) {
+                            removeWaterLog(); // Toggle off the last one
+                        } else if (target < waterTotal) {
+                            // Remove multiple
+                            const diff = waterTotal - target;
+                            for(let j=0; j<diff; j++) removeWaterLog();
                         } else {
-                          if (waterTotal < TOTAL_GLASSES_GOAL) {
-                            addWaterLog();
-                          }
+                            // Add multiple
+                            const diff = target - waterTotal;
+                            for(let j=0; j<diff; j++) addWaterLog();
                         }
                       }}
                     />

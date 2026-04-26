@@ -14,6 +14,13 @@
   gap: 32px;
 }
 
+@media (max-width: 768px) {
+  .contentInner {
+    padding: 16px;
+    gap: 20px;
+  }
+}
+
 .dashboardContent::-webkit-scrollbar {
   width: 6px;
 }
@@ -47,6 +54,18 @@
   color: white;
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
   transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .guidanceBtn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 12px;
+  }
+  
+  .guidanceBtn span {
+    display: none; /* Hide text on very small screens if needed, but maybe just small font is okay */
+  }
 }
 
 /* Tracking Header Section */
@@ -131,6 +150,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .panelCard {
+    padding: 16px;
+  }
 }
 
 /* Logging System Layout */
