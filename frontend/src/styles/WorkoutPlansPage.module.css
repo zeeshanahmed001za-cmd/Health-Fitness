@@ -406,6 +406,18 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 600px) {
+  .formRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  /* Make the last item (calories) span full width if it's the 3rd one */
+  .formRow > div:last-child {
+    grid-column: span 2;
+  }
+}
+
 .modalActions {
   display: flex;
   justify-content: flex-end;
