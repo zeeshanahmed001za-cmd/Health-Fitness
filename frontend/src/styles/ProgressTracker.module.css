@@ -20,6 +20,13 @@
   gap: 24px;
 }
 
+@media (max-width: 768px) {
+  .contentInner {
+    padding: 20px;
+    gap: 20px;
+  }
+}
+
 /* Hero Section */
 .heroSummary {
   display: flex;
@@ -508,7 +515,32 @@
 }
 
 @media (max-width: 768px) {
-  .dashboardContent { padding: 20px; }
-  .heroSummary { flex-direction: column; text-align: center; gap: 24px; }
-  .hubHeader { flex-direction: column; gap: 20px; align-items: flex-start; }
+  .dashboardContent { padding: 0; }
+  .heroSummary { 
+    flex-direction: column; 
+    text-align: center; 
+    gap: 24px; 
+    padding: 24px;
+    border-radius: 20px;
+  }
+  .hubHeader { 
+    flex-direction: column; 
+    gap: 20px; 
+    align-items: center; 
+  }
+  
+  .hubTabs {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .tabBtn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .mainVisualArea {
+    height: 300px;
+  }
 }
