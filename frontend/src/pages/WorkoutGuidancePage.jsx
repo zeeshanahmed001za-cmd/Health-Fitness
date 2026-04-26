@@ -8,24 +8,7 @@ import { useUser } from "../context/UserContext";
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/WorkoutGuidancePage.module.css";
 
-// Icons
-const HamburgerIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="3" y1="12" x2="21" y2="12"></line>
-    <line x1="3" y1="6" x2="21" y2="6"></line>
-    <line x1="3" y1="18" x2="21" y2="18"></line>
-  </svg>
-);
+
 const BackIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -142,20 +125,10 @@ const BoltIcon = () => (
 function WorkoutGuidancePage() {
   const { sidebarCollapsed, toggleSidebar } = useUser();
   useDocumentTitle("Workout Guidance");
-  // Sidebar state
-
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
 
 
   // Handlers
-  const handleSidebarToggle = () => {
-    if (window.innerWidth <= 768) {
-      setMobileSidebarOpen((prev) => !prev);
-    } else {
-      toggleSidebar();
-    }
-  };
+
 
   const avatarFallback =
     "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
@@ -164,13 +137,6 @@ function WorkoutGuidancePage() {
     <main className={pageStyles.dashboardContent}>
       <header className={dashStyles.topNavbar}>
         <div className={dashStyles.navLeft}>
-          <button
-            className={dashStyles.toggleSidebarBtn}
-            onClick={handleSidebarToggle}
-            aria-label="Toggle Sidebar"
-          >
-            <HamburgerIcon />
-          </button>
           <h1 className={dashStyles.pageTitle}>Workout Guidance</h1>
         </div>
         <div className={dashStyles.navRight}>

@@ -8,24 +8,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/NutritionPage.module.css";
 
-// Icons
-const HamburgerIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="3" y1="12" x2="21" y2="12"></line>
-    <line x1="3" y1="6" x2="21" y2="6"></line>
-    <line x1="3" y1="18" x2="21" y2="18"></line>
-  </svg>
-);
+
 
 const TrashIcon = () => (
   <svg
@@ -139,7 +122,6 @@ function NutritionPage() {
 
 
   // States
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Calorie Calculator state
@@ -157,13 +139,7 @@ function NutritionPage() {
 
 
   // Handlers
-  const handleSidebarToggle = () => {
-    if (window.innerWidth <= 768) {
-      setMobileSidebarOpen((prev) => !prev);
-    } else {
-      toggleSidebar();
-    }
-  };
+
 
   const handleAddFood = (e) => {
     e.preventDefault();
@@ -225,13 +201,6 @@ function NutritionPage() {
     <main className={pageStyles.dashboardContent}>
       <header className={dashStyles.topNavbar}>
         <div className={dashStyles.navLeft}>
-          <button
-            className={dashStyles.toggleSidebarBtn}
-            onClick={handleSidebarToggle}
-            aria-label="Toggle Sidebar"
-          >
-            <HamburgerIcon />
-          </button>
           <h1 className={dashStyles.pageTitle}>Nutrition Tracking</h1>
         </div>
         <div className={dashStyles.navRight}>

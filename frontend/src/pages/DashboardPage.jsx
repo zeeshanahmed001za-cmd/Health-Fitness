@@ -97,7 +97,6 @@ function DashboardPage() {
     const [dbWorkouts, setDbWorkouts] = useState([]);
     useDocumentTitle("Dashboard");
 
-    const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
     const [notificationsClean, setNotificationsClean] = useState(false);
 
 
@@ -291,13 +290,7 @@ function DashboardPage() {
     }, [foodLogs, waterLogs, loggedExercises, dbWorkouts]);
 
     // Handlers
-    const handleSidebarToggle = () => {
-        if (window.innerWidth <= 768) {
-            setMobileSidebarOpen((prev) => !prev);
-        } else {
-            toggleSidebar();
-        }
-    };
+
 
     const handleNotificationClick = () => {
         setNotificationsClean(true);

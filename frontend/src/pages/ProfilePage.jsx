@@ -9,24 +9,7 @@ import { useUser } from "../context/UserContext";
 import { updateUserProfileAPI } from "../api";
 
 
-// Icons
-const HamburgerIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="3" y1="12" x2="21" y2="12"></line>
-    <line x1="3" y1="6" x2="21" y2="6"></line>
-    <line x1="3" y1="18" x2="21" y2="18"></line>
-  </svg>
-);
+
 const BellIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -64,8 +47,7 @@ function ProfilePage() {
   useDocumentTitle("Profile");
   const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
 
-  // Sidebar state
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
 
 
 
@@ -126,13 +108,7 @@ function ProfilePage() {
   }, [userData, isEditing]);
 
   // --- Handlers ---
-  const handleSidebarToggle = () => {
-    if (window.innerWidth <= 768) {
-      setMobileSidebarOpen((prev) => !prev);
-    } else {
-      toggleSidebar();
-    }
-  };
+
 
   const handleEdit = () => {
     setPersonalSnapshot({ ...personalInfo });
@@ -256,13 +232,6 @@ function ProfilePage() {
     <main className={styles.profileDashboard}>
       <header className={dashStyles.topNavbar}>
         <div className={dashStyles.navLeft}>
-          <button
-            className={dashStyles.toggleSidebarBtn}
-            onClick={handleSidebarToggle}
-            aria-label="Toggle Sidebar"
-          >
-            <HamburgerIcon />
-          </button>
           <h1 className={dashStyles.pageTitle}>My Profile</h1>
         </div>
         <div className={dashStyles.navRight}>
