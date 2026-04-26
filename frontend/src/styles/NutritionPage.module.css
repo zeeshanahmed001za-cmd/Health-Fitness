@@ -247,6 +247,12 @@
   border-color: var(--accent-cyan);
 }
 
+.glass.syncing {
+  opacity: 0.5;
+  cursor: wait;
+  pointer-events: none;
+}
+
 .hydrationStats {
   font-size: 0.95rem;
   color: var(--text-secondary);
@@ -458,6 +464,13 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .macroGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 }
 
 .modalActions {

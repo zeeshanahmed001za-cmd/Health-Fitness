@@ -123,6 +123,7 @@ function NutritionPage() {
 
   // States
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSyncingWater, setIsSyncingWater] = useState(false);
 
   // Calorie Calculator state
   const [calcUnit, setCalcUnit] = useState("metric");
@@ -283,25 +284,30 @@ function NutritionPage() {
                   {Array.from({ length: TOTAL_GLASSES_GOAL }).map((_, i) => (
                     <button
                       key={i}
-                      className={`${pageStyles.glass} ${i < waterTotal ? pageStyles.active : ""}`}
-                      onClick={() => {
-                        // If clicking an already active glass, set to that number (effectively removing higher ones)
-                        // Actually, common UX: 
-                        // If you click glass 5 and you had 3, you get 5.
-                        // If you click glass 3 and you had 5, you get 3.
-                        // But removeWaterLog/addWaterLog might be specific logs.
-                        // Let's just adjust the count based on index.
+                      className={`${pageStyles.glass} ${i < waterTotal ? pageStyles.active : ""} ${isSyncingWater ? pageStyles.syncing : ""}`}
+                      onClick={async () => {
+                        if (isSyncingWater) return;
+                        
                         const target = i + 1;
                         if (target === waterTotal) {
-                            removeWaterLog(); // Toggle off the last one
+                            setIsSyncingWater(true);
+                            await removeWaterLog();
+                            setIsSyncingWater(false);
                         } else if (target < waterTotal) {
-                            // Remove multiple
+                            setIsSyncingWater(true);
                             const diff = waterTotal - target;
-                            for(let j=0; j<diff; j++) removeWaterLog();
+                            for(let j=0; j<diff; j++) {
+                                await removeWaterLog();
+                            }
+                            setIsSyncingWater(false);
                         } else {
-                            // Add multiple
-                            const diff = target - waterTotal;
-                            for(let j=0; j<diff; j++) addWaterLog();
+                            setIsSyncingWater(true);
+                            const diff = Math.min(target - waterTotal, TOTAL_GLASSES_GOAL - waterTotal);
+                            // Run sequentially to ensure the backend/context logic (like max 8 check) works
+                            for(let j=0; j<diff; j++) {
+                                await addWaterLog();
+                            }
+                            setIsSyncingWater(false);
                         }
                       }}
                     />
