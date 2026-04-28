@@ -293,14 +293,14 @@ function ProgressTracker() {
           </div>
 
           <div className={styles.mainVisualArea}>
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height="100%">
               {activeTab === 'weight' ? (
-                <ComposedChart data={weightChartData} margin={{ top: 10, right: 10, left: 10, bottom: 30 }}>
+                <ComposedChart data={weightChartData} margin={{ top: 10, right: 10, left: 35, bottom: 40 }}>
                   <defs>
-                    <filter id="shadow" height="200%">
-                      <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-                      <feOffset dx="0" dy="4" result="offsetblur" />
-                      <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+                    <filter id="shadow" height="150%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="2" />
+                      <feOffset dx="0" dy="2" result="offsetblur" />
+                      <feComponentTransfer><feFuncA type="linear" slope="0.2"/></feComponentTransfer>
                       <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
                     </filter>
                   </defs>
@@ -311,7 +311,9 @@ function ProgressTracker() {
                     fontSize={10} 
                     tickLine={false} 
                     axisLine={false} 
-                    dy={10}
+                    dy={12}
+                    minTickGap={15}
+                    padding={{ left: 10, right: 10 }}
                   />
                   <YAxis 
                     stroke="#94a3b8" 
@@ -319,15 +321,16 @@ function ProgressTracker() {
                     tickLine={false} 
                     axisLine={false} 
                     domain={['auto', 'auto']} 
-                    width={40}
-                    padding={{ top: 10, bottom: 10 }}
+                    width={10}
+                    dx={-10}
+                    padding={{ top: 20, bottom: 20 }}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" label={{ value: 'Target', fill: '#f59e0b', fontSize: 10, position: 'insideTopLeft' }} />}
                   <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={4} dot={{ r: 4, fill: "var(--accent-primary)", strokeWidth: 2, stroke: "#1e293b" }} activeDot={{ r: 8, strokeWidth: 0 }} animationDuration={1000} filter="url(#shadow)" />
                 </ComposedChart>
               ) : (
-                <ComposedChart data={weeklyActivityData} margin={{ top: 10, right: 10, left: 10, bottom: 30 }}>
+                <ComposedChart data={weeklyActivityData} margin={{ top: 10, right: 10, left: 35, bottom: 40 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                   <XAxis 
                     dataKey="name" 
@@ -335,7 +338,9 @@ function ProgressTracker() {
                     fontSize={10} 
                     tickLine={false} 
                     axisLine={false} 
-                    dy={10}
+                    dy={12}
+                    minTickGap={10}
+                    padding={{ left: 10, right: 10 }}
                   />
                   <YAxis 
                     stroke="#94a3b8" 
@@ -343,11 +348,12 @@ function ProgressTracker() {
                     tickLine={false} 
                     axisLine={false} 
                     domain={[0, 100]} 
-                    width={40}
-                    padding={{ top: 10, bottom: 10 }}
+                    width={10}
+                    dx={-10}
+                    padding={{ top: 20, bottom: 20 }}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="workout" fill="#818cf8" radius={[4, 4, 0, 0]} name="Workouts (%)" barSize={24} animationDuration={1000} />
+                  <Bar dataKey="workout" fill="#818cf8" radius={[4, 4, 0, 0]} name="Workouts (%)" barSize={20} animationDuration={1000} />
                   <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={3} name="Nutrition (%)" dot={{ r: 5, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1000} />
                 </ComposedChart>
               )}
