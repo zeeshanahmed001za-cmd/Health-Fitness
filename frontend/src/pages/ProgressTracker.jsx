@@ -267,9 +267,12 @@ function ProgressTracker() {
               <span className={styles.statValue}>{(userData?.loginStreak || 0)}<small> Days</small></span>
               <div className={styles.streakGoalInfo}>
                 <div className={styles.streakDots}>
-                  {[...Array(7)].map((_, i) => (
-                    <div key={i} className={`${styles.streakDot} ${(userData?.loginStreak || 0) > i ? styles.active : ''}`}></div>
-                  ))}
+                  {[...Array(7)].map((_, i) => {
+                    const streakProgress = (userData?.loginStreak > 0) ? ((userData.loginStreak - 1) % 7) + 1 : 0;
+                    return (
+                      <div key={i} className={`${styles.streakDot} ${streakProgress > i ? styles.active : ''}`}></div>
+                    );
+                  })}
                 </div>
                 <span className={styles.streakStatus}>
                   {`Log in daily to keep your streak!`}
