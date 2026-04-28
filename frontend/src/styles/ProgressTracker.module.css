@@ -227,23 +227,7 @@
   width: 100%;
 }
 
-.streakDots {
-  display: flex;
-  gap: 6px;
-}
 
-.streakDot {
-  width: 10px;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-  transition: all 0.3s;
-}
-
-.streakDot.active {
-  background: var(--accent-primary);
-  box-shadow: 0 0 8px var(--accent-glow);
-}
 
 .streakStatus {
   font-size: 0.8rem;
