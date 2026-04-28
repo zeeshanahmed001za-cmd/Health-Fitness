@@ -21,10 +21,9 @@ function LoginPage() {
 
   useEffect(() => {
     if (localStorage.getItem("userToken")) {
-      logout();
+      navigate("/dashboard");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only once on mount
+  }, [navigate]); // Run only once on mount or if navigate changes
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

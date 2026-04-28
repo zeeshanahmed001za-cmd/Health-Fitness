@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/LandingPage.module.css";
 
 import siteLogo from "../assets/images/site.png";
@@ -234,6 +234,13 @@ const GithubIcon = ({ size = 20 }) => (
 
 function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("userToken")) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   // Navbar scroll effect
   useEffect(() => {

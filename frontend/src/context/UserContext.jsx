@@ -13,9 +13,10 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(() => {
     try {
-      const savedOnboarding = sessionStorage.getItem("onboardingData");
       const savedSession = localStorage.getItem("userSession");
+      const savedOnboarding = sessionStorage.getItem("onboardingData");
 
+      // Preference order: sessionStorage (fresh) > localStorage (persistent)
       if (savedOnboarding) return JSON.parse(savedOnboarding);
       if (savedSession) return JSON.parse(savedSession);
     } catch (error) {
@@ -41,7 +42,9 @@ export const UserProvider = ({ children }) => {
   // Sync state changes to storage automatically
   useEffect(() => {
     if (userData && Object.keys(userData).length > 0) {
+      // Save to both for persistence across refresh and across session close
       sessionStorage.setItem("onboardingData", JSON.stringify(userData));
+      localStorage.setItem("userSession", JSON.stringify(userData));
     }
   }, [userData]);
 
