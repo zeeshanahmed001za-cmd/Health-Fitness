@@ -293,9 +293,9 @@ function ProgressTracker() {
           </div>
 
           <div className={styles.mainVisualArea}>
-            <ResponsiveContainer width="100%" height={420}>
+            <ResponsiveContainer width="100%" height={400}>
               {activeTab === 'weight' ? (
-                <ComposedChart data={weightChartData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                <ComposedChart data={weightChartData} margin={{ top: 10, right: 10, left: 10, bottom: 30 }}>
                   <defs>
                     <filter id="shadow" height="200%">
                       <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
@@ -305,20 +305,50 @@ function ProgressTracker() {
                     </filter>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} padding={{ left: 20, right: 20 }} />
-                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={['auto', 'auto']} padding={{ top: 20, bottom: 20 }} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#94a3b8" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    stroke="#94a3b8" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    domain={['auto', 'auto']} 
+                    width={40}
+                    padding={{ top: 10, bottom: 10 }}
+                  />
                   <Tooltip content={<CustomTooltip />} />
-                  {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" label={{ value: 'Target', fill: '#f59e0b', fontSize: 12, position: 'insideTopLeft' }} />}
+                  {goalWeight && <ReferenceLine y={goalWeight} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" label={{ value: 'Target', fill: '#f59e0b', fontSize: 10, position: 'insideTopLeft' }} />}
                   <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={4} dot={{ r: 4, fill: "var(--accent-primary)", strokeWidth: 2, stroke: "#1e293b" }} activeDot={{ r: 8, strokeWidth: 0 }} animationDuration={1000} filter="url(#shadow)" />
                 </ComposedChart>
               ) : (
-                <ComposedChart data={weeklyActivityData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                <ComposedChart data={weeklyActivityData} margin={{ top: 10, right: 10, left: 10, bottom: 30 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} domain={[0, 100]} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#94a3b8" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    stroke="#94a3b8" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    domain={[0, 100]} 
+                    width={40}
+                    padding={{ top: 10, bottom: 10 }}
+                  />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="workout" fill="#818cf8" radius={[6, 6, 0, 0]} name="Workouts (%)" barSize={30} animationDuration={1000} />
-                  <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={4} name="Nutrition (%)" dot={{ r: 6, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1000} />
+                  <Bar dataKey="workout" fill="#818cf8" radius={[4, 4, 0, 0]} name="Workouts (%)" barSize={24} animationDuration={1000} />
+                  <Line type="monotone" dataKey="nutrition" stroke="#f59e0b" strokeWidth={3} name="Nutrition (%)" dot={{ r: 5, fill: '#f59e0b', strokeWidth: 2, stroke: '#1e293b' }} animationDuration={1000} />
                 </ComposedChart>
               )}
             </ResponsiveContainer>
