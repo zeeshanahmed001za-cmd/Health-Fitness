@@ -8,9 +8,8 @@ import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
 import { EyeOpen, EyeClose } from "../components/Icons";
 
-const emailPolicy = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const passwordPolicy = (password) =>
-  password.length >= 10 && !/\s/.test(password);
+const emailPolicy = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+const passwordPolicy = (password) => password.length > 0;
 
 
 
@@ -209,7 +208,7 @@ function LoginPage() {
                   </button>
                 </div>
                 <span className={styles.errorText}>
-                  Must be at least 10 characters, no spaces.
+                  Please enter your password.
                 </span>
                 
                 {forgotMessage && (

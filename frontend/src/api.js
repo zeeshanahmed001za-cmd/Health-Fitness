@@ -14,7 +14,7 @@ const handleResponse = async (res) => {
         localStorage.removeItem('userToken');
         localStorage.removeItem('userSession');
         sessionStorage.removeItem('onboardingData');
-        
+
         // Only redirect if not already on auth pages to avoid infinite reloads/state loss
         if (!['/login', '/signup'].includes(window.location.pathname)) {
             window.location.href = '/login';

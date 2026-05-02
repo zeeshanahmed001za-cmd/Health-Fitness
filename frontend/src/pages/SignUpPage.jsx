@@ -9,9 +9,14 @@ import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
 import { EyeOpen, EyeClose } from "../components/Icons";
 
-const emailPolicy = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const emailPolicy = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 const passwordPolicy = (password) =>
-  password.length >= 10 && !/\s/.test(password);
+  password.length >= 8 &&
+  /[A-Z]/.test(password) &&
+  /[a-z]/.test(password) &&
+  /[0-9]/.test(password) &&
+  /[^A-Za-z0-9]/.test(password) &&
+  !/\s/.test(password);
 
 
 
@@ -77,9 +82,13 @@ function SignUpPage() {
   };
 
   // FIX 4: dynamic password hint helpers
-  const tooShort = password.length > 0 && password.length < 10;
+  const tooShort = password.length > 0 && password.length < 8;
   const hasSpaces = password.length > 0 && /\s/.test(password);
-  const passwordValid = password.length >= 10 && !/\s/.test(password);
+  const lacksUpper = password.length > 0 && !/[A-Z]/.test(password);
+  const lacksLower = password.length > 0 && !/[a-z]/.test(password);
+  const lacksNumber = password.length > 0 && !/[0-9]/.test(password);
+  const lacksSpecial = password.length > 0 && !/[^A-Za-z0-9]/.test(password);
+  const passwordValid = password.length > 0 && passwordPolicy(password);
 
   return (
     <div className={styles.pageBody}>
@@ -154,7 +163,7 @@ function SignUpPage() {
               {/* FIX 4: dynamic hint — tells user exactly which rule they're failing */}
               {password.length === 0 ? (
                 <p className={styles.passwordHint}>
-                  Must be at least 10 characters, no spaces.
+                  At least 8 chars, 1 uppercase, 1 lowercase, 1 number, and 1 special char.
                 </p>
               ) : passwordValid ? (
                 <p
@@ -168,11 +177,15 @@ function SignUpPage() {
                 >
                   {tooShort && (
                     <span>
-                      {10 - password.length} more character
-                      {10 - password.length !== 1 ? "s" : ""} needed.{" "}
+                      {8 - password.length} more character
+                      {8 - password.length !== 1 ? "s" : ""} needed.{" "}
                     </span>
                   )}
-                  {hasSpaces && <span>Remove spaces.</span>}
+                  {hasSpaces && <span>Remove spaces. </span>}
+                  {lacksUpper && <span>Add uppercase. </span>}
+                  {lacksLower && <span>Add lowercase. </span>}
+                  {lacksNumber && <span>Add number. </span>}
+                  {lacksSpecial && <span>Add special char. </span>}
                 </p>
               )}
 
