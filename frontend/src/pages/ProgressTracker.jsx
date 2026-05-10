@@ -18,6 +18,8 @@ const WeightIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="n
 const BurnIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 1.5 3.5 1 5.5s-1.5 2.5-1.5 3.5c0 1.38 1.12 2.5 2.5 2.5S17 13.38 17 12c0-3.5-2.5-4-2.5-8 4.25 2.5 6.5 6 6.5 10.5a8 8 0 1 1-16 0c0-1.85.64-3.58 1.7-5-.7 1.5-1.3 3-1.6 5z"/></svg>;
 const StreakIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>;
 const TrophyIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
+const ChevronUpIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>;
+const ChevronDownIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>;
 
 const AVATAR_FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
@@ -34,6 +36,19 @@ function ProgressTracker() {
   const [workoutLogs, setWorkoutLogs] = useState([]);
   const [newWeightInput, setNewWeightInput] = useState("");
   const [timeRange, setTimeRange] = useState("1W");
+  const [monthOffset, setMonthOffset] = useState(0);
+
+  const handleTimeRangeChange = (r) => {
+    setTimeRange(r);
+    setMonthOffset(0);
+  };
+
+  const selectedMonthLabel = useMemo(() => {
+    if (timeRange !== '1M') return "";
+    const d = new Date();
+    d.setMonth(d.getMonth() + monthOffset);
+    return d.toLocaleDateString([], { month: 'short', year: 'numeric' });
+  }, [timeRange, monthOffset]);
 
   useEffect(() => {
     fetchProgress();
@@ -141,14 +156,7 @@ function ProgressTracker() {
     }
   }, [goalKey, goalWeight, unit]);
 
-  const baseActivityData = useMemo(() => {
-    const days = [];
-    const todayObj = new Date();
-    todayObj.setHours(23, 59, 59, 999);
-    
-    const numDays = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : 365;
-    const daysToCalc = Math.max(numDays, 7);
-
+  const activityDataObj = useMemo(() => {
     const workoutByDay = {};
     workoutLogs.forEach(l => {
       const d = new Date(l.date || l.createdAt).toISOString().split('T')[0];
@@ -169,65 +177,103 @@ function ProgressTracker() {
       waterByDay[d] = (waterByDay[d] || 0) + 1;
     });
 
-    for (let i = daysToCalc - 1; i >= 0; i--) {
+    return { workoutByDay, foodByDay, waterByDay };
+  }, [workoutLogs, foodLogs, waterLogs]);
+
+  const weeklyAverages = useMemo(() => {
+    const { workoutByDay, foodByDay, waterByDay } = activityDataObj;
+    const todayObj = new Date();
+    todayObj.setHours(23, 59, 59, 999);
+    let wSum = 0, nSum = 0;
+    
+    for (let i = 6; i >= 0; i--) {
       const date = new Date(todayObj);
       date.setDate(date.getDate() - i);
       const dayStr = date.toISOString().split('T')[0];
       
-      let name;
-      let groupKey;
-      if (timeRange === '1Y') {
-        name = date.toLocaleDateString([], { month: 'short' });
-        groupKey = date.toLocaleDateString([], { month: 'short', year: 'numeric' });
-      } else if (timeRange === '1M') {
-        name = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-        groupKey = dayStr;
-      } else {
-        name = date.toLocaleDateString([], { weekday: 'short' });
-        groupKey = dayStr;
-      }
-
-      let workoutAdherence = 0;
-      if (i === 0) {
-        workoutAdherence = currentWorkoutProgress;
-      } else {
-        workoutAdherence = workoutByDay[dayStr] ? 100 : 0;
-      }
-
+      let workoutAdherence = i === 0 ? currentWorkoutProgress : (workoutByDay[dayStr] ? 100 : 0);
       const dayCalories = foodByDay[dayStr] || 0;
       const dayWater = waterByDay[dayStr] || 0;
       
       const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
       const watPct = Math.min((dayWater / 8) * 100, 100);
       
-      days.push({ 
-        name, 
-        groupKey,
-        rawDate: date,
-        workout: workoutAdherence, 
-        nutrition: Math.round((calPct + watPct) / 2) 
-      });
+      wSum += workoutAdherence;
+      nSum += Math.round((calPct + watPct) / 2);
     }
-    return days;
-  }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress, timeRange]);
-
-  const weeklyAverages = useMemo(() => {
-    const last7 = baseActivityData.slice(-7);
-    const workoutSum = last7.reduce((s, d) => s + (d.workout || 0), 0) / 7;
-    const nutritionSum = last7.reduce((s, d) => s + (d.nutrition || 0), 0) / 7;
-    return {
-      workout: Math.round(workoutSum),
-      nutrition: Math.round(nutritionSum)
-    };
-  }, [baseActivityData]);
+    
+    return { workout: Math.round(wSum / 7), nutrition: Math.round(nSum / 7) };
+  }, [activityDataObj, nutritionGoals, currentWorkoutProgress]);
 
   const chartActivityData = useMemo(() => {
-    const numDays = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : 365;
-    let data = baseActivityData.slice(-numDays);
-    
-    if (timeRange === '1Y') {
+    const { workoutByDay, foodByDay, waterByDay } = activityDataObj;
+    const todayObj = new Date();
+    todayObj.setHours(23, 59, 59, 999);
+    const days = [];
+
+    if (timeRange === '1M') {
+      const targetDate = new Date();
+      targetDate.setMonth(targetDate.getMonth() + monthOffset);
+      const targetYear = targetDate.getFullYear();
+      const targetMonthIndex = targetDate.getMonth();
+      const daysInMonth = new Date(targetYear, targetMonthIndex + 1, 0).getDate();
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(targetYear, targetMonthIndex, day, 23, 59, 59, 999);
+        const dayStr = date.toISOString().split('T')[0];
+        const name = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        
+        let workoutAdherence = 0;
+        if (dayStr === todayObj.toISOString().split('T')[0]) {
+          workoutAdherence = currentWorkoutProgress;
+        } else if (date <= todayObj) {
+          workoutAdherence = workoutByDay[dayStr] ? 100 : 0;
+        }
+
+        const dayCalories = foodByDay[dayStr] || 0;
+        const dayWater = waterByDay[dayStr] || 0;
+        
+        const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
+        const watPct = Math.min((dayWater / 8) * 100, 100);
+        
+        days.push({ 
+          name, 
+          rawDate: date,
+          workout: workoutAdherence, 
+          nutrition: date <= todayObj ? Math.round((calPct + watPct) / 2) : 0 
+        });
+      }
+      return days;
+    } else {
+      const numDays = timeRange === '1W' ? 7 : 365;
+      for (let i = numDays - 1; i >= 0; i--) {
+        const date = new Date(todayObj);
+        date.setDate(date.getDate() - i);
+        const dayStr = date.toISOString().split('T')[0];
+        
+        const name = timeRange === '1Y' ? date.toLocaleDateString([], { month: 'short' }) : date.toLocaleDateString([], { weekday: 'short' });
+        const groupKey = timeRange === '1Y' ? date.toLocaleDateString([], { month: 'short', year: 'numeric' }) : dayStr;
+        
+        let workoutAdherence = i === 0 ? currentWorkoutProgress : (workoutByDay[dayStr] ? 100 : 0);
+
+        const dayCalories = foodByDay[dayStr] || 0;
+        const dayWater = waterByDay[dayStr] || 0;
+        
+        const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
+        const watPct = Math.min((dayWater / 8) * 100, 100);
+        
+        days.push({ 
+          name, 
+          groupKey,
+          rawDate: date,
+          workout: workoutAdherence, 
+          nutrition: Math.round((calPct + watPct) / 2) 
+        });
+      }
+
+      if (timeRange === '1Y') {
         const monthly = {};
-        data.forEach(d => {
+        days.forEach(d => {
             if (!monthly[d.groupKey]) {
                 monthly[d.groupKey] = { name: d.name, workoutSum: 0, nutritionSum: 0, count: 0, timestamp: d.rawDate.getTime() };
             }
@@ -240,9 +286,10 @@ function ProgressTracker() {
             workout: Math.round(m.workoutSum / m.count),
             nutrition: Math.round(m.nutritionSum / m.count)
         }));
+      }
+      return days;
     }
-    return data;
-  }, [baseActivityData, timeRange]);
+  }, [activityDataObj, nutritionGoals, currentWorkoutProgress, timeRange, monthOffset]);
 
 
   const weightChartData = useMemo(() => {
@@ -258,12 +305,33 @@ function ProgressTracker() {
       return acc;
     }, {});
     let dataFiltered = Object.values(grouped).sort((a,b) => a.timestamp - b.timestamp);
-    const now = Date.now();
-    const cutoff = timeRange === '1W' ? now - 7*86400000 : timeRange === '1M' ? now - 30*86400000 : timeRange === '1Y' ? now - 365*86400000 : 0;
-    dataFiltered = dataFiltered.filter(d => d.timestamp >= cutoff);
+    
+    if (timeRange === '1M') {
+      const targetDate = new Date();
+      targetDate.setMonth(targetDate.getMonth() + monthOffset);
+      const targetYear = targetDate.getFullYear();
+      const targetMonthIndex = targetDate.getMonth();
+      const startOfMonth = new Date(targetYear, targetMonthIndex, 1).getTime();
+      const endOfMonth = new Date(targetYear, targetMonthIndex + 1, 0, 23, 59, 59, 999).getTime();
+      
+      dataFiltered = dataFiltered.filter(d => d.timestamp >= startOfMonth && d.timestamp <= endOfMonth);
+    } else {
+      const now = Date.now();
+      const cutoff = timeRange === '1W' ? now - 7*86400000 : timeRange === '1Y' ? now - 365*86400000 : 0;
+      dataFiltered = dataFiltered.filter(d => d.timestamp >= cutoff);
+    }
     
     if (dataFiltered.length === 0 && progressHistory.length > 0) {
-      const lastEntry = progressHistory[progressHistory.length - 1];
+      const targetDate = new Date();
+      if (timeRange === '1M') {
+         targetDate.setMonth(targetDate.getMonth() + monthOffset);
+         targetDate.setMonth(targetDate.getMonth() + 1, 0); // End of target month
+      }
+      const cutoffTime = timeRange === '1M' ? targetDate.getTime() : Date.now();
+      
+      let lastEntry = progressHistory.filter(h => new Date(h.date || h.createdAt).getTime() <= cutoffTime).pop();
+      if (!lastEntry) lastEntry = progressHistory[progressHistory.length - 1];
+      
       const d = new Date(lastEntry.date || lastEntry.createdAt);
       dataFiltered = [{
         name: d.toLocaleDateString([], { month: 'short', day: 'numeric' }),
@@ -272,7 +340,7 @@ function ProgressTracker() {
       }];
     }
     return dataFiltered;
-  }, [progressHistory, timeRange, currentWeight]);
+  }, [progressHistory, timeRange, currentWeight, monthOffset]);
 
   const handleWeightSubmit = async () => {
     if (!newWeightInput || isNaN(newWeightInput)) return;
@@ -371,8 +439,21 @@ function ProgressTracker() {
               <button className={`${styles.tabBtn} ${activeTab === 'weight' ? styles.active : ''}`} onClick={() => setActiveTab('weight')}>Weight Trend</button>
               <button className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.active : ''}`} onClick={() => setActiveTab('activity')}>Activity Progress</button>
             </div>
-            <div className={styles.chartFilters}>
-              {['1W', '1M', '1Y'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => setTimeRange(r)}>{r}</button>)}
+            <div className={styles.filterContainer}>
+              {timeRange === '1M' && (
+                <div className={styles.monthPaginator}>
+                  <button onClick={() => setMonthOffset(prev => prev - 1)} className={styles.iconBtn} title="Previous Month">
+                    <ChevronUpIcon />
+                  </button>
+                  <span className={styles.monthLabel}>{selectedMonthLabel}</span>
+                  <button onClick={() => setMonthOffset(prev => Math.min(prev + 1, 0))} className={styles.iconBtn} disabled={monthOffset === 0} title="Next Month">
+                    <ChevronDownIcon />
+                  </button>
+                </div>
+              )}
+              <div className={styles.chartFilters}>
+                {['1W', '1M', '1Y'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => handleTimeRangeChange(r)}>{r}</button>)}
+              </div>
             </div>
           </div>
 

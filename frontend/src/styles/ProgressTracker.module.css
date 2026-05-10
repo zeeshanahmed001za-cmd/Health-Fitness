@@ -295,6 +295,52 @@
   gap: 8px;
 }
 
+.filterContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.monthPaginator {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 8px;
+}
+
+.iconBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.iconBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.monthLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  min-width: 100px;
+  text-align: center;
+}
+
 .filterBtn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--glass-border);
@@ -529,6 +575,11 @@
     flex-direction: column;
     gap: 20px;
     align-items: center;
+  }
+
+  .filterContainer {
+    flex-direction: column;
+    gap: 12px;
   }
 
   .statCard {
