@@ -33,7 +33,7 @@ function ProgressTracker() {
   const [progressHistory, setProgressHistory] = useState([]);
   const [workoutLogs, setWorkoutLogs] = useState([]);
   const [newWeightInput, setNewWeightInput] = useState("");
-  const [timeRange, setTimeRange] = useState("1M");
+  const [timeRange, setTimeRange] = useState("1W");
 
   useEffect(() => {
     fetchProgress();
@@ -141,46 +141,137 @@ function ProgressTracker() {
     }
   }, [goalKey, goalWeight, unit]);
 
-  const weeklyActivityData = useMemo(() => {
+  const baseActivityData = useMemo(() => {
     const days = [];
     const todayObj = new Date();
     todayObj.setHours(23, 59, 59, 999);
-    for (let i = 6; i >= 0; i--) {
+    
+    const numDays = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : 365;
+    const daysToCalc = Math.max(numDays, 7);
+
+    const workoutByDay = {};
+    workoutLogs.forEach(l => {
+      const d = new Date(l.date || l.createdAt).toISOString().split('T')[0];
+      workoutByDay[d] = true;
+    });
+
+    const foodByDay = {};
+    foodLogs.forEach(l => {
+      if (!l.timestamp) return;
+      const d = l.timestamp.split('T')[0];
+      foodByDay[d] = (foodByDay[d] || 0) + (Number(l.calories) || 0);
+    });
+
+    const waterByDay = {};
+    waterLogs.forEach(l => {
+      if (!l.timestamp) return;
+      const d = l.timestamp.split('T')[0];
+      waterByDay[d] = (waterByDay[d] || 0) + 1;
+    });
+
+    for (let i = daysToCalc - 1; i >= 0; i--) {
       const date = new Date(todayObj);
       date.setDate(date.getDate() - i);
       const dayStr = date.toISOString().split('T')[0];
-      const name = date.toLocaleDateString([], { weekday: 'short' });
-      let workoutAdherence = i === 0 ? currentWorkoutProgress : (workoutLogs.some(l => new Date(l.date || l.createdAt).toISOString().split('T')[0] === dayStr) ? 100 : 0);
-      const dayCalories = foodLogs.filter(l => l.timestamp.startsWith(dayStr)).reduce((s, l) => s + (Number(l.calories) || 0), 0);
-      const dayWater = waterLogs.filter(l => l.timestamp.startsWith(dayStr)).length;
+      
+      let name;
+      let groupKey;
+      if (timeRange === '1Y') {
+        name = date.toLocaleDateString([], { month: 'short' });
+        groupKey = date.toLocaleDateString([], { month: 'short', year: 'numeric' });
+      } else if (timeRange === '1M') {
+        name = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        groupKey = dayStr;
+      } else {
+        name = date.toLocaleDateString([], { weekday: 'short' });
+        groupKey = dayStr;
+      }
+
+      let workoutAdherence = 0;
+      if (i === 0) {
+        workoutAdherence = currentWorkoutProgress;
+      } else {
+        workoutAdherence = workoutByDay[dayStr] ? 100 : 0;
+      }
+
+      const dayCalories = foodByDay[dayStr] || 0;
+      const dayWater = waterByDay[dayStr] || 0;
+      
       const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
       const watPct = Math.min((dayWater / 8) * 100, 100);
-      days.push({ name, workout: workoutAdherence, nutrition: Math.round((calPct + watPct) / 2) });
+      
+      days.push({ 
+        name, 
+        groupKey,
+        rawDate: date,
+        workout: workoutAdherence, 
+        nutrition: Math.round((calPct + watPct) / 2) 
+      });
     }
     return days;
-  }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress]);
+  }, [workoutLogs, foodLogs, waterLogs, nutritionGoals, currentWorkoutProgress, timeRange]);
 
   const weeklyAverages = useMemo(() => {
-    const workoutSum = weeklyActivityData.reduce((s, d) => s + (d.workout || 0), 0) / 7;
-    const nutritionSum = weeklyActivityData.reduce((s, d) => s + (d.nutrition || 0), 0) / 7;
+    const last7 = baseActivityData.slice(-7);
+    const workoutSum = last7.reduce((s, d) => s + (d.workout || 0), 0) / 7;
+    const nutritionSum = last7.reduce((s, d) => s + (d.nutrition || 0), 0) / 7;
     return {
       workout: Math.round(workoutSum),
       nutrition: Math.round(nutritionSum)
     };
-  }, [weeklyActivityData]);
+  }, [baseActivityData]);
+
+  const chartActivityData = useMemo(() => {
+    const numDays = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : 365;
+    let data = baseActivityData.slice(-numDays);
+    
+    if (timeRange === '1Y') {
+        const monthly = {};
+        data.forEach(d => {
+            if (!monthly[d.groupKey]) {
+                monthly[d.groupKey] = { name: d.name, workoutSum: 0, nutritionSum: 0, count: 0, timestamp: d.rawDate.getTime() };
+            }
+            monthly[d.groupKey].workoutSum += d.workout;
+            monthly[d.groupKey].nutritionSum += d.nutrition;
+            monthly[d.groupKey].count += 1;
+        });
+        return Object.values(monthly).sort((a,b) => a.timestamp - b.timestamp).map(m => ({
+            name: m.name,
+            workout: Math.round(m.workoutSum / m.count),
+            nutrition: Math.round(m.nutritionSum / m.count)
+        }));
+    }
+    return data;
+  }, [baseActivityData, timeRange]);
 
 
   const weightChartData = useMemo(() => {
     if (progressHistory.length === 0) return [{ name: "Start", weight: Number(currentWeight), timestamp: Date.now() - 86400000 * 7 }];
     const grouped = progressHistory.reduce((acc, log) => {
-      const dayKey = new Date(log.date || log.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' });
-      acc[dayKey] = { name: dayKey, weight: log.weight, timestamp: new Date(log.date || log.createdAt).getTime() };
+      const d = new Date(log.date || log.createdAt);
+      const key = timeRange === '1Y' ? d.toLocaleDateString([], { month: 'short', year: 'numeric' }) : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      const name = timeRange === '1Y' ? d.toLocaleDateString([], { month: 'short' }) : timeRange === '1W' ? d.toLocaleDateString([], { weekday: 'short' }) : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      
+      if (!acc[key] || acc[key].timestamp < d.getTime()) {
+        acc[key] = { name, weight: log.weight, timestamp: d.getTime() };
+      }
       return acc;
     }, {});
-    const dataFiltered = Object.values(grouped).sort((a,b) => a.timestamp - b.timestamp);
+    let dataFiltered = Object.values(grouped).sort((a,b) => a.timestamp - b.timestamp);
     const now = Date.now();
-    const cutoff = timeRange === '1M' ? now - 30*86400000 : timeRange === '3M' ? now - 90*86400000 : 0;
-    return dataFiltered.filter(d => d.timestamp >= cutoff);
+    const cutoff = timeRange === '1W' ? now - 7*86400000 : timeRange === '1M' ? now - 30*86400000 : timeRange === '1Y' ? now - 365*86400000 : 0;
+    dataFiltered = dataFiltered.filter(d => d.timestamp >= cutoff);
+    
+    if (dataFiltered.length === 0 && progressHistory.length > 0) {
+      const lastEntry = progressHistory[progressHistory.length - 1];
+      const d = new Date(lastEntry.date || lastEntry.createdAt);
+      dataFiltered = [{
+        name: d.toLocaleDateString([], { month: 'short', day: 'numeric' }),
+        weight: lastEntry.weight,
+        timestamp: d.getTime()
+      }];
+    }
+    return dataFiltered;
   }, [progressHistory, timeRange, currentWeight]);
 
   const handleWeightSubmit = async () => {
@@ -280,11 +371,9 @@ function ProgressTracker() {
               <button className={`${styles.tabBtn} ${activeTab === 'weight' ? styles.active : ''}`} onClick={() => setActiveTab('weight')}>Weight Trend</button>
               <button className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.active : ''}`} onClick={() => setActiveTab('activity')}>Activity Progress</button>
             </div>
-            {activeTab === 'weight' && (
-              <div className={styles.chartFilters}>
-                {['1M', '3M', '6M'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => setTimeRange(r)}>{r}</button>)}
-              </div>
-            )}
+            <div className={styles.chartFilters}>
+              {['1W', '1M', '1Y'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => setTimeRange(r)}>{r}</button>)}
+            </div>
           </div>
 
           <div className={styles.mainVisualArea}>
@@ -325,7 +414,7 @@ function ProgressTracker() {
                   <Line type="monotone" dataKey="weight" stroke="var(--accent-primary)" strokeWidth={4} dot={{ r: 4, fill: "var(--accent-primary)", strokeWidth: 2, stroke: "#1e293b" }} activeDot={{ r: 8, strokeWidth: 0 }} animationDuration={1000} filter="url(#shadow)" />
                 </ComposedChart>
               ) : (
-                <ComposedChart data={weeklyActivityData} margin={{ top: 10, right: 10, left: 35, bottom: 40 }}>
+                <ComposedChart data={chartActivityData} margin={{ top: 10, right: 10, left: 35, bottom: 40 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                   <XAxis 
                     dataKey="name" 
