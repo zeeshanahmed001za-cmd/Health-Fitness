@@ -50,6 +50,26 @@ function ProgressTracker() {
     return d.toLocaleDateString([], { month: 'short', year: 'numeric' });
   }, [timeRange, monthOffset]);
 
+  const minDate = useMemo(() => {
+    let earliest = Date.now();
+    if (userData?.createdAt) {
+      const userCreated = new Date(userData.createdAt).getTime();
+      if (userCreated < earliest) earliest = userCreated;
+    }
+    if (progressHistory.length > 0) {
+      const firstLog = new Date(progressHistory[0].date || progressHistory[0].createdAt).getTime();
+      if (firstLog && firstLog < earliest) earliest = firstLog;
+    }
+    return earliest;
+  }, [userData, progressHistory]);
+
+  const canGoPrevious = useMemo(() => {
+    const targetDate = new Date();
+    targetDate.setMonth(targetDate.getMonth() + monthOffset);
+    const startOfCurrentView = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1).getTime();
+    return startOfCurrentView > minDate;
+  }, [monthOffset, minDate]);
+
   useEffect(() => {
     fetchProgress();
   }, []);
@@ -442,7 +462,7 @@ function ProgressTracker() {
             <div className={styles.filterContainer}>
               {timeRange === '1M' && (
                 <div className={styles.monthPaginator}>
-                  <button onClick={() => setMonthOffset(prev => prev - 1)} className={styles.iconBtn} title="Previous Month">
+                  <button onClick={() => setMonthOffset(prev => prev - 1)} className={styles.iconBtn} disabled={!canGoPrevious} title="Previous Month">
                     <ChevronUpIcon />
                   </button>
                   <span className={styles.monthLabel}>{selectedMonthLabel}</span>
