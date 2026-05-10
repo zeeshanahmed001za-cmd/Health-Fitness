@@ -490,7 +490,7 @@ function ProgressTracker() {
                 </div>
               )}
               <div className={styles.chartFilters}>
-                {['1W', '1M', '1Y'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => handleTimeRangeChange(r)}>{r}</button>)}
+                {['1W', '1M'].map(r => <button key={r} className={`${styles.filterBtn} ${timeRange === r ? styles.active : ''}`} onClick={() => handleTimeRangeChange(r)}>{r}</button>)}
               </div>
             </div>
           </div>
