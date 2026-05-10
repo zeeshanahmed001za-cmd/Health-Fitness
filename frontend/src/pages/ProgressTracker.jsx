@@ -238,10 +238,12 @@ function ProgressTracker() {
       const targetMonthIndex = targetDate.getMonth();
       const daysInMonth = new Date(targetYear, targetMonthIndex + 1, 0).getDate();
       
+      const weeks = [];
+      let currentWeek = { name: "Week 1", wSum: 0, nSum: 0, count: 0 };
+
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(targetYear, targetMonthIndex, day, 23, 59, 59, 999);
         const dayStr = date.toISOString().split('T')[0];
-        const name = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
         
         let workoutAdherence = 0;
         if (dayStr === todayObj.toISOString().split('T')[0]) {
@@ -256,14 +258,30 @@ function ProgressTracker() {
         const calPct = Math.min((dayCalories / (nutritionGoals.calories || 2100)) * 100, 100);
         const watPct = Math.min((dayWater / 8) * 100, 100);
         
-        days.push({ 
-          name, 
-          rawDate: date,
-          workout: workoutAdherence, 
-          nutrition: date <= todayObj ? Math.round((calPct + watPct) / 2) : 0 
-        });
+        if (date <= todayObj) {
+          currentWeek.wSum += workoutAdherence;
+          currentWeek.nSum += Math.round((calPct + watPct) / 2);
+          currentWeek.count++;
+        }
+
+        if (day % 7 === 0 || day === daysInMonth) {
+          if (currentWeek.count > 0) {
+            weeks.push({
+              name: currentWeek.name,
+              workout: Math.round(currentWeek.wSum / currentWeek.count),
+              nutrition: Math.round(currentWeek.nSum / currentWeek.count),
+            });
+          } else {
+            weeks.push({
+              name: currentWeek.name,
+              workout: 0,
+              nutrition: 0,
+            });
+          }
+          currentWeek = { name: `Week ${Math.ceil((day + 1) / 7)}`, wSum: 0, nSum: 0, count: 0 };
+        }
       }
-      return days;
+      return weeks;
     } else {
       const numDays = timeRange === '1W' ? 7 : 365;
       for (let i = numDays - 1; i >= 0; i--) {
