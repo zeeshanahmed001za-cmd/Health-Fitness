@@ -18,12 +18,6 @@ function LoginPage() {
   const navigate = useNavigate();
   const { updateUserData, logout } = useUser();
 
-  useEffect(() => {
-    if (localStorage.getItem("userToken")) {
-      navigate("/dashboard");
-    }
-  }, [navigate]); // Run only once on mount or if navigate changes
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [termsChecked, setTermsChecked] = useState(false);

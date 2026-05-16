@@ -236,12 +236,6 @@ function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem("userToken")) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
-
   // Navbar scroll effect
   useEffect(() => {
     const handleScroll = () => {
