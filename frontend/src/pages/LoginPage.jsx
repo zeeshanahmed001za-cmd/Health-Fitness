@@ -6,7 +6,7 @@ import { useUser } from "../context/UserContext";
 import { loginUserAPI, forgotPasswordAPI } from "../api";
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
-import { EyeOpen, EyeClose } from "../components/Icons";
+import { EyeOpen, EyeClose, SpinnerIcon } from "../components/Icons";
 
 const emailPolicy = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 const passwordPolicy = (password) => password.length > 0;
@@ -260,7 +260,13 @@ function LoginPage() {
 
               {/* Submit Button */}
               <button type="submit" className={styles.primaryBtn} disabled={isSubmitting}>
-                {isSubmitting ? "Logging in..." : "Log in"}
+                {isSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <SpinnerIcon size={18} /> Logging in...
+                  </span>
+                ) : (
+                  "Log in"
+                )}
               </button>
 
               {/* Divider */}

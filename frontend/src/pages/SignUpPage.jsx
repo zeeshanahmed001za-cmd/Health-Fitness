@@ -7,7 +7,7 @@ import { registerUserAPI, updateUserProfileAPI } from "../api";
 
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
-import { EyeOpen, EyeClose } from "../components/Icons";
+import { EyeOpen, EyeClose, SpinnerIcon } from "../components/Icons";
 
 const emailPolicy = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 const passwordPolicy = (password) =>
@@ -234,7 +234,13 @@ function SignUpPage() {
 
             {/* Submit — FIX 2: handle isSubmitting properly */}
             <button type="submit" className={styles.primaryBtn} disabled={isSubmitting}>
-              {isSubmitting ? "Signing Up..." : "Sign Up"}
+              {isSubmitting ? (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <SpinnerIcon size={18} /> Signing Up...
+                </span>
+              ) : (
+                "Sign Up"
+              )}
             </button>
 
             <div className={styles.divider}>
