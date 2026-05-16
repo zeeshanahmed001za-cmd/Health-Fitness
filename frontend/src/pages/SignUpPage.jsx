@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/SignUpPage.module.css";
 import { useUser } from "../context/UserContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import { registerUserAPI, updateUserProfileAPI } from "../api";
+import { registerUserAPI, updateUserProfileAPI, googleLoginAPI } from "../api";
+import { useGoogleLogin } from '@react-oauth/google';
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
 import { EyeOpen, EyeClose, SpinnerIcon } from "../components/Icons";
@@ -32,6 +33,37 @@ function SignUpPage() {
   const [termsError, setTermsError] = useState(false);
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsGoogleSubmitting(true);
+      try {
+        const data = await googleLoginAPI(tokenResponse.access_token);
+        localStorage.setItem("userToken", data.token);
+        localStorage.setItem("userSession", JSON.stringify(data));
+        
+        try {
+           const fullData = { ...userData, ...data };
+           await updateUserProfileAPI(fullData);
+           updateUserData(fullData);
+        } catch(updateErr) {
+           console.error("Failed to sync onboarding data", updateErr);
+           updateUserData(data);
+        }
+
+        navigate("/dashboard");
+      } catch (error) {
+        setApiError(error.message || "Failed to log in with Google.");
+      } finally {
+        setIsGoogleSubmitting(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Google Login Failed', error);
+      setApiError("Google Login Failed. Please try again.");
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -176,8 +208,14 @@ function SignUpPage() {
             <div className={styles.divider}><span>or</span></div>
 
             <div className={styles.socialLogin}>
-              <button type="button" className={styles.socialBtn} disabled title="Coming soon">
-                <img src={googleIcon} alt="Google" /> Continue with Google
+              <button 
+                type="button" 
+                className={styles.socialBtn}
+                onClick={() => handleGoogleLogin()}
+                disabled={isGoogleSubmitting}
+              >
+                {isGoogleSubmitting ? <SpinnerIcon size={18} /> : <img src={googleIcon} alt="Google" />}
+                {isGoogleSubmitting ? "Wait..." : "Continue with Google"}
               </button>
               <button type="button" className={styles.socialBtn} disabled title="Coming soon">
                 <img src={facebookIcon} alt="Facebook" /> Continue with Facebook
