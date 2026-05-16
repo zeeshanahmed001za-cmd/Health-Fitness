@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/LoginPage.module.css";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { useUser } from "../context/UserContext";
-import { loginUserAPI, forgotPasswordAPI } from "../api";
+import { useGoogleLogin } from '@react-oauth/google';
+import { loginUserAPI, forgotPasswordAPI, googleLoginAPI } from "../api";
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
 import { EyeOpen, EyeClose, SpinnerIcon } from "../components/Icons";
@@ -33,6 +34,29 @@ function LoginPage() {
   const [forgotMessage, setForgotMessage] = useState("");
   const [forgotError, setForgotError] = useState("");
   const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsGoogleSubmitting(true);
+      try {
+        const data = await googleLoginAPI(tokenResponse.access_token);
+        localStorage.setItem("userToken", data.token);
+        localStorage.setItem("userSession", JSON.stringify(data));
+        updateUserData(data);
+        console.log("Google login successful. Redirecting to dashboard...");
+        navigate("/dashboard");
+      } catch (error) {
+        setApiError(error.message || "Failed to log in with Google.");
+      } finally {
+        setIsGoogleSubmitting(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Google Login Failed', error);
+      setApiError("Google Login Failed. Please try again.");
+    }
+  });
 
   const getGroupClass = (status) => {
     if (status === true) return `${styles.inputGroup} ${styles.success}`;
@@ -279,9 +303,11 @@ function LoginPage() {
                 <button
                   type="button"
                   className={`${styles.socialBtn} ${styles.googleBtn}`}
+                  onClick={() => handleGoogleLogin()}
+                  disabled={isGoogleSubmitting}
                 >
-                  <img src={googleIcon} alt="Google" />
-                  Google
+                  {isGoogleSubmitting ? <SpinnerIcon size={18} /> : <img src={googleIcon} alt="Google" />}
+                  {isGoogleSubmitting ? "Wait..." : "Google"}
                 </button>
                 <button
                   type="button"

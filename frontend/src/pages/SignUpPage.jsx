@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/SignUpPage.module.css";
 import { useUser } from "../context/UserContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
-import { registerUserAPI, updateUserProfileAPI } from "../api";
+import { registerUserAPI, updateUserProfileAPI, googleLoginAPI } from "../api";
+import { useGoogleLogin } from '@react-oauth/google';
 
 import googleIcon from "../assets/images/google.svg";
 import facebookIcon from "../assets/images/facebook.svg";
@@ -40,6 +41,39 @@ function SignUpPage() {
   const [termsError, setTermsError] = useState(false);
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsGoogleSubmitting(true);
+      try {
+        const data = await googleLoginAPI(tokenResponse.access_token);
+        localStorage.setItem("userToken", data.token);
+        localStorage.setItem("userSession", JSON.stringify(data));
+        
+        // Sync any onboarding data immediately using the new token
+        try {
+           const fullData = { ...userData, ...data };
+           await updateUserProfileAPI(fullData);
+           updateUserData(fullData);
+        } catch(updateErr) {
+           console.error("Failed to sync onboarding data", updateErr);
+           updateUserData(data);
+        }
+
+        console.log("Google login successful. Redirecting to dashboard...");
+        navigate("/dashboard");
+      } catch (error) {
+        setApiError(error.message || "Failed to log in with Google.");
+      } finally {
+        setIsGoogleSubmitting(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Google Login Failed', error);
+      setApiError("Google Login Failed. Please try again.");
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -253,11 +287,11 @@ function SignUpPage() {
               <button
                 type="button"
                 className={styles.socialBtn}
-                disabled
-                title="Coming soon"
+                onClick={() => handleGoogleLogin()}
+                disabled={isGoogleSubmitting}
               >
-                <img src={googleIcon} alt="Google" />
-                Continue with Google
+                {isGoogleSubmitting ? <SpinnerIcon size={18} /> : <img src={googleIcon} alt="Google" />}
+                {isGoogleSubmitting ? "Wait..." : "Continue with Google"}
               </button>
               <button
                 type="button"

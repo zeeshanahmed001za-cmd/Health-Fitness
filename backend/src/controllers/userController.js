@@ -127,4 +127,50 @@ const forgotPassword = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Password reset link sent to your email' });
 });
 
-export { registerUser, loginUser, getUserProfile, updateUserProfile, forgotPassword };
+// @desc    Google login
+// @route   POST /api/users/google-login
+// @access  Public
+const googleLogin = asyncHandler(async (req, res) => {
+    const { accessToken } = req.body;
+    
+    if (!accessToken) {
+        res.status(400);
+        throw new Error('Google access token is required');
+    }
+
+    try {
+        const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user info from Google');
+        }
+
+        const payload = await response.json();
+        const { email, name, given_name, family_name } = payload;
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            
+            user = await User.create({
+                name,
+                firstName: given_name,
+                lastName: family_name,
+                email,
+                password: randomPassword,
+            });
+        }
+
+        const updatedUser = await updateStreak(user);
+        res.json(mapUserToJSON(updatedUser, true));
+    } catch (error) {
+        console.error('Error verifying Google token', error);
+        res.status(401);
+        throw new Error('Invalid Google credential');
+    }
+});
+
+export { registerUser, loginUser, getUserProfile, updateUserProfile, forgotPassword, googleLogin };

@@ -45,6 +45,15 @@ export const loginUserAPI = async (email, password) => {
     return handleResponse(res);
 };
 
+export const googleLoginAPI = async (accessToken) => {
+    const res = await fetch(`${API_BASE_URL}/users/google-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken })
+    });
+    return handleResponse(res);
+};
+
 export const forgotPasswordAPI = async (email) => {
     const res = await fetch(`${API_BASE_URL}/users/forgot-password`, {
         method: 'POST',
