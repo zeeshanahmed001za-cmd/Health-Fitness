@@ -227,17 +227,65 @@
 }
 
 .logoutBtn {
+  width: 100%;
+  background-color: rgba(239, 68, 68, 0.08); /* Soft semi-transparent red */
+  border: 1px solid rgba(239, 68, 68, 0.15); /* Subtle red border */
+  border-radius: 12px;
+  color: #f87171; /* Lighter red for excellent visibility and premium look */
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  transition: all var(--transition-smooth);
+  margin-top: 8px;
+  justify-content: flex-start;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logoutBtn svg {
+  flex-shrink: 0;
   color: #ef4444;
-  padding: 12px 0;
+  transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
 .logoutBtn:hover {
-  color: #f87171;
-  background: none;
+  background-color: #ef4444; /* Vibrant active red on hover */
+  color: #ffffff; /* Contrast white text */
+  border-color: #ef4444;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); /* Glowing hover shadow matching active themes */
+  transform: translateY(-2px); /* Slight shift up */
 }
 
+.logoutBtn:hover svg {
+  color: #ffffff;
+  transform: translateX(-3px); /* Subtle nudge to the left, indicating exit/logout direction */
+}
+
+.logoutBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+/* Adjustments for the collapsed sidebar */
 .sidebar.collapsed .logoutBtn {
-  padding: 12px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  justify-content: center;
+  margin: 0 auto;
+  border-radius: 12px;
+}
+
+.sidebar.collapsed .logoutBtn svg {
+  margin: 0;
+}
+
+.sidebar.collapsed .logoutBtn:hover svg {
+  transform: scale(1.1); /* Slightly scale the icon instead of shifting since text is hidden */
 }
 
 /* Mobile */
