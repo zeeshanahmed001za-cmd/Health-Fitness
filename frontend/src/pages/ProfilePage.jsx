@@ -6,7 +6,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 import dashStyles from "../styles/Dashboard.module.css";
 import styles from "../styles/Profilepage.module.css";
 import { useUser } from "../context/UserContext";
-import { updateUserProfileAPI } from "../api";
+import { updateUserProfileAPI, deleteUserProfileAPI } from "../api";
 
 
 
@@ -45,11 +45,8 @@ const EditIcon = () => (
 
 function ProfilePage() {
   useDocumentTitle("Profile");
-  const { userData, updateUserData, sidebarCollapsed, toggleSidebar } = useUser();
-
-
-
-
+  const { userData, updateUserData, sidebarCollapsed, toggleSidebar, logout } = useUser();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
@@ -59,7 +56,6 @@ function ProfilePage() {
     firstName: userData.firstName || "",
     lastName: userData.lastName || "",
     email: userData.email || "",
-    phone: userData.phone || "",
     dob: userData.dob || "",
     gender: userData.gender || "male",
   });
@@ -86,6 +82,8 @@ function ProfilePage() {
     emailNotifications: userData?.emailNotifications ?? true,
     dynamicCalorieSync: userData?.dynamicCalorieSync ?? true,
     waterReminders: userData?.waterReminders ?? true,
+    language: userData?.language ?? "english",
+    darkMode: userData?.darkMode ?? true,
   });
   const [settingsSnapshot, setSettingsSnapshot] = useState(null);
 
@@ -96,7 +94,6 @@ function ProfilePage() {
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
         email: userData.email || "",
-        phone: userData.phone || "",
         dob: userData.dob || "",
         gender: userData.gender || "male",
       });
@@ -116,6 +113,8 @@ function ProfilePage() {
         emailNotifications: userData?.emailNotifications ?? true,
         dynamicCalorieSync: userData?.dynamicCalorieSync ?? true,
         waterReminders: userData?.waterReminders ?? true,
+        language: userData?.language ?? "english",
+        darkMode: userData?.darkMode ?? true,
       });
     }
   }, [userData, isEditing]);
@@ -135,6 +134,17 @@ function ProfilePage() {
     setPhysicalInfo(physicalSnapshot);
     setSettings(settingsSnapshot);
     setIsEditing(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteUserProfileAPI();
+      logout();
+      alert("Your account and all associated data have been permanently deleted.");
+    } catch (error) {
+      console.error("Failed to delete account:", error);
+      alert("Failed to delete account. Please try again later.");
+    }
   };
 
   const handleSave = async () => {
@@ -348,7 +358,7 @@ function ProfilePage() {
                 </div>
               </div>
               <div className={styles.formRow}>
-                <div className={styles.formGroup}>
+                <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                   <label>Email Address</label>
                   <input
                     type="email"
@@ -356,17 +366,6 @@ function ProfilePage() {
                     disabled={!isEditing}
                     onChange={(e) =>
                       handlePersonalChange("email", e.target.value)
-                    }
-                  />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>Phone Number</label>
-                  <input
-                    type="tel"
-                    value={personalInfo.phone}
-                    disabled={!isEditing}
-                    onChange={(e) =>
-                      handlePersonalChange("phone", e.target.value)
                     }
                   />
                 </div>
@@ -588,6 +587,66 @@ function ProfilePage() {
                   <span className={`${styles.slider} ${styles.round}`}></span>
                 </label>
               </div>
+
+              {/* Language Selection */}
+              <div className={styles.preferenceItem}>
+                <div className={styles.prefInfo}>
+                  <h4>Preferred Language</h4>
+                  <p>Choose your preferred language for the dashboard, logs, and workout plans.</p>
+                </div>
+                <div style={{ minWidth: "150px" }}>
+                  <select
+                    value={settings.language || "english"}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        language: e.target.value,
+                      }))
+                    }
+                    style={{
+                      background: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      color: "#ffffff",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "8px",
+                      outline: "none",
+                      width: "100%",
+                      cursor: "pointer",
+                      height: "40px",
+                      fontFamily: "inherit",
+                      fontSize: "0.9rem"
+                    }}
+                  >
+                    <option value="english">English</option>
+                    <option value="spanish">Español</option>
+                    <option value="french">Français</option>
+                    <option value="german">Deutsch</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Dark Mode Theme */}
+              <div className={styles.preferenceItem}>
+                <div className={styles.prefInfo}>
+                  <h4>Dark Mode Theme</h4>
+                  <p>Toggle between elegant dark themed aesthetics and classic light theme configurations.</p>
+                </div>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    checked={settings.darkMode}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        darkMode: e.target.checked,
+                      }))
+                    }
+                  />
+                  <span className={`${styles.slider} ${styles.round}`}></span>
+                </label>
+              </div>
             </div>
 
             {/* Danger Zone */}
@@ -601,7 +660,7 @@ function ProfilePage() {
                 disabled={!isEditing}
                 onClick={(e) => {
                   e.preventDefault();
-                  alert("To delete your account, please contact system support.");
+                  setShowDeleteConfirm(true);
                 }}
               >
                 Delete Account
@@ -611,6 +670,119 @@ function ProfilePage() {
 
         </div>
       </div>
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.8)",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            padding: "1.5rem"
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(18, 18, 22, 0.98)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: "16px",
+              padding: "2.5rem 2rem",
+              maxWidth: "480px",
+              width: "100%",
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(239, 68, 68, 0.15)",
+              textAlign: "center"
+            }}
+          >
+            <div
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "50%",
+                background: "rgba(239, 68, 68, 0.1)",
+                color: "rgb(239, 68, 68)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1.5rem",
+                fontSize: "1.8rem"
+              }}
+            >
+              ⚠️
+            </div>
+            <h3
+              style={{
+                color: "#ffffff",
+                fontSize: "1.4rem",
+                fontWeight: "700",
+                marginBottom: "1rem",
+                fontFamily: "inherit"
+              }}
+            >
+              Are you absolutely sure?
+            </h3>
+            <p
+              style={{
+                color: "rgba(255, 255, 255, 0.6)",
+                fontSize: "0.95rem",
+                lineHeight: "1.6",
+                marginBottom: "2.2rem",
+                fontFamily: "inherit"
+              }}
+            >
+              This action is permanent and cannot be undone. All your workout records, logs, meal diaries, weight goals, and account info will be <strong>permanently deleted</strong>.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center"
+              }}
+            >
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#ffffff",
+                  padding: "0.75rem 1.5rem",
+                  borderRadius: "8px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  transition: "all 0.2s"
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                style={{
+                  background: "rgb(239, 68, 68)",
+                  border: "none",
+                  color: "#ffffff",
+                  padding: "0.75rem 1.5rem",
+                  borderRadius: "8px",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  boxShadow: "0 4px 12px rgba(239, 68, 68, 0.3)",
+                  transition: "all 0.2s"
+                }}
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

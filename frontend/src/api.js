@@ -83,6 +83,12 @@ export const updateUserProfileAPI = async (profileData) => {
     });
 };
 
+export const deleteUserProfileAPI = async () => {
+    return fetchWithAuth('/users/profile', {
+        method: 'DELETE'
+    });
+};
+
 export const logWorkoutAPI = async (workoutData) => {
     return fetchWithAuth('/workouts', {
         method: 'POST',

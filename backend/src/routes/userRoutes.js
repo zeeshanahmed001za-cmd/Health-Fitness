@@ -5,7 +5,8 @@ import {
     getUserProfile,
     updateUserProfile,
     forgotPassword,
-    googleLogin
+    googleLogin,
+    deleteUserProfile
 } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -17,6 +18,7 @@ router.post('/google-login', googleLogin);
 router.post('/forgot-password', forgotPassword);
 router.route('/profile')
     .get(protect, getUserProfile)
-    .put(protect, updateUserProfile);
+    .put(protect, updateUserProfile)
+    .delete(protect, deleteUserProfile);
 
 export default router;

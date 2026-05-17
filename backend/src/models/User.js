@@ -25,6 +25,8 @@ const userSchema = mongoose.Schema({
     emailNotifications: { type: Boolean, default: true },
     dynamicCalorieSync: { type: Boolean, default: true },
     waterReminders: { type: Boolean, default: true },
+    language: { type: String, default: 'english' },
+    darkMode: { type: Boolean, default: true },
     role: { type: String, default: 'user' },
     lastLoginDate: { type: String }, // YYYY-MM-DD format
     loginStreak: { type: Number, default: 1 }

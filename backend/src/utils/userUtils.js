@@ -35,6 +35,8 @@ export const mapUserToJSON = (user, includeToken = false) => {
         emailNotifications: user.emailNotifications,
         dynamicCalorieSync: user.dynamicCalorieSync,
         waterReminders: user.waterReminders,
+        language: user.language,
+        darkMode: user.darkMode,
         loginStreak: user.loginStreak || 0,
         lastLoginDate: user.lastLoginDate
     };

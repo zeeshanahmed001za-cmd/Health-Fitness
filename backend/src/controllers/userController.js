@@ -1,5 +1,8 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
+import Nutrition from '../models/Nutrition.js';
+import Progress from '../models/Progress.js';
+import Workout from '../models/Workout.js';
 import generateToken from '../utils/generateToken.js';
 import { mapUserToJSON, updateStreak } from '../utils/userUtils.js';
 
@@ -95,6 +98,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         user.emailNotifications = req.body.emailNotifications !== undefined ? req.body.emailNotifications : user.emailNotifications;
         user.dynamicCalorieSync = req.body.dynamicCalorieSync !== undefined ? req.body.dynamicCalorieSync : user.dynamicCalorieSync;
         user.waterReminders = req.body.waterReminders !== undefined ? req.body.waterReminders : user.waterReminders;
+        user.language = req.body.language !== undefined ? req.body.language : user.language;
+        user.darkMode = req.body.darkMode !== undefined ? req.body.darkMode : user.darkMode;
 
         if (req.body.password) {
             user.password = req.body.password;
@@ -180,4 +185,26 @@ const googleLogin = asyncHandler(async (req, res) => {
     res.json(mapUserToJSON(updatedUser, true));
 });
 
-export { registerUser, loginUser, getUserProfile, updateUserProfile, forgotPassword, googleLogin };
+// @desc    Delete user profile
+// @route   DELETE /api/users/profile
+// @access  Private
+const deleteUserProfile = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
+    // Delete associated data
+    await Nutrition.deleteMany({ user: userId });
+    await Progress.deleteMany({ user: userId });
+    await Workout.deleteMany({ user: userId });
+
+    // Delete user
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (deletedUser) {
+        res.json({ message: 'User and all associated data permanently deleted' });
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
+});
+
+export { registerUser, loginUser, getUserProfile, updateUserProfile, forgotPassword, googleLogin, deleteUserProfile };
