@@ -48,6 +48,16 @@ export const UserProvider = ({ children }) => {
     }
   }, [userData]);
 
+  // Sync visual app theme with user preferences
+  useEffect(() => {
+    const isDarkMode = userData?.darkMode !== false; // default to true
+    if (isDarkMode) {
+      document.body.classList.remove("light-theme");
+    } else {
+      document.body.classList.add("light-theme");
+    }
+  }, [userData?.darkMode]);
+
   const updateUserData = useCallback((data) => {
     setUserData((prev) => {
       // Check if there's an actual change to avoid redundant renders

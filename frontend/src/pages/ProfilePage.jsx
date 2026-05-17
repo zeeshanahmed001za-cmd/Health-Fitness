@@ -43,13 +43,118 @@ const EditIcon = () => (
   </svg>
 );
 
+const TRANSLATIONS = {
+  english: {
+    title: "Profile",
+    personalInfo: "Personal Information",
+    firstName: "First Name",
+    lastName: "Last Name",
+    email: "Email Address",
+    dob: "Date of Birth",
+    gender: "Gender",
+    physicalDetails: "Physical Details",
+    currentWeight: "Current Weight",
+    targetWeight: "Target Weight",
+    height: "Height",
+    activityLevel: "Activity Level",
+    primaryGoal: "Primary Goal",
+    preferences: "Account Settings & Preferences",
+    emailNotifications: "Email Notifications",
+    calorieSync: "Calorie & Macro Dynamic Sync",
+    waterReminders: "Water Intake Reminders",
+    language: "Preferred Language",
+    appTheme: "App Theme",
+    deleteAccount: "Delete Account",
+    editProfile: "Edit Profile",
+    saveChanges: "Save Changes",
+    cancel: "Cancel"
+  },
+  spanish: {
+    title: "Perfil",
+    personalInfo: "Información Personal",
+    firstName: "Nombre",
+    lastName: "Apellido",
+    email: "Correo Electrónico",
+    dob: "Fecha de Nacimiento",
+    gender: "Género",
+    physicalDetails: "Detalles Físicos",
+    currentWeight: "Peso Actual",
+    targetWeight: "Peso Objetivo",
+    height: "Altura",
+    activityLevel: "Nivel de Actividad",
+    primaryGoal: "Objetivo Principal",
+    preferences: "Configuración y Preferencias",
+    emailNotifications: "Notificaciones por Correo",
+    calorieSync: "Sincronización Dinámica de Calorías",
+    waterReminders: "Recordatorios de Agua",
+    language: "Idioma Preferido",
+    appTheme: "Tema de la Aplicación",
+    deleteAccount: "Eliminar Cuenta",
+    editProfile: "Editar Perfil",
+    saveChanges: "Guardar Cambios",
+    cancel: "Cancelar"
+  },
+  french: {
+    title: "Profil",
+    personalInfo: "Informations Personnelles",
+    firstName: "Prénom",
+    lastName: "Nom de Famille",
+    email: "Adresse E-mail",
+    dob: "Date de Naissance",
+    gender: "Genre",
+    physicalDetails: "Détails Physiques",
+    currentWeight: "Poids Actuel",
+    targetWeight: "Poids Cible",
+    height: "Taille",
+    activityLevel: "Niveau d'Activité",
+    primaryGoal: "Objectif Principal",
+    preferences: "Paramètres et Préférences",
+    emailNotifications: "Notifications par E-mail",
+    calorieSync: "Ajustement Dynamique des Calories",
+    waterReminders: "Rappels d'Hydratation",
+    language: "Langue Préférée",
+    appTheme: "Thème de l'App",
+    deleteAccount: "Supprimer le Compte",
+    editProfile: "Modifier le Profil",
+    saveChanges: "Enregistrer",
+    cancel: "Annuler"
+  },
+  german: {
+    title: "Profil",
+    personalInfo: "Persönliche Daten",
+    firstName: "Vorname",
+    lastName: "Nachname",
+    email: "E-Mail-Adresse",
+    dob: "Geburtsdatum",
+    gender: "Geschlecht",
+    physicalDetails: "Körperliche Details",
+    currentWeight: "Aktuelles Gewicht",
+    targetWeight: "Zielgewicht",
+    height: "Größe",
+    activityLevel: "Aktivitätslevel",
+    primaryGoal: "Hauptziel",
+    preferences: "Einstellungen & Präferenzen",
+    emailNotifications: "E-Mail-Benachrichtigungen",
+    calorieSync: "Dynamische Kaloriensynchronisierung",
+    waterReminders: "Wasser-Erinnerungen",
+    language: "Bevorzugte Sprache",
+    appTheme: "App-Design",
+    deleteAccount: "Konto Löschen",
+    editProfile: "Profil Bearbeiten",
+    saveChanges: "Änderungen Speichern",
+    cancel: "Abbrechen"
+  }
+};
+
 function ProfilePage() {
   useDocumentTitle("Profile");
   const { userData, updateUserData, sidebarCollapsed, toggleSidebar, logout } = useUser();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showThemeModal, setShowThemeModal] = useState(false);
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
+  const t = TRANSLATIONS[settings.language || "english"] || TRANSLATIONS.english;
 
   // Form data state - initialized from context
   const [personalInfo, setPersonalInfo] = useState({
@@ -133,6 +238,15 @@ function ProfilePage() {
     setPersonalInfo(personalSnapshot);
     setPhysicalInfo(physicalSnapshot);
     setSettings(settingsSnapshot);
+    
+    // Revert visual preview theme to original snapshot state
+    const wasDark = settingsSnapshot?.darkMode !== false;
+    if (wasDark) {
+      document.body.classList.remove("light-theme");
+    } else {
+      document.body.classList.add("light-theme");
+    }
+    
     setIsEditing(false);
   };
 
@@ -309,16 +423,16 @@ function ProfilePage() {
           <div className={styles.headerActions}>
             {!isEditing && (
               <button className={styles.primaryBtn} onClick={handleEdit}>
-                Edit Profile
+                {t.editProfile}
               </button>
             )}
             {isEditing && (
               <>
                 <button className={styles.primaryBtn} onClick={handleSave}>
-                  Save Changes
+                  {t.saveChanges}
                 </button>
                 <button className={styles.btnCancel} onClick={handleCancel}>
-                  Cancel
+                  {t.cancel}
                 </button>
               </>
             )}
@@ -330,12 +444,12 @@ function ProfilePage() {
           {/* Personal Information */}
           <div className={`${styles.card} ${styles.formCard}`}>
             <div className={styles.sectionHeader}>
-              <h3>Personal Information</h3>
+              <h3>{t.personalInfo}</h3>
             </div>
             <div className={styles.profileForm}>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>First Name</label>
+                  <label>{t.firstName}</label>
                   <input
                     type="text"
                     value={personalInfo.firstName}
@@ -346,7 +460,7 @@ function ProfilePage() {
                   />
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Last Name</label>
+                  <label>{t.lastName}</label>
                   <input
                     type="text"
                     value={personalInfo.lastName}
@@ -359,7 +473,7 @@ function ProfilePage() {
               </div>
               <div className={styles.formRow}>
                 <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                  <label>Email Address</label>
+                  <label>{t.email}</label>
                   <input
                     type="email"
                     value={personalInfo.email}
@@ -372,7 +486,7 @@ function ProfilePage() {
               </div>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Date of Birth</label>
+                  <label>{t.dob}</label>
                   <input
                     type="date"
                     value={personalInfo.dob}
@@ -383,7 +497,7 @@ function ProfilePage() {
                   />
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Gender</label>
+                  <label>{t.gender}</label>
                   <select
                     value={personalInfo.gender}
                     disabled={!isEditing}
@@ -406,13 +520,13 @@ function ProfilePage() {
           {/* Physical Details & Goals */}
           <div className={`${styles.card} ${styles.formCard}`}>
             <div className={styles.sectionHeader}>
-              <h3>Physical Details & Goals</h3>
+              <h3>{t.physicalDetails}</h3>
             </div>
             <div className={styles.profileForm}>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>
-                    Current Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})
+                    {t.currentWeight} ({userData.weightUnit === "imperial" ? "lbs" : "kg"})
                     {isEditing && (
                       <button onClick={toggleWeightUnit} className={styles.inlineToggleBtn}>
                         Switch to {userData.weightUnit === "imperial" ? "kg" : "lbs"}
@@ -436,7 +550,7 @@ function ProfilePage() {
                   )}
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Target Weight ({userData.weightUnit === "imperial" ? "lbs" : "kg"})</label>
+                  <label>{t.targetWeight} ({userData.weightUnit === "imperial" ? "lbs" : "kg"})</label>
                   <input
                     type="number"
                     value={physicalInfo.targetWeight}
@@ -450,7 +564,7 @@ function ProfilePage() {
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>
-                    Height ({userData.heightUnit === "imperial" ? "ft'in\"" : "cm"})
+                    {t.height} ({userData.heightUnit === "imperial" ? "ft'in\"" : "cm"})
                     {isEditing && (
                       <button onClick={toggleHeightUnit} className={styles.inlineToggleBtn}>
                         Switch to {userData.heightUnit === "imperial" ? "cm" : "ft'in\""}
@@ -483,7 +597,7 @@ function ProfilePage() {
                   )}
                 </div>
                 <div className={styles.formGroup}>
-                  <label>Activity Level</label>
+                  <label>{t.activityLevel}</label>
                   <select
                     value={physicalInfo.activityLevel}
                     disabled={!isEditing}
@@ -501,7 +615,7 @@ function ProfilePage() {
               </div>
               <div className={styles.formRow}>
                 <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                  <label>Primary Goal</label>
+                  <label>{t.primaryGoal}</label>
                   <select
                     value={physicalInfo.primaryGoal}
                     disabled={!isEditing}
@@ -522,12 +636,12 @@ function ProfilePage() {
           {/* Settings & Preferences Card (Full width / spans 2 columns) */}
           <div className={`${styles.card} ${styles.preferencesCard}`}>
             <div className={styles.sectionHeader}>
-              <h3>Account Settings & Preferences</h3>
+              <h3>{t.preferences}</h3>
             </div>
             <div className={styles.preferenceList}>
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>Email Notifications</h4>
+                  <h4>{t.emailNotifications}</h4>
                   <p>Receive weekly digest, customized progress reports, and activity insights via email.</p>
                 </div>
                 <label className={styles.switch}>
@@ -548,7 +662,7 @@ function ProfilePage() {
 
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>Calorie & Macro Dynamic Sync</h4>
+                  <h4>{t.calorieSync}</h4>
                   <p>Automatically adjust daily calorie and macronutrient targets based on your weight logs.</p>
                 </div>
                 <label className={styles.switch}>
@@ -569,7 +683,7 @@ function ProfilePage() {
 
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>Water Intake Reminders</h4>
+                  <h4>{t.waterReminders}</h4>
                   <p>Receive friendly in-app alerts and notifications to meet your daily hydration target.</p>
                 </div>
                 <label className={styles.switch}>
@@ -591,7 +705,7 @@ function ProfilePage() {
               {/* Language Selection */}
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>Preferred Language</h4>
+                  <h4>{t.language}</h4>
                   <p>Choose your preferred language for the dashboard, logs, and workout plans.</p>
                 </div>
                 <div style={{ minWidth: "150px" }}>
@@ -626,33 +740,48 @@ function ProfilePage() {
                 </div>
               </div>
 
-              {/* Dark Mode Theme */}
+              {/* App Theme Selection */}
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>Dark Mode Theme</h4>
-                  <p>Toggle between elegant dark themed aesthetics and classic light theme configurations.</p>
+                  <h4>{t.appTheme}</h4>
+                  <p>Choose between staying on the elegant dark themed dashboard or switching to the classic light theme layout.</p>
                 </div>
-                <label className={styles.switch}>
-                  <input
-                    type="checkbox"
-                    checked={settings.darkMode}
-                    disabled={!isEditing}
-                    onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        darkMode: e.target.checked,
-                      }))
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isEditing) {
+                      setShowThemeModal(true);
+                    } else {
+                      alert("Please click 'Edit Profile' at the top of the page first to modify preferences.");
                     }
-                  />
-                  <span className={`${styles.slider} ${styles.round}`}></span>
-                </label>
+                  }}
+                  style={{
+                    background: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    color: "#ffffff",
+                    padding: "0.5rem 1.5rem",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "0.85rem",
+                    transition: "all 0.2s",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"}
+                  onMouseOut={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"}
+                >
+                  <span>{settings.darkMode ? "Dark (Default)" : "Light"}</span>
+                  <span style={{ fontSize: "0.8rem" }}>▼</span>
+                </button>
               </div>
             </div>
 
             {/* Danger Zone */}
             <div className={styles.dangerZone}>
               <div className={styles.prefInfo}>
-                <h4>Delete Account</h4>
+                <h4>{t.deleteAccount}</h4>
                 <p>Permanently delete all your workout journals, meal history, and profile data. This cannot be undone.</p>
               </div>
               <button
@@ -780,6 +909,136 @@ function ProfilePage() {
                 Confirm Delete
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* App Theme Selection Modal */}
+      {showThemeModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.8)",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            padding: "1.5rem"
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(18, 18, 22, 0.98)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "16px",
+              padding: "2rem",
+              maxWidth: "420px",
+              width: "100%",
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.6)",
+              textAlign: "center"
+            }}
+          >
+            <h3
+              style={{
+                color: "#ffffff",
+                fontSize: "1.3rem",
+                fontWeight: "700",
+                marginBottom: "1.5rem",
+                fontFamily: "inherit"
+              }}
+            >
+              Select App Theme
+            </h3>
+            
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                marginBottom: "2rem"
+              }}
+            >
+              {/* Option 1: Dark Mode */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSettings(prev => ({ ...prev, darkMode: true }));
+                  // Preview immediately!
+                  document.body.classList.remove("light-theme");
+                  setShowThemeModal(false);
+                }}
+                style={{
+                  background: settings.darkMode ? "rgba(16, 185, 129, 0.15)" : "rgba(255, 255, 255, 0.02)",
+                  border: settings.darkMode ? "1px solid rgb(16, 185, 129)" : "1px solid rgba(255, 255, 255, 0.05)",
+                  borderRadius: "12px",
+                  padding: "1.2rem",
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "all 0.2s"
+                }}
+              >
+                <div style={{ fontWeight: "600", fontSize: "0.95rem", display: "flex", justifyContent: "space-between" }}>
+                  <span>Dark (Default)</span>
+                  {settings.darkMode && <span style={{ color: "rgb(16, 185, 129)" }}>✓</span>}
+                </div>
+                <div style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.8rem", marginTop: "0.2rem" }}>
+                  Elegant slate dark theme tailored for high-contrast viewing.
+                </div>
+              </button>
+
+              {/* Option 2: Light Mode */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSettings(prev => ({ ...prev, darkMode: false }));
+                  // Preview immediately!
+                  document.body.classList.add("light-theme");
+                  setShowThemeModal(false);
+                }}
+                style={{
+                  background: !settings.darkMode ? "rgba(16, 185, 129, 0.15)" : "rgba(255, 255, 255, 0.02)",
+                  border: !settings.darkMode ? "1px solid rgb(16, 185, 129)" : "1px solid rgba(255, 255, 255, 0.05)",
+                  borderRadius: "12px",
+                  padding: "1.2rem",
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "all 0.2s"
+                }}
+              >
+                <div style={{ fontWeight: "600", fontSize: "0.95rem", display: "flex", justifyContent: "space-between" }}>
+                  <span>Light Theme</span>
+                  {!settings.darkMode && <span style={{ color: "rgb(16, 185, 129)" }}>✓</span>}
+                </div>
+                <div style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.8rem", marginTop: "0.2rem" }}>
+                  Clean, classic high-contrast light slate theme styles.
+                </div>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowThemeModal(false)}
+              style={{
+                background: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                color: "#ffffff",
+                padding: "0.6rem 1.5rem",
+                borderRadius: "8px",
+                fontWeight: "600",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                transition: "all 0.2s"
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

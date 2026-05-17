@@ -119,3 +119,36 @@ a {
     transform: translateY(0);
   }
 }
+
+/* Light Theme overrides */
+body.light-theme {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-third: #ffffff;
+  --accent-glow: rgba(16, 185, 129, 0.15);
+}
+
+body.light-theme .card,
+body.light-theme [class*="card"],
+body.light-theme [class*="preferencesCard"] {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.light-theme input,
+body.light-theme select,
+body.light-theme textarea {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.light-theme input:focus,
+body.light-theme select:focus,
+body.light-theme textarea:focus {
+  border-color: var(--accent-primary) !important;
+}
