@@ -275,21 +275,21 @@ body.light-theme [class*="iconBtn"]:hover {
 
 /* Page cards and form structures - Layered premium shadow system */
 body.light-theme .card,
-body.light-theme [class*="card"],
-body.light-theme [class*="preferencesCard"],
-body.light-theme [class*="formCard"],
-body.light-theme [class*="panelCard"] {
+body.light-theme [class*="card" i],
+body.light-theme [class*="preferences" i],
+body.light-theme [class*="form" i],
+body.light-theme [class*="panel" i] {
   background-color: var(--bg-secondary) !important;
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 16px -6px rgba(15, 23, 42, 0.02), 0 0 0 1px rgba(15, 23, 42, 0.01) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 16px -6px rgba(15, 23, 42, 0.03), 0 0 0 1px rgba(15, 23, 42, 0.01) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 body.light-theme .card:hover,
-body.light-theme [class*="card"]:hover,
-body.light-theme [class*="panelCard"]:hover {
+body.light-theme [class*="card" i]:hover,
+body.light-theme [class*="panel" i]:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 20px 30px -8px rgba(15, 23, 42, 0.07), 0 12px 20px -8px rgba(15, 23, 42, 0.03) !important;
+  box-shadow: 0 20px 30px -8px rgba(15, 23, 42, 0.08), 0 12px 20px -8px rgba(15, 23, 42, 0.04) !important;
 }
 
 /* Inputs, dropdowns and forms */
