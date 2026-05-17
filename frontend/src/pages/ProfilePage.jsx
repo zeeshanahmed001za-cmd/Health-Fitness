@@ -81,6 +81,14 @@ function ProfilePage() {
   const [personalSnapshot, setPersonalSnapshot] = useState(null);
   const [physicalSnapshot, setPhysicalSnapshot] = useState(null);
 
+  // Settings & Preferences state
+  const [settings, setSettings] = useState({
+    emailNotifications: userData.emailNotifications ?? true,
+    smsReminders: userData.smsReminders ?? false,
+    publicProfile: userData.publicProfile ?? false,
+  });
+  const [settingsSnapshot, setSettingsSnapshot] = useState(null);
+
   // Sync state if userData changes externally (e.g. from context updates)
   useEffect(() => {
     if (!isEditing) {
@@ -104,6 +112,11 @@ function ProfilePage() {
           return reverseMap[raw] || raw;
         })(),
       });
+      setSettings({
+        emailNotifications: userData.emailNotifications ?? true,
+        smsReminders: userData.smsReminders ?? false,
+        publicProfile: userData.publicProfile ?? false,
+      });
     }
   }, [userData, isEditing]);
 
@@ -113,12 +126,14 @@ function ProfilePage() {
   const handleEdit = () => {
     setPersonalSnapshot({ ...personalInfo });
     setPhysicalSnapshot({ ...physicalInfo });
+    setSettingsSnapshot({ ...settings });
     setIsEditing(true);
   };
 
   const handleCancel = () => {
     setPersonalInfo(personalSnapshot);
     setPhysicalInfo(physicalSnapshot);
+    setSettings(settingsSnapshot);
     setIsEditing(false);
   };
 
@@ -138,6 +153,7 @@ function ProfilePage() {
     const updatedData = {
       ...userData,
       ...personalInfo,
+      ...settings,
       weightValue: physicalInfo.currentWeight,
       goalWeightValue: physicalInfo.targetWeight,
       activityLevel: physicalInfo.activityLevel,
@@ -501,6 +517,95 @@ function ProfilePage() {
                   </select>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Settings & Preferences Card (Full width / spans 2 columns) */}
+          <div className={`${styles.card} ${styles.preferencesCard}`}>
+            <div className={styles.sectionHeader}>
+              <h3>Account Settings & Preferences</h3>
+            </div>
+            <div className={styles.preferenceList}>
+              <div className={styles.preferenceItem}>
+                <div className={styles.prefInfo}>
+                  <h4>Email Notifications</h4>
+                  <p>Receive weekly digest, customized progress reports, and activity insights via email.</p>
+                </div>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    checked={settings.emailNotifications}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        emailNotifications: e.target.checked,
+                      }))
+                    }
+                  />
+                  <span className={`${styles.slider} ${styles.round}`}></span>
+                </label>
+              </div>
+
+              <div className={styles.preferenceItem}>
+                <div className={styles.prefInfo}>
+                  <h4>SMS Reminders</h4>
+                  <p>Get a quick, friendly text message to log your daily workouts and nutrition entries.</p>
+                </div>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    checked={settings.smsReminders}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        smsReminders: e.target.checked,
+                      }))
+                    }
+                  />
+                  <span className={`${styles.slider} ${styles.round}`}></span>
+                </label>
+              </div>
+
+              <div className={styles.preferenceItem}>
+                <div className={styles.prefInfo}>
+                  <h4>Public Profile Visibility</h4>
+                  <p>Allow other members to view your weekly streaks, activity stats, and fitness goals.</p>
+                </div>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    checked={settings.publicProfile}
+                    disabled={!isEditing}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        publicProfile: e.target.checked,
+                      }))
+                    }
+                  />
+                  <span className={`${styles.slider} ${styles.round}`}></span>
+                </label>
+              </div>
+            </div>
+
+            {/* Danger Zone */}
+            <div className={styles.dangerZone}>
+              <div className={styles.prefInfo}>
+                <h4>Delete Account</h4>
+                <p>Permanently delete all your workout journals, meal history, and profile data. This cannot be undone.</p>
+              </div>
+              <button
+                className={styles.btnDanger}
+                disabled={!isEditing}
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert("To delete your account, please contact system support.");
+                }}
+              >
+                Delete Account
+              </button>
             </div>
           </div>
 
