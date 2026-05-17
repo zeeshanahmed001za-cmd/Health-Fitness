@@ -394,3 +394,38 @@ body.light-theme [class*="modal"] p,
 body.light-theme [style*="position: fixed"] p {
   color: #475569 !important;
 }
+
+/* 1st Task: Remove box shadow from recent logs card globally & in light theme */
+[class*="panelCard" i] {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+body.light-theme [class*="panelCard" i] {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+body.light-theme [class*="panelCard" i]:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 3rd Task: Add premium box shadow and hover lifting effect to goal section card */
+[class*="goalSection" i] {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+body.light-theme [class*="goalSection" i] {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 16px -6px rgba(15, 23, 42, 0.03), 0 0 0 1px rgba(15, 23, 42, 0.01) !important;
+}
+
+body.light-theme [class*="goalSection" i]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 20px 30px -8px rgba(15, 23, 42, 0.08), 0 12px 20px -8px rgba(15, 23, 42, 0.04) !important;
+}
