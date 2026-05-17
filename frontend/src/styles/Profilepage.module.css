@@ -243,10 +243,16 @@
 
 .formGroup input:disabled,
 .formGroup select:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  background: var(--item-bg-hover);
-  border-color: transparent;
+  opacity: 0.9;
+  cursor: default;
+  background: transparent;
+  border: 1px solid transparent !important;
+  padding-left: 0;
+  box-shadow: none;
+}
+
+.formGroup select:disabled {
+  background-image: none !important;
 }
 
 /* Preferences */
