@@ -750,7 +750,7 @@ function ProfilePage() {
                   <h4>{t.language}</h4>
                   <p>Choose your preferred language for the dashboard, logs, and workout plans.</p>
                 </div>
-                <div style={{ minWidth: "150px" }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", minWidth: "150px" }}>
                   <select
                     value={settings.language || "english"}
                     onChange={(e) =>
@@ -760,20 +760,20 @@ function ProfilePage() {
                       background: settings.darkMode ? "#1e293b" : "#ffffff",
                       border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
                       color: settings.darkMode ? "#ffffff" : "#0f172a",
-                      padding: "0.5rem 1rem",
+                      padding: "0.5rem 2.5rem 0.5rem 1rem",
                       borderRadius: "8px",
                       outline: "none",
-                      width: "100%",
+                      width: "140px",
                       cursor: "pointer",
                       height: "40px",
                       fontFamily: "inherit",
                       fontSize: "0.9rem"
                     }}
                   >
-                    <option value="english" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>English</option>
-                    <option value="spanish" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>Español</option>
-                    <option value="french" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>Français</option>
-                    <option value="german" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>Deutsch</option>
+                    <option value="english">English</option>
+                    <option value="spanish">Spanish</option>
+                    <option value="french">French</option>
+                    <option value="german">German</option>
                   </select>
                 </div>
               </div>
@@ -784,33 +784,31 @@ function ProfilePage() {
                   <h4>{t.appTheme}</h4>
                   <p>Choose between staying on the elegant dark themed dashboard or switching to the classic light theme layout.</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowThemeModal(true)}
-                  style={{
-                    background: settings.darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.05)",
-                    border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
-                    color: settings.darkMode ? "#ffffff" : "#0f172a",
-                    padding: "0.5rem 1.5rem",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: "600",
-                    fontSize: "0.85rem",
-                    transition: "all 0.2s",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem"
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = settings.darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.1)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = settings.darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.05)";
-                  }}
-                >
-                  <span>{settings.darkMode ? "Dark (Default)" : "Light"}</span>
-                  <span style={{ fontSize: "0.8rem" }}>▼</span>
-                </button>
+                <div style={{ display: "flex", justifyContent: "flex-end", minWidth: "150px" }}>
+                  <select
+                    value={settings.darkMode ? "dark" : "light"}
+                    onChange={(e) => {
+                      const isDark = e.target.value === "dark";
+                      handlePreferenceChange("darkMode", isDark);
+                    }}
+                    style={{
+                      background: settings.darkMode ? "#1e293b" : "#ffffff",
+                      border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
+                      color: settings.darkMode ? "#ffffff" : "#0f172a",
+                      padding: "0.5rem 2.5rem 0.5rem 1rem",
+                      borderRadius: "8px",
+                      outline: "none",
+                      width: "140px",
+                      cursor: "pointer",
+                      height: "40px",
+                      fontFamily: "inherit",
+                      fontSize: "0.9rem"
+                    }}
+                  >
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -844,8 +842,8 @@ function ProfilePage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(0, 0, 0, 0.8)",
-            backdropFilter: "blur(12px)",
+            background: "rgba(0, 0, 0, 0.7)",
+            backdropFilter: "blur(8px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -855,72 +853,56 @@ function ProfilePage() {
         >
           <div
             style={{
-              background: "rgba(18, 18, 22, 0.98)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
-              borderRadius: "16px",
-              padding: "2.5rem 2rem",
-              maxWidth: "480px",
+              background: settings.darkMode ? "#121216" : "#ffffff",
+              border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
+              borderRadius: "12px",
+              padding: "2rem",
+              maxWidth: "420px",
               width: "100%",
-              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(239, 68, 68, 0.15)",
+              boxShadow: settings.darkMode ? "0 20px 40px rgba(0, 0, 0, 0.6)" : "0 10px 25px rgba(0, 0, 0, 0.08)",
               textAlign: "center"
             }}
           >
-            <div
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "50%",
-                background: "rgba(239, 68, 68, 0.1)",
-                color: "rgb(239, 68, 68)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 1.5rem",
-                fontSize: "1.8rem"
-              }}
-            >
-              ⚠️
-            </div>
             <h3
               style={{
-                color: "#ffffff",
-                fontSize: "1.4rem",
+                color: settings.darkMode ? "#ffffff" : "#0f172a",
+                fontSize: "1.25rem",
                 fontWeight: "700",
-                marginBottom: "1rem",
+                marginBottom: "0.75rem",
                 fontFamily: "inherit"
               }}
             >
-              Are you absolutely sure?
+              Delete Account
             </h3>
             <p
               style={{
-                color: "rgba(255, 255, 255, 0.6)",
-                fontSize: "0.95rem",
-                lineHeight: "1.6",
-                marginBottom: "2.2rem",
+                color: settings.darkMode ? "rgba(255, 255, 255, 0.6)" : "#475569",
+                fontSize: "0.9rem",
+                lineHeight: "1.5",
+                marginBottom: "1.75rem",
                 fontFamily: "inherit"
               }}
             >
-              This action is permanent and cannot be undone. All your workout records, logs, meal diaries, weight goals, and account info will be <strong>permanently deleted</strong>.
+              Deleting your account will permanently remove all of your profile preferences, workout records, and logs. This action cannot be undone.
             </p>
             <div
               style={{
                 display: "flex",
-                gap: "1rem",
+                gap: "0.75rem",
                 justifyContent: "center"
               }}
             >
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  color: "#ffffff",
-                  padding: "0.75rem 1.5rem",
+                  background: settings.darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.05)",
+                  border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
+                  color: settings.darkMode ? "#ffffff" : "#0f172a",
+                  padding: "0.6rem 1.25rem",
                   borderRadius: "8px",
                   fontWeight: "600",
                   cursor: "pointer",
-                  fontSize: "0.9rem",
+                  fontSize: "0.85rem",
                   transition: "all 0.2s"
                 }}
               >
@@ -932,12 +914,12 @@ function ProfilePage() {
                   background: "rgb(239, 68, 68)",
                   border: "none",
                   color: "#ffffff",
-                  padding: "0.75rem 1.5rem",
+                  padding: "0.6rem 1.25rem",
                   borderRadius: "8px",
                   fontWeight: "600",
                   cursor: "pointer",
-                  fontSize: "0.9rem",
-                  boxShadow: "0 4px 12px rgba(239, 68, 68, 0.3)",
+                  fontSize: "0.85rem",
+                  boxShadow: "0 4px 12px rgba(239, 68, 68, 0.2)",
                   transition: "all 0.2s"
                 }}
               >
