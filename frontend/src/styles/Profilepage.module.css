@@ -243,6 +243,15 @@
 
 .formGroup input:disabled,
 .formGroup select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: var(--item-bg-hover);
+  border-color: transparent;
+}
+
+/* Light Theme overrides: remove border wrapped around disabled inputs/selects on light theme */
+:global(body.light-theme) .formGroup input:disabled,
+:global(body.light-theme) .formGroup select:disabled {
   opacity: 0.9;
   cursor: default;
   background: transparent;
@@ -251,7 +260,7 @@
   box-shadow: none;
 }
 
-.formGroup select:disabled {
+:global(body.light-theme) .formGroup select:disabled {
   background-image: none !important;
 }
 
