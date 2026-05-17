@@ -131,9 +131,111 @@ body.light-theme {
   --accent-glow: rgba(16, 185, 129, 0.15);
 }
 
+/* Force light colors on basic text tags to prevent hardcoded white/grey leaks */
+body.light-theme p,
+body.light-theme span,
+body.light-theme label,
+body.light-theme li,
+body.light-theme td,
+body.light-theme th,
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4,
+body.light-theme h5,
+body.light-theme h6 {
+  color: var(--text-primary);
+}
+
+body.light-theme p,
+body.light-theme label,
+body.light-theme [class*="muted"],
+body.light-theme [class*="subtitle"],
+body.light-theme [class*="description"],
+body.light-theme [class*="hint"] {
+  color: var(--text-secondary);
+}
+
+/* Style select native option tags beautifully */
+select option {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+body.light-theme select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Sidebar and layout overrides for Light Theme */
+body.light-theme [class*="sidebarOverlay"] {
+  background-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+body.light-theme [class*="sidebar"] {
+  background-color: var(--bg-secondary) !important;
+  border-right: 1px solid #e2e8f0 !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="brandTitle"] {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="navItem"] {
+  color: var(--text-secondary) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="navItem"] svg {
+  color: var(--text-secondary) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="navItem"]:hover {
+  background-color: #f1f5f9 !important;
+  color: var(--text-primary) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="navItem"]:hover svg {
+  color: var(--text-primary) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="navItem"][class*="active"] {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: var(--accent-primary) !important;
+  border-left: 4px solid var(--accent-primary) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="navItem"][class*="active"] svg {
+  color: var(--accent-primary) !important;
+}
+
+body.light-theme [class*="topNavbar"] {
+  background-color: var(--bg-primary) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+body.light-theme [class*="topNavbar"] [class*="pageTitle"] {
+  color: var(--text-primary) !important;
+}
+
+body.light-theme [class*="toggleSidebarBtn"],
+body.light-theme [class*="iconBtn"] {
+  color: var(--text-secondary) !important;
+}
+
+body.light-theme [class*="toggleSidebarBtn"]:hover,
+body.light-theme [class*="iconBtn"]:hover {
+  background-color: #e2e8f0 !important;
+  color: var(--text-primary) !important;
+}
+
+/* Page cards and form structures */
 body.light-theme .card,
 body.light-theme [class*="card"],
-body.light-theme [class*="preferencesCard"] {
+body.light-theme [class*="preferencesCard"],
+body.light-theme [class*="formCard"] {
   background-color: var(--bg-secondary) !important;
   border: 1px solid #e2e8f0 !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02) !important;
@@ -151,4 +253,34 @@ body.light-theme input:focus,
 body.light-theme select:focus,
 body.light-theme textarea:focus {
   border-color: var(--accent-primary) !important;
+}
+
+/* Dashboard specific cards and progress sections */
+body.light-theme [class*="statValue"],
+body.light-theme [class*="metricValue"],
+body.light-theme [class*="number"] {
+  color: var(--text-primary) !important;
+}
+
+body.light-theme [class*="statLabel"],
+body.light-theme [class*="metricLabel"],
+body.light-theme [class*="labelText"] {
+  color: var(--text-secondary) !important;
+}
+
+/* Modal popups */
+body.light-theme [class*="modal"],
+body.light-theme [style*="position: fixed"] > div {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+body.light-theme [class*="modal"] h3,
+body.light-theme [style*="position: fixed"] h3 {
+  color: #0f172a !important;
+}
+
+body.light-theme [class*="modal"] p,
+body.light-theme [style*="position: fixed"] p {
+  color: #475569 !important;
 }

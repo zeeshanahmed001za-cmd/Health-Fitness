@@ -322,6 +322,60 @@ function ProfilePage() {
     setPhysicalInfo((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handlePreferenceChange = async (key, value) => {
+    // 1. Update local settings state
+    const newSettings = { ...settings, [key]: value };
+    setSettings(newSettings);
+
+    // 2. Sync visual theme immediately if theme changed
+    if (key === "darkMode") {
+      if (value) {
+        document.body.classList.remove("light-theme");
+      } else {
+        document.body.classList.add("light-theme");
+      }
+    }
+
+    // 3. Prepare payload for backend API
+    const goalNormalizationMap = {
+      lose: "weight_loss",
+      build: "muscle_gain",
+      maintain: "maintain_weight",
+      endurance: "build_endurance",
+    };
+    const normalizedGoal = goalNormalizationMap[physicalInfo.primaryGoal] || physicalInfo.primaryGoal;
+
+    const updatedData = {
+      ...userData,
+      ...personalInfo,
+      ...newSettings,
+      weightValue: physicalInfo.currentWeight,
+      goalWeightValue: physicalInfo.targetWeight,
+      activityLevel: physicalInfo.activityLevel,
+      primaryGoal: [normalizedGoal],
+    };
+
+    // Keep height synced
+    if (physicalInfo.height.includes("'")) {
+       const [ft, inc] = physicalInfo.height.replace(/"/g, '').split("'");
+       updatedData.heightFeet = ft;
+       updatedData.heightInches = inc;
+       updatedData.heightUnit = 'imperial';
+    } else if (physicalInfo.height) {
+       updatedData.heightCm = physicalInfo.height;
+       updatedData.heightUnit = 'metric';
+    }
+
+    // 4. Save to backend immediately
+    try {
+      await updateUserProfileAPI(updatedData);
+      updateUserData(updatedData);
+    } catch (err) {
+      console.error("Failed to update preference", err);
+      updateUserData(updatedData); // still sync context locally
+    }
+  };
+
   const toggleWeightUnit = (e) => {
     e.preventDefault();
     setPhysicalInfo(prev => {
@@ -648,12 +702,8 @@ function ProfilePage() {
                   <input
                     type="checkbox"
                     checked={settings.emailNotifications}
-                    disabled={!isEditing}
                     onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        emailNotifications: e.target.checked,
-                      }))
+                      handlePreferenceChange("emailNotifications", e.target.checked)
                     }
                   />
                   <span className={`${styles.slider} ${styles.round}`}></span>
@@ -669,12 +719,8 @@ function ProfilePage() {
                   <input
                     type="checkbox"
                     checked={settings.dynamicCalorieSync}
-                    disabled={!isEditing}
                     onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        dynamicCalorieSync: e.target.checked,
-                      }))
+                      handlePreferenceChange("dynamicCalorieSync", e.target.checked)
                     }
                   />
                   <span className={`${styles.slider} ${styles.round}`}></span>
@@ -690,12 +736,8 @@ function ProfilePage() {
                   <input
                     type="checkbox"
                     checked={settings.waterReminders}
-                    disabled={!isEditing}
                     onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        waterReminders: e.target.checked,
-                      }))
+                      handlePreferenceChange("waterReminders", e.target.checked)
                     }
                   />
                   <span className={`${styles.slider} ${styles.round}`}></span>
@@ -711,17 +753,13 @@ function ProfilePage() {
                 <div style={{ minWidth: "150px" }}>
                   <select
                     value={settings.language || "english"}
-                    disabled={!isEditing}
                     onChange={(e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        language: e.target.value,
-                      }))
+                      handlePreferenceChange("language", e.target.value)
                     }
                     style={{
-                      background: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      color: "#ffffff",
+                      background: settings.darkMode ? "#1e293b" : "#ffffff",
+                      border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
+                      color: settings.darkMode ? "#ffffff" : "#0f172a",
                       padding: "0.5rem 1rem",
                       borderRadius: "8px",
                       outline: "none",
@@ -732,10 +770,10 @@ function ProfilePage() {
                       fontSize: "0.9rem"
                     }}
                   >
-                    <option value="english">English</option>
-                    <option value="spanish">Español</option>
-                    <option value="french">Français</option>
-                    <option value="german">Deutsch</option>
+                    <option value="english" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>English</option>
+                    <option value="spanish" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>Español</option>
+                    <option value="french" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>Français</option>
+                    <option value="german" style={{ background: settings.darkMode ? "#1e293b" : "#ffffff", color: settings.darkMode ? "#ffffff" : "#0f172a" }}>Deutsch</option>
                   </select>
                 </div>
               </div>
@@ -748,17 +786,11 @@ function ProfilePage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (isEditing) {
-                      setShowThemeModal(true);
-                    } else {
-                      alert("Please click 'Edit Profile' at the top of the page first to modify preferences.");
-                    }
-                  }}
+                  onClick={() => setShowThemeModal(true)}
                   style={{
-                    background: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    color: "#ffffff",
+                    background: settings.darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.05)",
+                    border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
+                    color: settings.darkMode ? "#ffffff" : "#0f172a",
                     padding: "0.5rem 1.5rem",
                     borderRadius: "8px",
                     cursor: "pointer",
@@ -769,8 +801,12 @@ function ProfilePage() {
                     alignItems: "center",
                     gap: "0.5rem"
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"}
-                  onMouseOut={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)"}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = settings.darkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(15, 23, 42, 0.1)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = settings.darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.05)";
+                  }}
                 >
                   <span>{settings.darkMode ? "Dark (Default)" : "Light"}</span>
                   <span style={{ fontSize: "0.8rem" }}>▼</span>
@@ -786,7 +822,6 @@ function ProfilePage() {
               </div>
               <button
                 className={styles.btnDanger}
-                disabled={!isEditing}
                 onClick={(e) => {
                   e.preventDefault();
                   setShowDeleteConfirm(true);
@@ -967,9 +1002,7 @@ function ProfilePage() {
               <button
                 type="button"
                 onClick={() => {
-                  setSettings(prev => ({ ...prev, darkMode: true }));
-                  // Preview immediately!
-                  document.body.classList.remove("light-theme");
+                  handlePreferenceChange("darkMode", true);
                   setShowThemeModal(false);
                 }}
                 style={{
@@ -996,9 +1029,7 @@ function ProfilePage() {
               <button
                 type="button"
                 onClick={() => {
-                  setSettings(prev => ({ ...prev, darkMode: false }));
-                  // Preview immediately!
-                  document.body.classList.add("light-theme");
+                  handlePreferenceChange("darkMode", false);
                   setShowThemeModal(false);
                 }}
                 style={{
