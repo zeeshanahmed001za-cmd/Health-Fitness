@@ -93,8 +93,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         if (req.body.age !== undefined && req.body.age !== "") user.age = Number(req.body.age);
 
         user.emailNotifications = req.body.emailNotifications !== undefined ? req.body.emailNotifications : user.emailNotifications;
-        user.smsReminders = req.body.smsReminders !== undefined ? req.body.smsReminders : user.smsReminders;
-        user.publicProfile = req.body.publicProfile !== undefined ? req.body.publicProfile : user.publicProfile;
+        user.dynamicCalorieSync = req.body.dynamicCalorieSync !== undefined ? req.body.dynamicCalorieSync : user.dynamicCalorieSync;
+        user.waterReminders = req.body.waterReminders !== undefined ? req.body.waterReminders : user.waterReminders;
 
         if (req.body.password) {
             user.password = req.body.password;

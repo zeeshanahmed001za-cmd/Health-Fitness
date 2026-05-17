@@ -33,8 +33,8 @@ export const mapUserToJSON = (user, includeToken = false) => {
         weightValue: user.weightValue,
         goalWeightValue: user.goalWeightValue,
         emailNotifications: user.emailNotifications,
-        smsReminders: user.smsReminders,
-        publicProfile: user.publicProfile,
+        dynamicCalorieSync: user.dynamicCalorieSync,
+        waterReminders: user.waterReminders,
         loginStreak: user.loginStreak || 0,
         lastLoginDate: user.lastLoginDate
     };

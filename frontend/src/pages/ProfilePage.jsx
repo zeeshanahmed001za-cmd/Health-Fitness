@@ -83,9 +83,9 @@ function ProfilePage() {
 
   // Settings & Preferences state
   const [settings, setSettings] = useState({
-    emailNotifications: userData.emailNotifications ?? true,
-    smsReminders: userData.smsReminders ?? false,
-    publicProfile: userData.publicProfile ?? false,
+    emailNotifications: userData?.emailNotifications ?? true,
+    dynamicCalorieSync: userData?.dynamicCalorieSync ?? true,
+    waterReminders: userData?.waterReminders ?? true,
   });
   const [settingsSnapshot, setSettingsSnapshot] = useState(null);
 
@@ -113,9 +113,9 @@ function ProfilePage() {
         })(),
       });
       setSettings({
-        emailNotifications: userData.emailNotifications ?? true,
-        smsReminders: userData.smsReminders ?? false,
-        publicProfile: userData.publicProfile ?? false,
+        emailNotifications: userData?.emailNotifications ?? true,
+        dynamicCalorieSync: userData?.dynamicCalorieSync ?? true,
+        waterReminders: userData?.waterReminders ?? true,
       });
     }
   }, [userData, isEditing]);
@@ -549,18 +549,18 @@ function ProfilePage() {
 
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>SMS Reminders</h4>
-                  <p>Get a quick, friendly text message to log your daily workouts and nutrition entries.</p>
+                  <h4>Calorie & Macro Dynamic Sync</h4>
+                  <p>Automatically adjust daily calorie and macronutrient targets based on your weight logs.</p>
                 </div>
                 <label className={styles.switch}>
                   <input
                     type="checkbox"
-                    checked={settings.smsReminders}
+                    checked={settings.dynamicCalorieSync}
                     disabled={!isEditing}
                     onChange={(e) =>
                       setSettings((prev) => ({
                         ...prev,
-                        smsReminders: e.target.checked,
+                        dynamicCalorieSync: e.target.checked,
                       }))
                     }
                   />
@@ -570,18 +570,18 @@ function ProfilePage() {
 
               <div className={styles.preferenceItem}>
                 <div className={styles.prefInfo}>
-                  <h4>Public Profile Visibility</h4>
-                  <p>Allow other members to view your weekly streaks, activity stats, and fitness goals.</p>
+                  <h4>Water Intake Reminders</h4>
+                  <p>Receive friendly in-app alerts and notifications to meet your daily hydration target.</p>
                 </div>
                 <label className={styles.switch}>
                   <input
                     type="checkbox"
-                    checked={settings.publicProfile}
+                    checked={settings.waterReminders}
                     disabled={!isEditing}
                     onChange={(e) =>
                       setSettings((prev) => ({
                         ...prev,
-                        publicProfile: e.target.checked,
+                        waterReminders: e.target.checked,
                       }))
                     }
                   />

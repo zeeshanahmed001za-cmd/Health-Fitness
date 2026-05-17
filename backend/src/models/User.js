@@ -23,8 +23,8 @@ const userSchema = mongoose.Schema({
     weightValue: { type: Number },
     goalWeightValue: { type: Number },
     emailNotifications: { type: Boolean, default: true },
-    smsReminders: { type: Boolean, default: false },
-    publicProfile: { type: Boolean, default: true },
+    dynamicCalorieSync: { type: Boolean, default: true },
+    waterReminders: { type: Boolean, default: true },
     role: { type: String, default: 'user' },
     lastLoginDate: { type: String }, // YYYY-MM-DD format
     loginStreak: { type: Number, default: 1 }
