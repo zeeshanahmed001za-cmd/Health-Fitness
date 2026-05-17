@@ -27,7 +27,7 @@
 .card {
   background-color: var(--bg-secondary);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   box-shadow: var(--shadow-soft);
 }
 
@@ -139,7 +139,7 @@
 .btnCancel {
   background: transparent;
   color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-medium);
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius-md);
   font-weight: 600;
@@ -149,7 +149,7 @@
 }
 
 .btnCancel:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--item-bg-hover);
   color: white;
 }
 
@@ -215,7 +215,7 @@
 .formGroup input,
 .formGroup select {
   background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-medium);
   color: var(--text-primary);
   padding: 0.8rem 1rem;
   border-radius: var(--radius-md);
@@ -245,7 +245,7 @@
 .formGroup select:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--item-bg-hover);
   border-color: transparent;
 }
 
@@ -267,7 +267,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .preferenceItem:last-child {
@@ -308,7 +308,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--border-medium);
   transition: 0.4s;
 }
 
@@ -418,8 +418,8 @@
 }
 
 .inlineToggleBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--item-bg-hover);
+  border: 1px solid var(--border-medium);
   color: var(--text-secondary);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
@@ -430,6 +430,6 @@
 }
 
 .inlineToggleBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-medium);
   color: var(--text-primary);
 }

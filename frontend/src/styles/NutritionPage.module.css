@@ -82,13 +82,10 @@
 }
 
 .metaCard {
-  background: linear-gradient(135deg,
-      rgba(30, 41, 59, 0.7),
-      rgba(15, 23, 42, 0.8));
-  backdrop-filter: blur(10px);
+  background: var(--bg-secondary);
   padding: 20px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -128,7 +125,7 @@
 
 .primaryBtn {
   background-color: var(--accent-primary);
-  color: #0c121e;
+  color: var(--text-third);
   border: none;
   padding: 10px 24px;
   border-radius: var(--radius-md);
@@ -144,7 +141,7 @@
   background: var(--bg-secondary);
   padding: 24px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: all var(--transition-smooth);
   height: 100%;
@@ -219,7 +216,7 @@
 .glass {
   width: 40px;
   height: 52px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--border-medium);
   border-radius: 4px 4px 12px 12px;
   background: transparent;
   cursor: pointer;
@@ -276,7 +273,7 @@
   background: var(--bg-secondary);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
 }
 
 .toolCard h4 {
@@ -316,19 +313,19 @@
 }
 
 .foodItem {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--item-bg-hover);
   padding: 16px 20px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   gap: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
   transition: all var(--transition-fast);
 }
 
 .foodItem:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--item-bg-hover);
+  border-color: var(--border-medium);
 }
 
 .mealIcon {
@@ -416,7 +413,7 @@
   background: var(--bg-secondary);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-medium);
   width: 90%;
   max-width: 500px;
 }
@@ -445,8 +442,8 @@
 .formGroup input,
 .formGroup select {
   width: 100%;
-  background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-medium);
   padding: 12px;
   border-radius: 10px;
   color: var(--text-primary);
@@ -482,7 +479,7 @@
 
 .btnCancel {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-medium);
   color: var(--text-secondary);
   padding: 12px 24px;
   border-radius: 10px;
@@ -504,7 +501,7 @@
 
 .unitToggle {
   display: flex;
-  background: var(--bg-primary);
+  background: var(--bg-tertiary);
   border-radius: 10px;
   padding: 4px;
   margin-bottom: 8px;
@@ -533,7 +530,7 @@
   background: rgba(16, 185, 129, 0.05);
   border-radius: var(--radius-md);
   text-align: center;
-  border: 1px solid rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--border-light);
 }
 
 .resultTitle {

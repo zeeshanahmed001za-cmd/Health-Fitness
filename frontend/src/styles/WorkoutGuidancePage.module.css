@@ -37,13 +37,13 @@
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--item-bg-hover);
+  border: 1px solid var(--border-light);
   transition: all var(--transition-fast);
 }
 
 .backBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--border-light);
   color: var(--text-primary);
 }
 
@@ -56,7 +56,7 @@
   );
   padding: 40px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   margin-bottom: 32px;
   text-align: center;
 }
@@ -65,7 +65,7 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 12px;
-  background: linear-gradient(to right, #fff, var(--accent-cyan));
+  background: linear-gradient(to right, var(--text-primary), var(--accent-cyan));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -90,7 +90,7 @@
   background: var(--bg-secondary);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   transition:
     transform var(--transition-smooth),
     border-color var(--transition-smooth);
@@ -173,7 +173,7 @@
 .splitItem {
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .splitItem:last-child {
@@ -212,7 +212,7 @@
   background: var(--bg-secondary);
   padding: 32px 24px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -232,7 +232,7 @@
   height: 160px;
   object-fit: cover;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--item-bg-hover);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
@@ -240,7 +240,7 @@
   background: var(--bg-secondary);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   transition: all var(--transition-smooth);
 }
 
@@ -269,10 +269,10 @@
 }
 
 .equipmentCol {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--item-bg-hover);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
 }
 
 .equipmentCol h4 {
@@ -296,7 +296,7 @@
   background: var(--bg-secondary);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
   gap: 16px;

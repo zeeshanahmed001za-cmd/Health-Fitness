@@ -432,7 +432,7 @@ function DashboardPage() {
                                                 <circle
                                                     cx="50" cy="50" r={radius}
                                                     fill="transparent"
-                                                    stroke="rgba(255, 255, 255, 0.05)"
+                                                    stroke="var(--track-bg)"
                                                     strokeWidth="6"
                                                 />
                                                 {/* Active Progress */}

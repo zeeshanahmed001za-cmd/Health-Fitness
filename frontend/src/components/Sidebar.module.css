@@ -21,7 +21,7 @@
   width: var(--sidebar-width);
   height: 100vh;
   background-color: var(--bg-secondary);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
   transition:
@@ -48,7 +48,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 24px; /* Match navItem padding */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-light);
   gap: 8px;
 }
 
@@ -122,7 +122,7 @@
 }
 
 .toggleSidebarBtn:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--item-bg-hover);
   color: var(--text-primary);
 }
 
@@ -140,7 +140,7 @@
 }
 
 .sidebarNav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-medium);
   border-radius: 4px;
 }
 
@@ -171,7 +171,7 @@
 
 .navItem:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: var(--item-bg-hover);
 }
 
 .navItem.active {
@@ -218,7 +218,7 @@
 
 .sidebarFooter {
   padding: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-light);
 }
 
 .sidebar.collapsed .sidebarFooter {

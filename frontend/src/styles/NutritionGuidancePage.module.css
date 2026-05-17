@@ -24,13 +24,13 @@
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--item-bg-hover);
+  border: 1px solid var(--border-light);
   transition: all var(--transition-fast);
 }
 
 .backBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--border-light);
   color: var(--text-primary);
 }
 
@@ -43,7 +43,7 @@
   );
   padding: 40px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   text-align: center;
 }
 
@@ -70,7 +70,7 @@
 
 .nutrientRow {
   background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
   padding: 24px;
   cursor: pointer;
@@ -78,8 +78,8 @@
 }
 
 .nutrientRow:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  border-color: var(--border-medium);
+  box-shadow: var(--card-shadow);
 }
 
 .nutrientHeaderRow {
@@ -108,7 +108,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--item-bg-hover);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,7 +118,7 @@
 
 .nutrientRow.expanded .accordionIcon {
   background: var(--accent-primary);
-  color: #000;
+  color: var(--text-third);
   transform: rotate(180deg);
 }
 
@@ -131,7 +131,7 @@
 .nutrientDropdownContent {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--border-light);
 }
 
 .nutrientDropdownInner {
@@ -169,10 +169,10 @@
 }
 
 .miniCard {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--item-bg-hover);
   padding: 32px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
 }
 
 .miniCard h4 {

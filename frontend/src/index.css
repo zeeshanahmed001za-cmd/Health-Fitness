@@ -37,6 +37,19 @@
   --sidebar-width: 290px;
   --sidebar-collapsed-width: 80px;
   --header-height: 70px;
+
+  /* Premium Adaptive Layout variables */
+  --border-light: rgba(255, 255, 255, 0.05);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.4);
+  --item-bg-hover: rgba(255, 255, 255, 0.03);
+  --track-bg: rgba(255, 255, 255, 0.05);
+
+  /* Glassmorphism Overrides */
+  --glass-bg: rgba(30, 41, 59, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.12);
 }
 
 * {
@@ -122,14 +135,28 @@ a {
 
 /* Light Theme overrides */
 body.light-theme {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --bg-primary: #f1f5f9; /* Richer Slate 100 for elegant background separation */
+  --bg-secondary: #ffffff; /* Pure white card/panel backgrounds */
+  --bg-tertiary: #f8fafc; /* Slate 50 for clean input fields and nested containers */
+  --text-primary: #0f172a; /* Slate 900 for high contrast text */
+  --text-secondary: #475569; /* Slate 600 for secondary text */
   --text-third: #ffffff;
   --accent-glow: rgba(4, 120, 87, 0.15);
   --accent-primary: #047857; /* Deeper Emerald for perfect contrast & readability in light mode */
+  --accent-hover: #065f46;
+
+  /* Premium Adaptive Layout overrides for Light Theme */
+  --border-light: rgba(15, 23, 42, 0.08); /* Sophisticated crisp border */
+  --border-medium: rgba(15, 23, 42, 0.12); /* Clean border for inputs and dividers */
+  --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 16px -6px rgba(15, 23, 42, 0.04);
+  --card-shadow-hover: 0 20px 30px -8px rgba(15, 23, 42, 0.08), 0 12px 20px -8px rgba(15, 23, 42, 0.04);
+  --item-bg-hover: rgba(15, 23, 42, 0.03); /* Soft hover state */
+  --track-bg: rgba(15, 23, 42, 0.06); /* Highly visible light-theme track background */
+
+  /* Glassmorphism Overrides */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.95);
 }
 
 /* Force light colors on basic text tags to prevent hardcoded white/grey leaks */
