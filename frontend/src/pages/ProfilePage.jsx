@@ -154,7 +154,6 @@ function ProfilePage() {
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
-  const t = TRANSLATIONS[settings.language || "english"] || TRANSLATIONS.english;
 
   // Form data state - initialized from context
   const [personalInfo, setPersonalInfo] = useState({
@@ -191,6 +190,7 @@ function ProfilePage() {
     darkMode: userData?.darkMode ?? true,
   });
   const [settingsSnapshot, setSettingsSnapshot] = useState(null);
+  const t = TRANSLATIONS[settings?.language || "english"] || TRANSLATIONS.english;
 
   // Sync state if userData changes externally (e.g. from context updates)
   useEffect(() => {
