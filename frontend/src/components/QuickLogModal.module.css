@@ -172,7 +172,7 @@
 
 .submitBtn {
     background: var(--accent-primary);
-    color: #000;
+    color: #ffffff;
     border: none;
     padding: 10px 20px;
     border-radius: 10px;
@@ -284,4 +284,83 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Light Theme styles with high specificity */
+:global(body.light-theme) .logCard {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15) !important;
+}
+
+:global(body.light-theme) .cardHeader h3 {
+    color: #0f172a !important;
+}
+
+:global(body.light-theme) .description {
+    color: #475569 !important;
+}
+
+:global(body.light-theme) .examples {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+:global(body.light-theme) .examples li {
+    color: #475569 !important;
+}
+
+:global(body.light-theme) .cardInput {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+:global(body.light-theme) .cardInput:focus {
+    background: #ffffff !important;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.1) !important;
+}
+
+:global(body.light-theme) .submitBtn {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2) !important;
+}
+
+:global(body.light-theme) .submitBtn:hover {
+    background: #065f46 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3) !important;
+}
+
+:global(body.light-theme) .refineLabel {
+    color: #0f172a !important;
+}
+
+:global(body.light-theme) .inputGroup label {
+    color: #475569 !important;
+}
+
+:global(body.light-theme) .inputGroup input,
+:global(body.light-theme) .inputGroup select {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+:global(body.light-theme) .inputGroup input:focus,
+:global(body.light-theme) .inputGroup select:focus {
+    border-color: var(--accent-primary) !important;
+    background: #ffffff !important;
+}
+
+:global(body.light-theme) .backBtn {
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    background: transparent !important;
+}
+
+:global(body.light-theme) .backBtn:hover {
+    background: #f1f5f9 !important;
 }
