@@ -128,7 +128,8 @@ body.light-theme {
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-third: #ffffff;
-  --accent-glow: rgba(16, 185, 129, 0.15);
+  --accent-glow: rgba(4, 120, 87, 0.15);
+  --accent-primary: #047857; /* Deeper Emerald for perfect contrast & readability in light mode */
 }
 
 /* Force light colors on basic text tags to prevent hardcoded white/grey leaks */
@@ -178,18 +179,21 @@ body.light-theme [class*="sidebar"] {
 }
 
 body.light-theme [class*="sidebar"] [class*="brandTitle"] {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
-  -webkit-background-clip: text;
-  background-clip: text;
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  font-weight: 800 !important;
 }
 
 body.light-theme [class*="sidebar"] [class*="navItem"] {
-  color: var(--text-secondary) !important;
+  color: #334155 !important;
+  font-weight: 500 !important;
 }
 
 body.light-theme [class*="sidebar"] [class*="navItem"] svg {
-  color: var(--text-secondary) !important;
+  color: #475569 !important;
 }
 
 body.light-theme [class*="sidebar"] [class*="navItem"]:hover {
@@ -202,15 +206,53 @@ body.light-theme [class*="sidebar"] [class*="navItem"]:hover svg {
 }
 
 body.light-theme [class*="sidebar"] [class*="navItem"][class*="active"] {
-  background-color: rgba(16, 185, 129, 0.1) !important;
+  background-color: rgba(4, 120, 87, 0.08) !important;
   color: var(--accent-primary) !important;
   border-left: 4px solid var(--accent-primary) !important;
+  font-weight: 700 !important;
 }
 
 body.light-theme [class*="sidebar"] [class*="navItem"][class*="active"] svg {
   color: var(--accent-primary) !important;
 }
 
+/* Sidebar Quick Log Button */
+body.light-theme [class*="sidebar"] [class*="quickActionBtn"] {
+  background-color: var(--accent-primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="quickActionBtn"]:hover {
+  background-color: #065f46 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3) !important;
+}
+
+/* Sidebar Logout Button - Fixed light red visibility */
+body.light-theme [class*="sidebar"] [class*="logoutBtn"] {
+  background-color: #fef2f2 !important;
+  border: 1px solid #fee2e2 !important;
+  color: #dc2626 !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="logoutBtn"] svg {
+  color: #ef4444 !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="logoutBtn"]:hover {
+  background-color: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+body.light-theme [class*="sidebar"] [class*="logoutBtn"]:hover svg {
+  color: #ffffff !important;
+}
+
+/* Header & Top Navbar */
 body.light-theme [class*="topNavbar"] {
   background-color: var(--bg-primary) !important;
   border-bottom: 1px solid #e2e8f0 !important;
@@ -231,16 +273,26 @@ body.light-theme [class*="iconBtn"]:hover {
   color: var(--text-primary) !important;
 }
 
-/* Page cards and form structures */
+/* Page cards and form structures - Layered premium shadow system */
 body.light-theme .card,
 body.light-theme [class*="card"],
 body.light-theme [class*="preferencesCard"],
-body.light-theme [class*="formCard"] {
+body.light-theme [class*="formCard"],
+body.light-theme [class*="panelCard"] {
   background-color: var(--bg-secondary) !important;
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 16px -6px rgba(15, 23, 42, 0.02), 0 0 0 1px rgba(15, 23, 42, 0.01) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
+body.light-theme .card:hover,
+body.light-theme [class*="card"]:hover,
+body.light-theme [class*="panelCard"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 20px 30px -8px rgba(15, 23, 42, 0.07), 0 12px 20px -8px rgba(15, 23, 42, 0.03) !important;
+}
+
+/* Inputs, dropdowns and forms */
 body.light-theme input,
 body.light-theme select,
 body.light-theme textarea {
@@ -255,6 +307,42 @@ body.light-theme textarea:focus {
   border-color: var(--accent-primary) !important;
 }
 
+/* Dashboard welcome header & action buttons */
+body.light-theme [class*="welcomeSection"] {
+  background: linear-gradient(135deg, rgba(4, 120, 87, 0.08) 0%, rgba(4, 120, 87, 0.01) 100%) !important;
+  border: 1px solid rgba(4, 120, 87, 0.15) !important;
+}
+
+body.light-theme [class*="welcomeText"] h2 {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+  font-weight: 800 !important;
+}
+
+body.light-theme [class*="welcomeText"] p {
+  color: var(--text-secondary) !important;
+}
+
+body.light-theme [class*="primaryBtn"],
+body.light-theme [class*="logMealBtn"] {
+  background-color: var(--accent-primary) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+body.light-theme [class*="primaryBtn"]:hover,
+body.light-theme [class*="logMealBtn"]:hover {
+  background-color: #065f46 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
 /* Dashboard specific cards and progress sections */
 body.light-theme [class*="statValue"],
 body.light-theme [class*="metricValue"],
@@ -266,6 +354,28 @@ body.light-theme [class*="statLabel"],
 body.light-theme [class*="metricLabel"],
 body.light-theme [class*="labelText"] {
   color: var(--text-secondary) !important;
+}
+
+body.light-theme [class*="workoutItem"] {
+  background-color: rgba(15, 23, 42, 0.02) !important;
+}
+
+body.light-theme [class*="workoutItem"]:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+body.light-theme [class*="mealRow"]:hover {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+body.light-theme [class*="metricProgress"] {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-theme [class*="customSelect"] {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 /* Modal popups */
