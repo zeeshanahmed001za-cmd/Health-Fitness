@@ -229,10 +229,10 @@
 
 .logoutBtn {
   width: 100%;
-  background-color: transparent;
-  border: 1px solid transparent;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 12px;
-  color: var(--text-secondary);
+  color: #ef4444;
   font-family: var(--font-main);
   font-size: 0.95rem;
   font-weight: 600;
@@ -248,7 +248,7 @@
 
 .logoutBtn svg {
   flex-shrink: 0;
-  color: var(--text-secondary);
+  color: #ef4444;
   transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
@@ -318,102 +318,4 @@
 
 }
 
-/* Light Theme modular overrides with high specificity */
-:global(body.light-theme) .sidebar {
-  background-color: var(--bg-secondary) !important;
-  border-right: 1px solid #e2e8f0 !important;
-}
 
-:global(body.light-theme) .sidebarHeader {
-  border-bottom: 1px solid #e2e8f0 !important;
-}
-
-:global(body.light-theme) .brandTitle {
-  background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  font-weight: 800 !important;
-}
-
-:global(body.light-theme) .toggleSidebarBtn {
-  color: var(--text-secondary) !important;
-}
-
-:global(body.light-theme) .toggleSidebarBtn:hover {
-  background-color: #e2e8f0 !important;
-  color: var(--text-primary) !important;
-}
-
-:global(body.light-theme) .navItem {
-  color: #334155 !important;
-  font-weight: 500 !important;
-}
-
-:global(body.light-theme) .navItem svg {
-  color: #475569 !important;
-}
-
-:global(body.light-theme) .navItem:hover {
-  background-color: #f1f5f9 !important;
-  color: var(--text-primary) !important;
-}
-
-:global(body.light-theme) .navItem:hover svg {
-  color: var(--text-primary) !important;
-}
-
-:global(body.light-theme) .navItem.active {
-  background-color: rgba(4, 120, 87, 0.08) !important;
-  color: var(--accent-primary) !important;
-  border-left: 4px solid var(--accent-primary) !important;
-  font-weight: 700 !important;
-}
-
-:global(body.light-theme) .navItem.active svg {
-  color: var(--accent-primary) !important;
-}
-
-:global(body.light-theme) .sidebar.collapsed .navItem.active {
-  background-color: rgba(4, 120, 87, 0.12) !important;
-  border-left: none !important;
-}
-
-:global(body.light-theme) .quickActionBtn {
-  background: var(--accent-primary) !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2) !important;
-}
-
-:global(body.light-theme) .quickActionBtn:hover {
-  background: #065f46 !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3) !important;
-}
-
-:global(body.light-theme) .sidebarFooter {
-  border-top: 1px solid #e2e8f0 !important;
-}
-
-:global(body.light-theme) .logoutBtn {
-  background-color: transparent !important;
-  border: 1px solid transparent !important;
-  color: #334155 !important;
-  box-shadow: none !important;
-}
-
-:global(body.light-theme) .logoutBtn svg {
-  color: #475569 !important;
-}
-
-:global(body.light-theme) .logoutBtn:hover {
-  background-color: #ef4444 !important;
-  border-color: #ef4444 !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2) !important;
-}
-
-:global(body.light-theme) .logoutBtn:hover svg {
-  color: #ffffff !important;
-}
