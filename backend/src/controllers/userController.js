@@ -162,7 +162,7 @@ const googleLogin = asyncHandler(async (req, res) => {
     if (!user) {
         if (!isSignup) {
             res.status(404);
-            throw new Error('No account found with this Google email. Please sign up first.');
+            throw new Error('Account not found. Please sign up.');
         }
 
         const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
