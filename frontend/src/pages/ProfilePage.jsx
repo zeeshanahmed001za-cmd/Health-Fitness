@@ -194,6 +194,10 @@ function ProfilePage() {
 
   // Sync state if userData changes externally (e.g. from context updates)
   useEffect(() => {
+    document.body.classList.remove("light-theme");
+  }, []);
+
+  useEffect(() => {
     if (!isEditing) {
       setPersonalInfo({
         firstName: userData.firstName || "",
@@ -238,15 +242,6 @@ function ProfilePage() {
     setPersonalInfo(personalSnapshot);
     setPhysicalInfo(physicalSnapshot);
     setSettings(settingsSnapshot);
-    
-    // Revert visual preview theme to original snapshot state
-    const wasDark = settingsSnapshot?.darkMode !== false;
-    if (wasDark) {
-      document.body.classList.remove("light-theme");
-    } else {
-      document.body.classList.add("light-theme");
-    }
-    
     setIsEditing(false);
   };
 
@@ -327,16 +322,7 @@ function ProfilePage() {
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
 
-    // 2. Sync visual theme immediately if theme changed
-    if (key === "darkMode") {
-      if (value) {
-        document.body.classList.remove("light-theme");
-      } else {
-        document.body.classList.add("light-theme");
-      }
-    }
-
-    // 3. Prepare payload for backend API
+    // 2. Prepare payload for backend API
     const goalNormalizationMap = {
       lose: "weight_loss",
       build: "muscle_gain",
@@ -778,38 +764,6 @@ function ProfilePage() {
                 </div>
               </div>
 
-              {/* App Theme Selection */}
-              <div className={styles.preferenceItem}>
-                <div className={styles.prefInfo}>
-                  <h4>{t.appTheme}</h4>
-                  <p>Choose between staying on the elegant dark themed dashboard or switching to the classic light theme layout.</p>
-                </div>
-                <div style={{ display: "flex", justifyContent: "flex-end", minWidth: "150px" }}>
-                  <select
-                    value={settings.darkMode ? "dark" : "light"}
-                    onChange={(e) => {
-                      const isDark = e.target.value === "dark";
-                      handlePreferenceChange("darkMode", isDark);
-                    }}
-                    style={{
-                      background: settings.darkMode ? "#1e293b" : "#ffffff",
-                      border: settings.darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid #cbd5e1",
-                      color: settings.darkMode ? "#ffffff" : "#0f172a",
-                      padding: "0.5rem 2.5rem 0.5rem 1rem",
-                      borderRadius: "8px",
-                      outline: "none",
-                      width: "140px",
-                      cursor: "pointer",
-                      height: "40px",
-                      fontFamily: "inherit",
-                      fontSize: "0.9rem"
-                    }}
-                  >
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                  </select>
-                </div>
-              </div>
             </div>
 
             {/* Danger Zone */}
