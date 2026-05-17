@@ -39,7 +39,7 @@ function SignUpPage() {
     onSuccess: async (tokenResponse) => {
       setIsGoogleSubmitting(true);
       try {
-        const data = await googleLoginAPI(tokenResponse.access_token);
+        const data = await googleLoginAPI(tokenResponse.access_token, true);
         localStorage.setItem("userToken", data.token);
         localStorage.setItem("userSession", JSON.stringify(data));
         

@@ -45,11 +45,11 @@ export const loginUserAPI = async (email, password) => {
     return handleResponse(res);
 };
 
-export const googleLoginAPI = async (accessToken) => {
+export const googleLoginAPI = async (accessToken, isSignup = false) => {
     const res = await fetch(`${API_BASE_URL}/users/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken })
+        body: JSON.stringify({ accessToken, isSignup })
     });
     return handleResponse(res);
 };

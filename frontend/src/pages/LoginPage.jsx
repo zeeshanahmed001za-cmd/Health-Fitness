@@ -33,7 +33,7 @@ function LoginPage() {
     onSuccess: async (tokenResponse) => {
       setIsGoogleSubmitting(true);
       try {
-        const data = await googleLoginAPI(tokenResponse.access_token);
+        const data = await googleLoginAPI(tokenResponse.access_token, false);
         localStorage.setItem("userToken", data.token);
         localStorage.setItem("userSession", JSON.stringify(data));
         updateUserData(data);
