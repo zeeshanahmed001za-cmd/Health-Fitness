@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/DashboardPage.module.css";
-import { getWorkoutsAPI } from "../api";
+import { isToday } from "../utils/nutritionUtils";
 import { useUser } from "../context/UserContext";
 import { useNutrition } from "../context/NutritionContext";
 import useDocumentTitle from "../hooks/useDocumentTitle";
@@ -93,8 +93,7 @@ const AVATAR_FALLBACK =
 function DashboardPage() {
     const { userData, sidebarCollapsed, toggleSidebar } = useUser();
     const navigate = useNavigate();
-    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs, toggleQuickLog, isQuickLogOpen } = useNutrition();
-    const [dbWorkouts, setDbWorkouts] = useState([]);
+    const { totals, groupedLogs, nutritionGoals, foodLogs, waterLogs, refreshLogs, toggleQuickLog, isQuickLogOpen, dbWorkouts, refreshWorkouts } = useNutrition();
     useDocumentTitle("Dashboard");
 
     const [notificationsClean, setNotificationsClean] = useState(false);
@@ -127,25 +126,27 @@ function DashboardPage() {
         );
     }, [loggedExercises, completedExercises]);
 
-    // Fetch Workouts from backend
+    // Fetch Workouts from backend via context
     useEffect(() => {
-        const fetchWorkouts = async () => {
-            try {
-                const data = await getWorkoutsAPI();
-                if (data && Array.isArray(data)) setDbWorkouts(data);
-            } catch (err) {
-                console.error("Failed to fetch workouts", err);
-            }
-        };
-        fetchWorkouts();
-    }, []);
+        if (refreshWorkouts) {
+            refreshWorkouts();
+        }
+    }, [refreshWorkouts]);
 
     const totalBurned = useMemo(() => {
-        return completedExercises.reduce(
+        const localBurned = completedExercises.reduce(
             (acc, curr) => acc + (parseInt(curr.calories) || 0),
             0,
         );
-    }, [completedExercises]);
+        const dbBurned = (dbWorkouts || []).reduce((acc, curr) => {
+            const timestamp = curr.date || curr.createdAt;
+            if (isToday(timestamp)) {
+                return acc + (Number(curr.caloriesBurned) || 0);
+            }
+            return acc;
+        }, 0);
+        return localBurned + dbBurned;
+    }, [completedExercises, dbWorkouts]);
 
     const calorieGoal = nutritionGoals.calories;
     const caloriesConsumed = totals.calories;

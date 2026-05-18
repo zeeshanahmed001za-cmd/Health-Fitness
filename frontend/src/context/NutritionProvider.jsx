@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { NutritionContext } from './NutritionContext';
 import { useUser } from './UserContext';
-import { getNutritionLogsAPI, addNutritionLogAPI, deleteNutritionLogAPI } from '../api';
+import { getNutritionLogsAPI, addNutritionLogAPI, deleteNutritionLogAPI, getWorkoutsAPI, deleteWorkoutAPI } from '../api';
 import { isToday, calculateDynamicGoals } from '../utils/nutritionUtils';
 
 /**
@@ -16,6 +16,7 @@ export const NutritionProvider = ({ children }) => {
   const [foodLogs, setFoodLogs] = useState([]);
   const [waterLogs, setWaterLogs] = useState([]);
   const [nutritionGoals, setNutritionGoals] = useState({ calories: 2100, protein: 150, carbs: 200, fat: 70 });
+  const [dbWorkouts, setDbWorkouts] = useState([]);
 
   // Load user-specific data when userId changes
   useEffect(() => {
@@ -36,6 +37,7 @@ export const NutritionProvider = ({ children }) => {
       setFoodLogs([]);
       setWaterLogs([]);
       setNutritionGoals({ calories: 2100, protein: 150, carbs: 200, fat: 70 });
+      setDbWorkouts([]);
     }
   }, [userId]);
 
@@ -73,6 +75,14 @@ export const NutritionProvider = ({ children }) => {
         }
       })
       .catch(err => console.error("Failed to load nutrition from cloud", err));
+
+    getWorkoutsAPI()
+      .then(workouts => {
+        if (workouts && Array.isArray(workouts)) {
+          setDbWorkouts(workouts);
+        }
+      })
+      .catch(err => console.error("Failed to load workouts from cloud", err));
   }, [userId]);
 
   // 2. Persistence Layer (Local fallback) - User Specific
@@ -177,17 +187,46 @@ export const NutritionProvider = ({ children }) => {
     setNutritionGoals((prev) => ({ ...prev, ...newGoals }));
   }, []);
 
+  const refreshWorkouts = useCallback(async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+
+    try {
+      const workouts = await getWorkoutsAPI();
+      if (workouts && Array.isArray(workouts)) {
+        setDbWorkouts(workouts);
+      }
+    } catch (err) {
+      console.error("Failed to refresh workouts", err);
+    }
+  }, []);
+
+  const deleteWorkout = useCallback(async (id) => {
+    try {
+      await deleteWorkoutAPI(id);
+      setDbWorkouts((prev) => prev.filter(w => w._id !== id));
+    } catch (err) {
+      console.error("Failed to delete workout", err);
+    }
+  }, []);
+
   const refreshLogs = useCallback(async () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
 
     try {
-      const logs = await getNutritionLogsAPI();
+      const [logs, workouts] = await Promise.all([
+        getNutritionLogsAPI(),
+        getWorkoutsAPI()
+      ]);
       if (logs) {
         const food = logs.filter(l => l.activityType === 'food').map(l => ({...l, id: l._id}));
         const water = logs.filter(l => l.activityType === 'water').map(l => ({...l, id: l._id}));
         setFoodLogs(food);
         setWaterLogs(water);
+      }
+      if (workouts && Array.isArray(workouts)) {
+        setDbWorkouts(workouts);
       }
     } catch (err) {
       console.error("Failed to refresh logs", err);
@@ -246,8 +285,11 @@ export const NutritionProvider = ({ children }) => {
     updateGoal,
     refreshLogs,
     isQuickLogOpen,
-    toggleQuickLog
-  }), [foodLogs, todaysFoodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal, refreshLogs, isQuickLogOpen, toggleQuickLog]);
+    toggleQuickLog,
+    dbWorkouts,
+    refreshWorkouts,
+    deleteWorkout
+  }), [foodLogs, todaysFoodLogs, waterLogs, nutritionGoals, totals, waterTotal, groupedLogs, addFoodLog, removeFoodLog, addWaterLog, removeWaterLog, updateGoal, refreshLogs, isQuickLogOpen, toggleQuickLog, dbWorkouts, refreshWorkouts, deleteWorkout]);
 
 
   return (

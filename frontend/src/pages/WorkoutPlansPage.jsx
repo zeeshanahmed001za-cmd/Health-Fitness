@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
 import { useUser } from "../context/UserContext";
+import { useNutrition } from "../context/NutritionContext";
 
 import dashStyles from "../styles/Dashboard.module.css";
 import pageStyles from "../styles/WorkoutPlansPage.module.css";
@@ -78,11 +79,19 @@ const ExerciseItem = ({ ex, onToggle, onRemove }) => (
 
 function WorkoutPlansPage() {
   const { userData, sidebarCollapsed, toggleSidebar } = useUser();
+  const { dbWorkouts, deleteWorkout, refreshWorkouts } = useNutrition();
   const userId = userData?._id || userData?.id;
   useDocumentTitle("Workout Log");
 
   // Data state
   const [exercises, setExercises] = useState(defaultExercises);
+
+  // Load backend workouts when userId changes
+  useEffect(() => {
+    if (userId && refreshWorkouts) {
+      refreshWorkouts();
+    }
+  }, [userId, refreshWorkouts]);
 
   // Load user-specific data when userId changes
   useEffect(() => {
@@ -348,6 +357,42 @@ function WorkoutPlansPage() {
               className={pageStyles.progressFill}
               style={{ width: `${completionPercent}%` }}
             ></div>
+          </div>
+        </section>
+
+        {/* Logged Workout History */}
+        <section className={pageStyles.logSection}>
+          <div className={pageStyles.sectionHeader}>
+            <h3>Logged Workout History</h3>
+            <p className={pageStyles.sectionGoal}>Synchronized with Cloud Database</p>
+          </div>
+          <div className={pageStyles.exerciseList}>
+            {dbWorkouts && dbWorkouts.length > 0 ? (
+              dbWorkouts.map((ex) => (
+                <div key={ex._id} className={pageStyles.exerciseItem}>
+                  <div className={pageStyles.exBody}>
+                    <h4 style={{ textTransform: 'capitalize' }}>
+                      {ex.exercises?.[0]?.name || ex.type || 'Workout'}
+                    </h4>
+                    <p>
+                      {ex.type} | {ex.duration} mins {ex.notes ? `| ${ex.notes}` : ''} | <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>{new Date(ex.date || ex.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                    </p>
+                  </div>
+                  {ex.caloriesBurned ? (
+                    <div className={pageStyles.exStats}>
+                      {ex.caloriesBurned} kcal
+                    </div>
+                  ) : null}
+                  <button className={pageStyles.exRemove} style={{ opacity: 1 }} onClick={() => deleteWorkout(ex._id)}>
+                    <TrashIcon />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className={pageStyles.emptyState}>
+                No workouts logged in your history yet. Use the Quick Log modal to type your workouts (e.g. "ran for 30 minutes").
+              </div>
+            )}
           </div>
         </section>
       </div>
