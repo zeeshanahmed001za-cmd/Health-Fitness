@@ -29,64 +29,7 @@ describe('parserService - parseWithRules', () => {
         });
     });
 
-    describe('Weight Detection', () => {
-        it('should parse weight in kg without conversion', () => {
-            const result = parseWithRules('scaled 70 kg');
-            expect(result).toEqual({ activityType: 'weight', data: { weight: 70 } });
-        });
 
-        it('should parse weight in lbs and convert to kg', () => {
-            const result = parseWithRules('weighed 150 lbs');
-            // 150 * 0.453592 = 68.0388 => 68
-            expect(result).toEqual({ activityType: 'weight', data: { weight: 68 } });
-        });
-
-        it('should parse weight in pounds and convert to kg', () => {
-            const result = parseWithRules('weight 200 pounds');
-            // 200 * 0.453592 = 90.7184 => 90.7
-            expect(result).toEqual({ activityType: 'weight', data: { weight: 90.7 } });
-        });
-
-        it('should parse weight without unit implicitly as kg', () => {
-            const result = parseWithRules('weight 80');
-            expect(result).toEqual({ activityType: 'weight', data: { weight: 80 } });
-        });
-    });
-
-    describe('Workout Detection', () => {
-        it('should parse a cardio workout in minutes', () => {
-            const result = parseWithRules('ran for 30 minutes');
-            expect(result).toEqual({
-                activityType: 'workout',
-                data: { type: 'Cardio', duration: 30, name: 'ran', caloriesBurned: 210 }
-            });
-        });
-
-        it('should parse a strength workout in hours', () => {
-            const result = parseWithRules('gym for 1 hour');
-            expect(result).toEqual({
-                activityType: 'workout',
-                data: { type: 'Strength', duration: 60, name: 'gym', caloriesBurned: 420 }
-            });
-        });
-
-        it('should parse other workouts and default name/type appropriately', () => {
-            const result = parseWithRules('30 min training');
-            expect(result).toEqual({
-                activityType: 'workout',
-                data: { type: 'Other', duration: 30, name: 'training', caloriesBurned: 210 }
-            });
-        });
-
-        it('should fallback to Exercise name if name empty', () => {
-            // this regex replaces numbers and keywords, if it's completely empty -> Exercise
-            const result = parseWithRules('workout for 30 mins');
-            expect(result).toEqual({
-                activityType: 'workout',
-                data: { type: 'Other', duration: 30, name: 'Exercise', caloriesBurned: 210 }
-            });
-        });
-    });
 
     describe('Food Detection', () => {
         it('should parse simple food with explicit calories', () => {

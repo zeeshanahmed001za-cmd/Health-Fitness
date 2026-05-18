@@ -111,33 +111,5 @@ describe('Quick Log API Integration', () => {
         expect(nutrition[0].amount).toEqual(500);
     });
 
-    it('should log a workout successfully', async () => {
-        const res = await request(app)
-            .post('/api/nutrition/quick-log')
-            .set('Authorization', `Bearer ${userToken}`)
-            .send({ text: 'ran for 30 minutes' });
 
-        expect(res.statusCode).toEqual(201);
-        expect(res.body.message).toMatch(/Logged 30 mins of ran!/);
-        
-        // Verify in DB
-        const workouts = await Workout.find({ user: userId });
-        expect(workouts).toHaveLength(1);
-        expect(workouts[0].type).toEqual('Cardio');
-        expect(workouts[0].duration).toEqual(30);
-    });
-
-    it('should log weight successfully', async () => {
-        const res = await request(app)
-            .post('/api/nutrition/quick-log')
-            .set('Authorization', `Bearer ${userToken}`)
-            .send({ text: 'weighed 70.5 kg' });
-
-        expect(res.statusCode).toEqual(201);
-        expect(res.body.message).toMatch(/Logged weight: 70.5 kg/);
-        
-        const weights = await Progress.find({ user: userId });
-        expect(weights).toHaveLength(1);
-        expect(weights[0].weight).toEqual(70.5);
-    });
 });

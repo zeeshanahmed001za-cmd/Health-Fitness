@@ -1,7 +1,5 @@
 import asyncHandler from 'express-async-handler';
 import Nutrition from '../models/Nutrition.js';
-import Workout from '../models/Workout.js';
-import Progress from '../models/Progress.js';
 import { parseWithRules } from '../services/parserService.js';
 
 /**
@@ -75,27 +73,6 @@ export const quickLog = asyncHandler(async (req, res) => {
                 timestamp: Date.now()
             });
             message = `Logged ${result.amount}ml of water!`;
-            break;
-
-        case 'workout':
-            result = await Workout.create({
-                user: req.user._id,
-                type: data.type || 'Other',
-                duration: data.duration || 30,
-                caloriesBurned: data.caloriesBurned || (data.duration * 7),
-                date: Date.now(),
-                exercises: [{ name: data.name || 'Exercise' }]
-            });
-            message = `Logged ${result.duration} mins of ${result.exercises[0].name}!`;
-            break;
-
-        case 'weight':
-            result = await Progress.create({
-                user: req.user._id,
-                weight: data.weight,
-                date: Date.now()
-            });
-            message = `Logged weight: ${result.weight} kg`;
             break;
     }
 

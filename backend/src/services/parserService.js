@@ -26,33 +26,6 @@ export const parseWithRules = (text) => {
         return { activityType: 'water', data: { amount: Math.round(amount), name: 'Water' } };
     }
 
-    // Weight Detection
-    const weightRegex = /(?:weight|weigh|weighed|scale|scaled)\s*(\d+\.?\d*)\s*(kg|lbs|pounds)?/i;
-    const weightMatch = input.match(weightRegex);
-    if (weightMatch) {
-        let weight = parseFloat(weightMatch[1]);
-        if (weightMatch[2] === 'lbs' || weightMatch[2] === 'pounds') weight *= 0.453592;
-        return { activityType: 'weight', data: { weight: Math.round(weight * 10) / 10 } };
-    }
-
-    // Workout Detection
-    const workoutKeywords = ['run', 'ran', 'workout', 'gym', 'training', 'minutes', 'mins', 'min', 'walk', 'cycle', 'swim'];
-    if (workoutKeywords.some(kw => input.includes(kw))) {
-        const durationMatch = input.match(/(\d+)\s*(?:minutes|mins|min|hour|hr|h)\b/i);
-        let duration = durationMatch ? parseInt(durationMatch[1]) : null;
-        if (durationMatch && durationMatch[0].match(/hour|hr|h/i)) duration *= 60;
-        
-        if (duration) {
-            let type = 'Other';
-            if (/run|ran|walk|cycle|swim|cardio/i.test(input)) type = 'Cardio';
-            else if (/lift|gym|strength|weight/i.test(input)) type = 'Strength';
-            let name = input.replace(/\b(\d+)\b|\b(?:minutes|mins|min|hours?|hrs?|h|for|at|of|the|workout|did)\b/gi, '').trim();
-            // remove multiple spaces
-            name = name.replace(/\s+/g, ' ').trim();
-            return { activityType: 'workout', data: { type, duration, name: name || 'Exercise', caloriesBurned: duration * 7 } };
-        }
-    }
-
     // Simple Food Detection (with explicit calories)
     const calorieMatch = input.match(/(\d+)\s*(?:calories|kcal|cals|cal)\b/i);
     if (calorieMatch && input.split(' ').length < 8) {

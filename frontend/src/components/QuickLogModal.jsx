@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { quickLogAPI, addNutritionLogAPI, addProgressAPI, logWorkoutAPI } from '../api';
+import { quickLogAPI, addNutritionLogAPI } from '../api';
 import { useNutrition } from '../context/NutritionContext';
 import styles from './QuickLogModal.module.css';
 
@@ -34,14 +34,6 @@ const QuickLogModal = () => {
                     carbs: Number(data.carbs),
                     fat: Number(data.fat),
                     category: data.category || 'snacks'
-                });
-            } else if (refinementData.activityType === 'weight') {
-                await addProgressAPI({ weight: Number(data.weight) });
-            } else if (refinementData.activityType === 'workout') {
-                await logWorkoutAPI({
-                    type: data.type || 'Other',
-                    duration: Number(data.duration),
-                    exercises: [{ name: refinementData.name }]
                 });
             }
 
@@ -102,19 +94,19 @@ const QuickLogModal = () => {
             <div className={styles.overlay} onClick={() => toggleQuickLog(false)} />
             <div className={styles.logCard}>
                 <div className={styles.cardHeader}>
-                    <h3>{refinementData ? 'Refine Details' : 'Quick Log'}</h3>
+                    <h3>{refinementData ? 'Refine Food Details' : 'Quick Food Log'}</h3>
                     <button className={styles.closeBtn} onClick={() => toggleQuickLog(false)}>&times;</button>
                 </div>
 
                 {!refinementData ? (
                     <>
                         <div className={styles.modalInfo}>
-                            <p className={styles.description}>Log your day by typing naturally.</p>
+                            <p className={styles.description}>Log your meals and water by typing naturally.</p>
                             <div className={styles.examples}>
                                 <ul>
                                     <li>"2 cups of water"</li>
                                     <li>"300 calorie snack"</li>
-                                    <li>"ran for 30 minutes"</li>
+                                    <li>"an apple"</li>
                                 </ul>
                             </div>
                         </div>
@@ -123,7 +115,7 @@ const QuickLogModal = () => {
                                 ref={inputRef}
                                 type="text"
                                 className={styles.cardInput}
-                                placeholder="What did you do?"
+                                placeholder="What did you eat?"
                                 value={text}
                                 onChange={(e) => setText(e.target.value)}
                                 disabled={loading}
@@ -160,30 +152,7 @@ const QuickLogModal = () => {
                             </div>
                         )}
 
-                        {refinementData.activityType === 'workout' && (
-                            <div className={styles.gridFields}>
-                                <div className={styles.inputGroup}>
-                                    <label>Duration (mins)</label>
-                                    <input name="duration" type="number" defaultValue={refinementData.duration || ''} required />
-                                </div>
-                                <div className={styles.inputGroup}>
-                                    <label>Type</label>
-                                    <select name="type" defaultValue={refinementData.type || 'Other'}>
-                                        <option value="Cardio">Cardio</option>
-                                        <option value="Strength">Strength</option>
-                                        <option value="Flexibility">Flexibility</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                        )}
 
-                        {refinementData.activityType === 'weight' && (
-                            <div className={styles.inputGroup}>
-                                <label>Weight (kg)</label>
-                                <input name="weight" type="number" step="0.1" defaultValue={refinementData.weight || ''} required />
-                            </div>
-                        )}
 
                         <div className={styles.cardFooter}>
                             <button type="button" className={styles.backBtn} onClick={() => setRefinementData(null)}>Back</button>
