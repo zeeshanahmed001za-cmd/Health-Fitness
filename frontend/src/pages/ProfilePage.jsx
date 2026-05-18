@@ -249,10 +249,8 @@ function ProfilePage() {
     try {
       await deleteUserProfileAPI();
       logout();
-      alert("Your account and all associated data have been permanently deleted.");
     } catch (error) {
       console.error("Failed to delete account:", error);
-      alert("Failed to delete account. Please try again later.");
     }
   };
 
